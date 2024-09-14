@@ -1,23 +1,23 @@
 [
-	{
-		"dates": "June 2018 · Present",
-		"role": "Front-end Engineer",
-		"company": "Full Truck Alliance",
-		"description": "Responsible for customer service and CRM system front-end development.",
-		"logo": "/assets/images/experiences/fta.ico"
-	},
-	{
-		"dates": "July 2015 · June 2018",
-		"role": "Front-end Engineer",
-		"company": "YOHO!",
-		"description": "Responsible for mobile front-end development of e-commerce platform.",
-		"logo": "/assets/images/experiences/yoho.ico"
-	},
-	{
-		"dates": "September 2014 · July 2015 ",
-		"role": "Node.JS Developer",
-		"company": "WuLian",
-		"description": "Intern, involved in the development of Internet of Things cloud systems.",
-		"logo": "/assets/images/experiences/wulian.ico"
-	}
+  {
+    "dates": "Luty 2018 · Obecnie",
+    "role": "Full Stack Engineer",
+    "company": "Ringier Axel Springer Tech",
+    "description": "Rozwój aplikacji w Angular i Nest.js. Udział w projektach takich jak Moneteasy, Skapiec.pl, narzędzia do zarządzania importem feedów produktowych, panel OnetAds oraz analiza i wdrożenie TopicsAPI z Privacy Sandbox od Google.",
+    "logo": "/assets/images/experiences/rasp.png"
+  },
+  {
+    "dates": "Kwiecień 2017 · Styczeń 2018",
+    "role": "Młodszy programista C# i SQL",
+    "company": "Sente Systemy Informatyczne",
+    "description": "Rozwój aplikacji w C# i SQL.",
+    "logo": "/assets/images/experiences/sente.svg"
+  },
+  {
+    "dates": "2010 · Obecnie",
+    "role": "Tech dude po znajomości",
+    "company": "Janiak-Meble",
+    "description": "Tworzenie i zarządzanie stroną www.janiakmeble.pl",
+    "logo": "/assets/images/experiences/janiak-meble.svg"
+  }
 ]
