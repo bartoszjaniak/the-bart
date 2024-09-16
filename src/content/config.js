@@ -15,7 +15,6 @@ const projectCollection = defineCollection({
     name: z.string(),
     image: z.string(),
     description: z.string(),
-    dateFormatted: z.string(),
   }),
 });
 
