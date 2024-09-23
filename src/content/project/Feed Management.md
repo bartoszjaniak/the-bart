@@ -13,7 +13,7 @@ Ten projekt obejmował stworzenie zaawansowanego systemu do zarządzania importe
 
 ### Technologie
 
-- Frontend: Angular
+- Frontend: Angular, Material, HTML, CSS
 - Backend: Nest.js
 - Infrastruktura: AWS
 

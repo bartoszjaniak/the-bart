@@ -13,7 +13,7 @@ Panel OnetAds to nowa platforma self-service, pozwalająca firmom samodzielne za
 
 ### Technologie
 
-- Frontend: Angular
+- Frontend: Angular, Material, HTML, CSS
 - Backend: Nest.js
 - Infrastruktura: AWS
 
