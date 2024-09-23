@@ -1,8 +1,9 @@
 ---
 layout: ../../layouts/project.astro
 name: Moneteasy
-description: Kreator widgetów produktowych
+description: Kreator widgetów produktowych i narzędzie do monetyzacji treści wykorzystywane przez wydawców
 image: /assets/images/projects/moneteasy.png
+projectUrl: https://moneteasy.pl/
 ---
 
 ![Logo Moneteasy](/assets/images/projects/moneteasy.png)
@@ -20,18 +21,8 @@ Moneteasy to innowacyjne narzędzie służące do tworzenia widgetów produktowy
 
 Jako członek zespołu deweloperskiego, byłem odpowiedzialny za:
 
-1. Projektowanie i implementację interfejsu użytkownika kreatora widgetów
-2. Optymalizację wydajności widgetów na stronach klientów
-3. Integrację systemu analitycznego do śledzenia wyświetleń i kliknięć
-
-### Wyzwania i rozwiązania
-
-Jednym z głównych wyzwań było zapewnienie wydajności widgetów na różnych stronach internetowych. Rozwiązaliśmy to poprzez:
-
-- Wykorzystanie lazy loading dla zasobów widgetów
-- Minimalizację i optymalizację kodu JavaScript
-- Implementację systemu cachowania dla szybszego ładowania danych produktowych
+1. Projektowanie i implementację interfejsu użytkownika kreatora widgetów oraz systemu synchronizacji ofert
 
 ### Rezultaty
 
-Projekt Moneteasy znacząco zwiększył przychody naszych klientów-wydawców, jednocześnie poprawiając doświadczenie użytkowników końcowych poprzez prezentację relewantnych produktów. Narzędzie zostało przyjęte przez setki wydawców, generując miliony wyświetleń miesięcznie.
+Projekt Moneteasy znacząco zwiększył przychody naszych klientów-wydawców, jednocześnie poprawiając doświadczenie użytkowników końcowych poprzez prezentację dopasowanych produktów. Narzędzie zostało przyjęte przez setki wydawców, generując miliony wyświetleń miesięcznie.

@@ -1,8 +1,8 @@
 ---
 layout: ../../layouts/project.astro
 name: Skapiec.pl
-description: Przepisanie porównywarki cen
-image: https://media.licdn.com/dms/image/v2/D4E0BAQGpE6AEbDhWew/company-logo_200_200/company-logo_200_200/0/1722265421235/ringier_axel_springer_tech_logo?e=1734566400&v=beta&t=cGINHspCQx7IHiMPn7n9G3cKa3RteP0PedtMnURdGM4
+description: Jedna z największych porównywarek cen w Polsce
+image: /assets/images/projects/skapiec.png
 ---
 
 ![Logo Skapiec.pl](/assets/images/projects/skapiec.png)
@@ -13,26 +13,17 @@ Skapiec.pl to popularna porównywarka cen z dużą konkurencją na polskim rynku
 
 ### Technologie
 
-- Frontend: React.js
-- Server-Side Rendering: Własny framework firmy
+- Frontend: Preact.js
+- Server-Side Rendering: Własny framework
 
 ### Mój wkład
 
 W tym projekcie byłem odpowiedzialny za:
 
 1. Tworzenie poszczególnych komponentów na podstawie dostarczonych makiet
-2. Implementację logiki biznesowej po stronie klienta
+2. Implementację logiki biznesowe
 3. Optymalizację wydajności i czasu ładowania strony
 4. Współpracę z zespołem SEO w celu poprawy widoczności w wynikach wyszukiwania
-
-### Wyzwania i rozwiązania
-
-Głównym wyzwaniem było zachowanie wysokiej wydajności przy jednoczesnym zapewnieniu bogatej funkcjonalności. Osiągnęliśmy to poprzez:
-
-- Wykorzystanie technik code splitting i lazy loading
-- Optymalizację renderowania po stronie serwera
-- Implementację zaawansowanego systemu cachowania
-- Zastosowanie technik progresywnego ładowania treści
 
 ### Rezultaty
 

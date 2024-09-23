@@ -1,15 +1,15 @@
 ---
 layout: ../../layouts/project.astro
-name: Narzędzia do zarządzania importem feedów produktowych
-description: Ten projekt obejmował stworzenie zaawansowanego systemu do zarządzania importem feedów produktowych z różnych sklepów internetowych.
-image: https://media.licdn.com/dms/image/v2/D4E0BAQGpE6AEbDhWew/company-logo_200_200/company-logo_200_200/0/1722265421235/ringier_axel_springer_tech_logo?e=1734566400&v=beta&t=cGINHspCQx7IHiMPn7n9G3cKa3RteP0PedtMnURdGM4
+name: Narzędzia do zarządzania katalogiem produktów
+description: Centralnego Katalogu Produktów wykorzystywany m.in. przez porównywarkę skapiec.pl
+image: /assets/images/projects/tools.jpeg
 ---
 
-![Logo projektu feedów](/assets/images/projects/feed-management.png)
+![Logo projektu feedów](/assets/images/projects/tools.jpeg)
 
 ## Opis projektu
 
-Ten projekt obejmował stworzenie zaawansowanego systemu do zarządzania importem feedów produktowych z różnych sklepów internetowych. Celem było stworzenie spójnego agregatu danych produktowych dla naszych serwisów.
+Ten projekt obejmował stworzenie zaawansowanego systemu do zarządzania importem feedów produktowych z różnych sklepów internetowych. Celem było stworzenie spójnego agregatu danych produktowych dla naszych serwisów oraz narzędzi umożliwiających kontrolę nad nim. Nowy system miał zastąpić leciwy jednak wciąż działający wówczas system.
 
 ### Technologie
 
@@ -21,20 +21,20 @@ Ten projekt obejmował stworzenie zaawansowanego systemu do zarządzania importe
 
 Moja rola w tym projekcie była kluczowa i obejmowała:
 
-1. Projektowanie architektury całego systemu
-2. Implementację większości frontendu aplikacji backoffice
+1. Udział w projektowaniu architektury całego systemu
+2. Implementację dużej części frontendu aplikacji
 3. Tworzenie serwisów backendowych do przetwarzania feedów
-4. Integrację z usługami AWS do przetwarzania dużych ilości danych
+4. Zaprojektowanie i stworzenie modułów pozwalających zautomatyzować niektóre powtarzalne zadania
 
 ### Wyzwania i rozwiązania
 
-Głównym wyzwaniem było przetwarzanie milionów ofert z różnych źródeł w czasie rzeczywistym. Rozwiązaliśmy to poprzez:
+Głównym wyzwaniem było przetwarzanie milionów ofert z różnych źródeł w czasie rzeczywistym, wykluczenie błędów a także płynne przejście na nowy system. Rozwiązaliśmy to poprzez:
 
-- Implementację systemu kolejkowania zadań
-- Wykorzystanie usług AWS Lambda do równoległego przetwarzania danych
-- Stworzenie elastycznego systemu mapowania danych z różnych formatów feedów
+- Wdrażanie poszczególnych części systemu z zachowaniem częściowej kompatybilności z poprzednim systemem
+- Dokładną analizę poprzedniej wersji systemu i przepisania jego najważniejszych części
+- Implementację systemu paczkowania oraz kolejkowania ofert
 - Wdrożenie zaawansowanego systemu monitoringu i alertów
+- Zaprojektowanie i stworzenie interfejsu użytkownika umożliwiającego wygodną pracę na dużych zbiorach danych
 
 ### Rezultaty
-
-System znacząco usprawnił proces importu i agregacji danych produktowych, redukując czas przetwarzania o 70% i zwiększając dokładność danych o 95%. To z kolei pozwoliło na szybsze aktualizacje ofert w naszych serwisach i lepsze doświadczenie użytkowników końcowych.
+Umarł król, niech żyje król. Nowy system całkowicie zastąpił stary. Nowa wersja okazała się znacznie stabilniejsza, tańsza w utrzymaniu i przede wszystkim o wiele bardziej rozwojowa. Pracownicy korzystający z narzędzi backoffice mogli skupić się na poprawie jakości katalogu a ilość zgłaszanych błędów spadła.

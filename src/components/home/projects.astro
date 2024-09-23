@@ -5,10 +5,10 @@ import Project from "../project.astro";
 const allProjects = await getCollection("project");
 
 const projects = allProjects.map((project) => {
-	return {
-		...(project.data || {}),
-		link: `/project/${project.slug}`,
-	};
+  return {
+    ...(project.data || {}),
+    link: `/project/${project.slug}`,
+  };
 });
 ---
 
@@ -33,12 +33,12 @@ const projects = allProjects.map((project) => {
             image={project.image}
             url={project.link}
           />
-        )
+        );
       })
     }
   </div>
 
   <div class="flex items-center justify-center w-full py-5">
-    <Button text="View All My Projects" link="/projects" />
+    <Button text="Zobacz wszystkie moje projekty" link="/projects" />
   </div>
 </section>
