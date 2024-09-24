@@ -4,6 +4,7 @@ name: Moneteasy
 description: Kreator widgetów produktowych i narzędzie do monetyzacji treści wykorzystywane przez wydawców
 image: /assets/images/projects/moneteasy.png
 projectUrl: https://moneteasy.pl/
+tags: [Angular, node.js]
 ---
 
 ![Logo Moneteasy](/assets/images/projects/moneteasy.png)

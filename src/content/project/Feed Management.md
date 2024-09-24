@@ -3,6 +3,7 @@ layout: ../../layouts/project.astro
 name: Narzędzia do zarządzania katalogiem produktów
 description: Centralnego Katalogu Produktów wykorzystywany m.in. przez porównywarkę skapiec.pl
 image: /assets/images/projects/tools.jpeg
+tags: [Angular, Nest.js, AWS, RASP]
 ---
 
 ![Logo projektu feedów](/assets/images/projects/tools.jpeg)
