@@ -3,6 +3,7 @@ layout: ../../layouts/project.astro
 name: Panel OnetAds
 description: Platforma self-service do sprzedaży reklam
 image: /assets/images/projects/onetads.png
+tags: [Angular, Nest.js, AWS, Mockups, Material UI]
 ---
 
 ![Logo OnetAds](/assets/images/projects/onetads.png)
