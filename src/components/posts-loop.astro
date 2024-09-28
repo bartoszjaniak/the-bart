@@ -1,14 +1,14 @@
 ---
 import { getCollection } from "astro:content";
-const allPosts = await getCollection("post");
+const allPosts = await getCollection("post", ({ data }) => !data.isDraft);
 
 const { count } = Astro.props;
 
 const postsLoop = allPosts.slice(0, count).map((post) => {
-	return {
-		...(post.data || {}),
-		link: `/post/${post.slug}`,
-	};
+  return {
+    ...(post.data || {}),
+    link: `/post/${post.slug}`,
+  };
 });
 ---
 
@@ -73,10 +73,10 @@ const postsLoop = allPosts.slice(0, count).map((post) => {
             <span>{post.description}</span>
           </p>
           <div class="mt-2.5 text-xs font-medium text-neutral-800 dark:text-neutral-300">
-            Posted on {post.dateFormatted}
+            Opublikowane: {post.createdAt}
           </div>
         </div>
       </div>
-    )
+    );
   })
 }

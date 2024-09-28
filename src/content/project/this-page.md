@@ -7,6 +7,7 @@ tags: [Po godzinach, Astro, Tailwind, CI&CD]
 ---
 
 ![Fragment strony na której teraz jesteś](/assets/images/projects/this-page.png)
+
 ## Opis projektu
 
 Jest to moje prywatne portfolio wraz z miejscem na swoje teści. Chciałbym na nim przedstawić siebie i zaprezentować moje projekty. W tym projekcie skupiłem się na jak najszybszym dostarczeniu. Wykorzystałem gotowy szablon do którego dodawałem różne rzeczy o których niżej. Co ważne projekt ten jest napisany w technologiach których wcześniej nie miałem okazji zgłebić: frameworku Astro oraz frameworku do stylowania Tailwind. Z Tailwindem miałem wcześniej doczynienia ale nie w takim stopniu.
@@ -31,9 +32,11 @@ Link do kodu źródłowego projektu znajdziesz [https://github.com/bartoszjaniak
 - W oryginalnym szablonie projekty były tylko zajawkami prowadzącymi do konkretnych narzędzi. Ja chciałem się skupić na opisaniu czym dany projekt jest i jaki wpływ wywarł na mnie. Stworzyłem więc sekcję podobną do oryginalnej sekcji bloga z przeznaczeniem na projekty.
 - Dodałem przyciski pozwalające wrócić na blog/portfolio z poziomu artykułu
 - Pojawiły się elementy tagów umożliwiające szybkie skojarzenie najważniejszych punktów projektów
+- Dodałem animację machania rączką
 
 ### Co jeszcze się zmieni:
+
 - Zostanie dodana obsługa wielu języków
-- Zostaną napisane testy jednostkowe oraz E2E (głównie w celach rozwoju umiejętności)
+- Zostaną napisane testy jednostkowe oraz E2E
 - Zostaną dodane tagi także do artykułów
 - Pojawi się możliwość filtrowania po tagach

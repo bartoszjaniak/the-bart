@@ -5,7 +5,8 @@ const postCollection = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    dateFormatted: z.string(),
+    createdAt: z.string(),
+    isDraft: z.boolean().default(false),
   }),
 });
 
@@ -16,7 +17,7 @@ const projectCollection = defineCollection({
     image: z.string(),
     description: z.string(),
     projectUrl: z.string().optional(),
-    tags: z.array(z.string()).default([])
+    tags: z.array(z.string()).default([]),
   }),
 });
 
