@@ -42,6 +42,7 @@ Po miesiącu używania kombinacji regulowanego biurka i stołka, muszę przyzna�
 1. Plecy przestały boleć - to był główny cel i został osiągnięty!
 2. Mam więcej energii - częste zmiany pozycji sprawiają, że jestem bardziej pobudzony
 3. Lepsza koncentracja - dziwne, ale fakt. Może to przez lepsze dotlenienie?
+4. To akurat mało oczywiste ale zajmuje mniej miejsca niż fotel, a to ważne w mojej 4m2 przestrzeni biurowej na home office
 
 Oczywiście, nie jest to rozwiązanie idealne dla każdego. Pierwsze dni były trudne - musiałem przyzwyczaić się do nowej pozycji i częstego ruchu. Ale po tygodniu moje ciało się dostosowało i teraz nie wyobrażam sobie powrotu do klasycznego fotela.
 
@@ -53,7 +54,7 @@ Pamiętajcie jednak, że samo siedzenie na stołku to nie wszystko. Regularne pr
 
 ## Linki
 
-- Stołek LIDKULLEN z IKEA: [https://www.ikea.com/pl/pl/p/lidkullen-stolek-do-siedzenia-stania-gunnared-ciemnoszary-30445774/](https://www.ikea.com/pl/pl/p/lidkullen-stolek-do-siedzenia-stania-gunnared-ciemnoszary-30445774/)
-- Film, który zainspirował mnie do zmiany: [https://www.youtube.com/watch?v=s1wOPDg7hWM]
+- Stołek LIDKULLEN z IKEA: [link](https://www.ikea.com/pl/pl/p/lidkullen-stolek-do-siedzenia-stania-gunnared-ciemnoszary-30445774/)
+- Film, który zainspirował mnie do zmiany: [Człowieku, RUSZ SIĘ!](https://www.youtube.com/watch?v=s1wOPDg7hWM)
 
-Zdjęcia pochodzą ze strony IKEA: [https://www.ikea.com]
+Zdjęcia pochodzą ze strony [IKEA](https://www.ikea.com)
