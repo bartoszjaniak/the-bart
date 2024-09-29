@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/post.astro
-title: Moje podejście do fit-office
-description: Łączenie pracy zdalnej z aktywnością fizyczną
+title: Moje podejście do dbania o formę - fit-office 💪
+description: Łączenie pracy zdalnej z aktywnością fizyczną kiedy czas nie jest z gumy
 createdAt: 20.09.2024
 ---
 
