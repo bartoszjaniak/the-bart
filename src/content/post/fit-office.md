@@ -2,10 +2,9 @@
 layout: ../../layouts/post.astro
 title: Moje podejście do dbania o formę - fit-office 💪
 description: Łączenie pracy zdalnej z aktywnością fizyczną kiedy czas nie jest z gumy
+image: https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb
 createdAt: 20.09.2024
 ---
-
-![https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb](https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb)
 
 ## Wprowadzenie
 
