@@ -3,6 +3,8 @@ import experiences from "../collections/experiences.json";
 import AboutExperience from "../components/about-experience.astro";
 import PageHeading from "../components/page-heading.astro";
 import Layout from "../layouts/main.astro";
+
+const email = import.meta.env.PUBLIC_EMAIL;
 ---
 
 <Layout title="O mnie">
@@ -81,12 +83,10 @@ import Layout from "../layouts/main.astro";
       Jeśli chcesz być na bieżąco z moją pracą, możesz <a
         href="https://www.linkedin.com/in/bartosz-janiak-super-dev"
         target="_blank"
-        class="text-indigo-600 underline"
-        >śledzić mnie na LinkedIn</a
+        class="text-indigo-600 underline">śledzić mnie na LinkedIn</a
       >, lub wysłać mi <a
-        href="mailto:bartoszjaniak@outlook.com"
-        class="text-indigo-600 underline"
-        >email</a
+        href={`mailto:${email}`}
+        class="text-indigo-600 underline">email</a
       >. Z przyjemnością odpowiem na Twoją wiadomość.
     </p>
   </section>
