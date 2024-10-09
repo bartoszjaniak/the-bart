@@ -78,3 +78,5 @@ W ustawieniach w zakładce **“Zarządzanie pamięcią”** można podejrzeć i
 - Problem z nadmiernym zgadywaniem naszych zamiarów przez AI można rozwiązać poprzez precyzyjne instrukcje
 
 Personalizacja ChatGPT otwiera nowe możliwości w efektywnym wykorzystaniu sztucznej inteligencji w pracy programisty, ale wymaga świadomego i odpowiedzialnego podejścia.
+
+![Co dalej, mistrzu kodu?](/assets/images/posts/gpt-personalization/code-master.png)
