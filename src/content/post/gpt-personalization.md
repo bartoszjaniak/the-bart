@@ -55,6 +55,10 @@ W ustawieniach w zakładce **“Zarządzanie pamięcią”** można podejrzeć i
 
 ![Zarządzanie zaisanymi informacjami w ustawieniach](/assets/images/posts/gpt-personalization/memory-management.png)
 
+# Okazjonalny brak współpracy
+
+Muszę zaznaczyć, że mechanizmy personalizacji nie zawsze chcą współpracować. Czasami zdarza się, że nasze ustawienia nie są stosowane - zarówno z konfiguracji zaaplikowanej w ustawieniach jak i bezpośrednio na czacie (mimo że jest potwierdzenie że “zaktualizowano pamięć”). Pomaga dopracowanie instrukcji albo bardziej konkretne ustawienie. Można spróbować na przykład opisać cechy stylu wypowiedzi danej postaci (o które można zapytać czata) niż wskazanie “mów jak…”.
+
 # Szybkie podsumowanie
 
 **Znaczenie i ograniczenia czata GPT**
