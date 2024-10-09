@@ -3,7 +3,7 @@ layout: ../../layouts/post.astro
 title: Zamieniłem krzesło biurowe na stołek 🪑
 description: ...i przestały boleć mnie plecy
 image: /assets/images/posts/stool-2.jpeg
-createdAt: 29.09.2024
+createdAt: 2024-09-29
 ---
 
 ## Wprowadzenie
