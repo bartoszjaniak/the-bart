@@ -1,9 +1,11 @@
 ---
+import { Image } from "astro:assets";
 import Button from "../components/button.astro";
 import Projects from "../components/home/projects.astro";
 import Separator from "../components/home/separator.astro";
 import Writings from "../components/home/writings.astro";
 import Layout from "../layouts/main.astro";
+import myFace from "/public/assets/images/photo.webp";
 ---
 
 <Layout title="Bartosz Janiak">
@@ -55,8 +57,8 @@ import Layout from "../layouts/main.astro";
             </span>
           </div>
           <div class="relative z-30 px-1">
-            <img
-              src="/assets/images/photo.webp"
+            <Image
+              src={myFace}
               alt="Zdjęcie Bartosza Janiaka"
               loading="eager"
               decoding="auto"
