@@ -5,7 +5,7 @@ const postCollection = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    createdAt: z.string(),
+      createdAt: z.date(),
     isDraft: z.boolean().default(false),
     image: z.string().optional(),
   }),
