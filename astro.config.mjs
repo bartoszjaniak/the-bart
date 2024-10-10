@@ -14,9 +14,6 @@ export default defineConfig({
         progressive: true,
         quality: 75,
       },
-      webp: {
-        quality: 75,
-      },
       jpeg: {
         quality: 75,
         progressive: true,
