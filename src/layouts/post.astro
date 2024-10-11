@@ -1,7 +1,6 @@
 ---
 import Button from "../components/button.astro";
 import Layout from "./main.astro";
-import { Image } from "astro:assets";
 const { frontmatter } = Astro.props;
 // Przyjmujemy, że entry ma pola takie jak title, description i image
 const title = frontmatter.title || "Domyślny tytuł";
@@ -48,12 +47,10 @@ const image = frontmatter.image || "/default-image.jpg";
       </h1>
     </div>
     <div class="m-10">
-      <Image
+      <img
         src={frontmatter.image}
         alt={frontmatter.imageAlt}
         title={frontmatter.imageAlt}
-        width="816"
-        height="816"
         class="w-full h-auto rounded-3xl"
       />
     </div>
