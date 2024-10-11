@@ -1,10 +1,7 @@
 ---
-import { Image } from 'astro:assets';
+import { Image } from "astro:assets";
 import Button from "../button.astro";
 import PostsLoop from "../posts-loop.astro";
-import rocket from "/public/assets/images/rocket2.png";
-
-const feed = "https://feed.miantiao.me/";
 ---
 
 <section class="max-w-4xl mx-auto px-7 lg:px-0">
@@ -22,7 +19,7 @@ const feed = "https://feed.miantiao.me/";
 
   <div class="w-full max-w-4xl mx-auto my-7 xl:px-0">
     <div
-      class="flex flex-col items-center justify-start  md:flex-row md:space-x-7"
+      class="flex flex-col items-center justify-start md:flex-row md:space-x-7"
     >
       <div class="w-full md:w-2/3 space-y-7">
         <PostsLoop count="3" />
@@ -31,8 +28,15 @@ const feed = "https://feed.miantiao.me/";
           <Button text="Zobacz moje inne posty" link="/posts" />
         </div>
       </div>
-      <div class="w-full h-full mt-10 md:w-1/3 md:mt-0 flex items-end hidden md:flex">
-        <Image src={rocket} alt="Rakieta!" loading="eager" width={300} height={300} />
+      <div
+        class="w-full h-full mt-10 md:w-1/3 md:mt-0 flex items-end hidden md:flex"
+      >
+        <Image
+          src="/assets/images/rocket2.png"
+          alt="Rakieta!"
+          width="300"
+          height="300"
+        />
       </div>
       <!-- <div class="w-full mt-10 md:w-1/3 md:mt-0">
         <form
