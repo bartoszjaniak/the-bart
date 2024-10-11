@@ -1,6 +1,7 @@
 ---
 import Button from "../components/button.astro";
 import Layout from "./main.astro";
+import { Image } from "astro:assets";
 const { frontmatter } = Astro.props;
 // Przyjmujemy, że entry ma pola takie jak title, description i image
 const title = frontmatter.title || "Domyślny tytuł";
@@ -11,60 +12,20 @@ const image = frontmatter.image || "/default-image.jpg";
 ---
 
 <Layout title={frontmatter.title}>
-  <meta
-    slot="head"
-    name="description"
-    content={description}
-  />
+  <meta slot="head" name="description" content={description} />
 
   <!-- Open Graph meta tags -->
-  <meta
-    slot="head"
-    property="og:title"
-    content={title}
-  />
-  <meta
-    slot="head"
-    property="og:description"
-    content={description}
-  />
-  <meta
-    slot="head"
-    property="og:image"
-    content={image}
-  />
-  <meta
-    slot="head"
-    property="og:url"
-    content={url}
-  />
-  <meta
-    slot="head"
-    property="og:type"
-    content="article"
-  />
+  <meta slot="head" property="og:title" content={title} />
+  <meta slot="head" property="og:description" content={description} />
+  <meta slot="head" property="og:image" content={image} />
+  <meta slot="head" property="og:url" content={url} />
+  <meta slot="head" property="og:type" content="article" />
 
   <!-- Możesz też dodać meta tagi dla Twittera -->
-  <meta
-    slot="head"
-    name="twitter:card"
-    content="summary_large_image"
-  />
-  <meta
-    slot="head"
-    name="twitter:title"
-    content={title}
-  />
-  <meta
-    slot="head"
-    name="twitter:description"
-    content={description}
-  />
-  <meta
-    slot="head"
-    name="twitter:image"
-    content={image}
-  />
+  <meta slot="head" name="twitter:card" content="summary_large_image" />
+  <meta slot="head" name="twitter:title" content={title} />
+  <meta slot="head" name="twitter:description" content={description} />
+  <meta slot="head" name="twitter:image" content={image} />
 
   <main
     class="relative z-30 max-w-4xl pb-1 mx-auto mt-10 bg-white dark:bg-neutral-950 md:rounded-t-md text-neutral-900"
@@ -87,8 +48,12 @@ const image = frontmatter.image || "/default-image.jpg";
       </h1>
     </div>
     <div class="m-10">
-      <img
+      <Image
         src={frontmatter.image}
+        alt={frontmatter.imageAlt}
+        title={frontmatter.imageAlt}
+        width="816"
+        height="816"
         class="w-full h-auto rounded-3xl"
       />
     </div>
@@ -101,10 +66,7 @@ const image = frontmatter.image || "/default-image.jpg";
     <div
       class="flex items-center justify-center w-full max-w-2xl mx-auto mb-6 md:mb-12"
     >
-      <Button
-        text="wróć do listy postów"
-        link="/posts"
-      />
+      <Button text="wróć do listy postów" link="/posts" />
     </div>
   </main>
 </Layout>

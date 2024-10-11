@@ -3,6 +3,7 @@ layout: ../../layouts/post.astro
 title: Personalizacja czata GPT 🦾
 description: Jak spersonalizować ChatGPT i zamienić sztywnego bota w swojego genialnego asystenta-programistę.
 image: /assets/images/posts/gpt-personalization/skippy.png
+imageAlt: Gadająca puszka (pozdro dla kumatych)
 createdAt: 2024-10-09
 ---
 
