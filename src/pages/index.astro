@@ -5,6 +5,7 @@ import Projects from "../components/home/projects.astro";
 import Separator from "../components/home/separator.astro";
 import Writings from "../components/home/writings.astro";
 import Layout from "../layouts/main.astro";
+import myFace from "../assets/images/photo.png";
 ---
 
 <Layout title="Bartosz Janiak">
@@ -57,10 +58,10 @@ import Layout from "../layouts/main.astro";
           </div>
           <div class="relative z-30 px-1">
             <Image
-              src="/assets/images/photo.png"
+              src={myFace}
               alt="Zdjęcie Bartosza Janiaka"
-              width="300"
-              height="344"
+              width={400}
+              height={487}
               class="relative z-30 w-full aspect-[1024/1246] md:max-w-md mx-auto dark:-translate-y-0.5"
             />
           </div>

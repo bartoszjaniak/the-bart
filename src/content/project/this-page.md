@@ -33,6 +33,9 @@ Link do kodu źródłowego projektu znajdziesz [https://github.com/bartoszjaniak
 - Dodałem przyciski pozwalające wrócić na blog/portfolio z poziomu artykułu
 - Pojawiły się elementy tagów umożliwiające szybkie skojarzenie najważniejszych punktów projektów
 - Dodałem animację machania rączką
+- Zoptymalizowałem niektóre obrazy poprzez ich dostosowanie przez bundler podczas budowy aplikacji
+- Poprawiłem niektóre style
+- Poprawiłem sortowanie artykułów (teraz są po dacie od najnowszych)
 
 ### Co jeszcze się zmieni:
 
