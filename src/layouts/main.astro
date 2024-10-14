@@ -9,12 +9,22 @@ const { title } = Astro.props;
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
 
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WYPM73WT1W"
+    ></script>
+    {import.meta.env.PROD && (
+                <script>
+                    var dataLayer = window.dataLayer || [];
+                    function gtag() {
+                        dataLayer.push(arguments);
+                    }
+                    window.gtag("js", new Date());
+                    window.gtag("config", "G-WYPM73WT1W");
+                </script>
+    )}
     <!-- Used to add dark mode right away, adding here prevents any flicker -->
     <script is:inline>
       if (typeof Storage !== "undefined") {
@@ -32,11 +42,7 @@ const { title } = Astro.props;
         border-radius: 20px;
       }
     </style>
-    <link
-      rel="icon"
-      type="image/x-icon"
-      href="../assets/images/favicon.png"
-    />
+    <link rel="icon" type="image/x-icon" href="../assets/images/favicon.png" />
     <script src="../assets/css/main.css"></script>
     <slot name="head" />
     <Fragment set:html={import.meta.env.HEADER_INJECT} />
