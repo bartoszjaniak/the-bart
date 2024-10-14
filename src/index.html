@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Client-Side Image Pixelator</title>
+  </head>
+  <body>
+    <h1>Upload and Pixelate Image (Client-side)</h1>
+    <input type="file" id="fileInput" accept="image/*" />
+    <br /><br />
+    <canvas id="canvas"></canvas>
+    <br /><br />
+    <button id="downloadBtn" style="display: none">Download PNG</button>
+
+    <script>
+      const fileInput = document.getElementById("fileInput");
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+      const downloadBtn = document.getElementById("downloadBtn");
+
+      fileInput.addEventListener("change", (event) => {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const img = new Image();
+            img.onload = function () {
+              // Ustaw rozmiar canvasu
+              canvas.width = 400; // Maksymalna szerokość
+              const scale = 400 / img.width;
+              canvas.height = img.height * scale;
+
+              // Narysuj obraz na canvasie
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+              // Przetwórz obraz na piksele
+              pixelateImage(10); // Wartość 10 to rozmiar pikseli (można dostosować)
+
+              // Wyświetl przycisk do pobrania
+              downloadBtn.style.display = "block";
+            };
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // Funkcja pikselująca obraz
+      function pixelateImage(pixelSize) {
+        const width = canvas.width;
+        const height = canvas.height;
+        const imageData = ctx.getImageData(0, 0, width, height);
+
+        for (let y = 0; y < height; y += pixelSize) {
+          for (let x = 0; x < width; x += pixelSize) {
+            // Znajdź kolor środkowego piksela
+            const pixelIndex =
+              ((y + Math.floor(pixelSize / 2)) * width +
+                (x + Math.floor(pixelSize / 2))) *
+              4;
+            const red = imageData.data[pixelIndex];
+            const green = imageData.data[pixelIndex + 1];
+            const blue = imageData.data[pixelIndex + 2];
+            const alpha = imageData.data[pixelIndex + 3]; // Przezroczystość
+
+            // Pomiń czarne piksele i przezroczyste
+            if (!(red === 0 && green === 0 && blue === 0) && alpha > 0) {
+              // Wypełnij cały blok pikseli kolorem
+              ctx.fillStyle = `rgba(${red},${green},${blue},${alpha / 255})`;
+              ctx.fillRect(x, y, pixelSize, pixelSize);
+            }
+          }
+        }
+      }
+
+      // Pobierz jako PNG
+      downloadBtn.addEventListener("click", () => {
+        const link = document.createElement("a");
+        link.href = canvas.toDataURL("image/png");
+        link.download = "output.png";
+        link.click();
+      });
+    </script>
+  </body>
+</html>
