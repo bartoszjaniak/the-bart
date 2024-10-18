@@ -82,3 +82,19 @@ html.dark #darkToggle:hover .horizon {
     transform: translate3d(0, 10, 0);
   }
 }
+
+.carousel {
+    display: inline-flex;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.carousel-item {
+    box-sizing: content-box;
+    display: flex;
+    flex: none;
+    scroll-snap-align: start;
+}
