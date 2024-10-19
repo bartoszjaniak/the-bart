@@ -6,6 +6,8 @@ export default {
     extend: {
       animation: {
         wave: "wave 4s ease-in-out infinite",
+        "slide-left": "slide-left 8s linear infinite",
+        "infinite-scroll": "infinite-scroll 120s linear infinite",
       },
       keyframes: {
         wave: {
@@ -16,6 +18,10 @@ export default {
           "20%": { transform: "rotate(-4deg)" },
           "25%": { transform: "rotate(10deg)" },
           "30%": { transform: "rotate(0deg)" },
+        },
+        "infinite-scroll": {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-100%)" },
         },
       },
     },

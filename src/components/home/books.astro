@@ -1,0 +1,93 @@
+---
+import { Image } from "astro:assets";
+
+import atomoweNawyki from "../../assets/images/books/Atomowe nawyki.jpg";
+import esencjalista from "../../assets/images/books/Esencjalista.jpg";
+import hyperion from "../../assets/images/books/Hyperion.jpg";
+
+const books: { name: string; url: string; image: ImageMetadata }[] = [
+  {
+    name: "Esencjalista",
+    url: "https://lubimyczytac.pl/ksiazka/274606/esencjalista-mniej-ale-lepiej",
+    image: esencjalista,
+  },
+  {
+    name: "Hyperion",
+    url: "https://lubimyczytac.pl/ksiazka/231216/hyperion",
+    image: hyperion,
+  },
+  {
+    name: "Atomowe nawyki",
+    url: "https://lubimyczytac.pl/ksiazka/249954/atomowe-nawyki",
+    image: atomoweNawyki,
+  },
+  {
+    name: "Esencjalista",
+    url: "https://lubimyczytac.pl/ksiazka/274606/esencjalista-mniej-ale-lepiej",
+    image: esencjalista,
+  },
+  {
+    name: "Hyperion",
+    url: "https://lubimyczytac.pl/ksiazka/231216/hyperion",
+    image: hyperion,
+  },
+  {
+    name: "Atomowe nawyki",
+    url: "https://lubimyczytac.pl/ksiazka/249954/atomowe-nawyki",
+    image: atomoweNawyki,
+  },
+  {
+    name: "Esencjalista",
+    url: "https://lubimyczytac.pl/ksiazka/274606/esencjalista-mniej-ale-lepiej",
+    image: esencjalista,
+  },
+  {
+    name: "Hyperion",
+    url: "https://lubimyczytac.pl/ksiazka/231216/hyperion",
+    image: hyperion,
+  },
+  {
+    name: "Atomowe nawyki",
+    url: "https://lubimyczytac.pl/ksiazka/249954/atomowe-nawyki",
+    image: atomoweNawyki,
+  },
+  {
+    name: "Esencjalista",
+    url: "https://lubimyczytac.pl/ksiazka/274606/esencjalista-mniej-ale-lepiej",
+    image: esencjalista,
+  },
+  {
+    name: "Hyperion",
+    url: "https://lubimyczytac.pl/ksiazka/231216/hyperion",
+    image: hyperion,
+  },
+  {
+    name: "Atomowe nawyki",
+    url: "https://lubimyczytac.pl/ksiazka/249954/atomowe-nawyki",
+    image: atomoweNawyki,
+  },
+];
+---
+
+<section
+  class="carousel-container flex justify-center items-center overflow-x-auto space-x-6 p-4 scrollbar-hide md:scrollbar-default"
+>
+  {
+    books.map((book) => {
+      return (
+        <div class="flex-shrink-0">
+          <a
+            href={book.url}
+            target="_blank"
+          >
+            <Image
+              src={book.image}
+              alt={book.name}
+              class="w-32 h-auto object-cover grayscale hover:grayscale-0 transition-all duration-300 border-2 border-gray-400 border-dashed rounded-lg p-2"
+            />
+          </a>
+        </div>
+      );
+    })
+  }
+</section>
