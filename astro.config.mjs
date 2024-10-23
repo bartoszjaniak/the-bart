@@ -22,7 +22,11 @@ export default defineConfig({
       },
     }),
   ],
+  experimental: {
+    assets,
+  },
   adapter: netlify({
     edgeMiddleware: true,
+    imageCDN: false,
   }),
 });
