@@ -3,7 +3,7 @@ import { Image } from "astro:assets";
 interface Props {
   name: string;
   url: string;
-  image: ImageMetadata;
+  image: string;
 }
 
 const { name, url, image } = Astro.props;
@@ -26,6 +26,8 @@ const { name, url, image } = Astro.props;
       <Image
         src={image}
         alt={name}
+        width="300"
+        height="344"
         class="w-full h-auto rounded-lg"
       />
     </span>

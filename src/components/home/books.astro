@@ -1,66 +1,56 @@
 ---
-import atomoweNawyki from "../../assets/images/books/Atomowe.jpg";
-import eragon from "../../assets/images/books/Eragon.jpg";
-import esencjalista from "../../assets/images/books/Esencjalista.jpg";
-import glebia from "../../assets/images/books/Glebia.jpg";
-import hyperion from "../../assets/images/books/Hyperion.jpg";
-import klamca from "../../assets/images/books/Klamca.jpg";
-import legion from "../../assets/images/books/Legion.jpg";
-import babilon from "../../assets/images/books/Najbogatszy.jpg";
-import problem from "../../assets/images/books/Problem.jpg";
-import expanse from "../../assets/images/books/Przebudzenie.jpg";
 import Book from "../../components/book.astro";
 
-const books: { name: string; url: string; image: ImageMetadata }[] = [
+const books: { name: string; url: string; image: string }[] = [
   {
     name: "Esencjalista",
     url: "https://lubimyczytac.pl/ksiazka/274606/esencjalista-mniej-ale-lepiej",
-    image: esencjalista,
+    image: "/assets/images/books/Esencjalista.jpg",
   },
   {
     name: "Seria Hyperion",
     url: "https://lubimyczytac.pl/cykl/795/hyperion",
-    image: hyperion,
+    image: "/assets/images/books/Hyperion.jpg",
   },
   {
     name: "Atomowe nawyki",
     url: "https://lubimyczytac.pl/ksiazka/249954/atomowe-nawyki",
-    image: atomoweNawyki,
+    image: "/assets/images/books/Atomowe.jpg",
   },
   {
     name: "Seria Głębia",
     url: "https://lubimyczytac.pl/cykl/7284/glebia",
-    image: glebia,
+    image: "/assets/images/books/Glebia.jpg",
   },
   {
     name: "Wspomnienie o przeszłości Ziemi",
     url: "https://lubimyczytac.pl/cykl/13580/wspomnienie-o-przeszlosci-ziemi",
-    image: problem,
+    image: "/assets/images/books/Problem.jpg",
   },
   {
     name: "Kłamca",
     url: "https://lubimyczytac.pl/cykl/400/klamca",
-    image: klamca,
+    image: "/assets/images/books/Klamca.jpg",
   },
   {
     name: "Nasze imię Legion, nasze imię Bob",
     url: "https://lubimyczytac.pl/cykl/16142/bobiverse",
-    image: legion,
+    image: "/assets/images/books/Legion.jpg",
   },
   {
     name: "Najbogatszy człowiek w Babilonie",
     url: "https://lubimyczytac.pl/ksiazka/4377439/najbogatszy-czlowiek-w-babilonie",
-    image: babilon,
+    image: "/assets/images/books/Najbogatszy.jpg",
   },
   {
     name: "Seria Expanse",
     url: "https://lubimyczytac.pl/cykl/18127/expanse-ekspansja",
-    image: expanse,
+    image: "/assets/images/books/Esencjalista.jpg",
   },
   {
     name: "Cykl Eragon",
     url: "https://lubimyczytac.pl/cykl/125/dziedzictwo",
-    image: eragon,
+    image: "/assets/images/books/Eragon.jpg",
   },
 ];
 ---
