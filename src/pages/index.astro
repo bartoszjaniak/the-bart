@@ -1,33 +1,33 @@
 ---
-import { Image } from "astro:assets";
-import Button from "../components/button.astro";
-import Books from "../components/home/books.astro";
-import Projects from "../components/home/projects.astro";
-import Separator from "../components/home/separator.astro";
-import Writings from "../components/home/writings.astro";
-import Layout from "../layouts/main.astro";
+import { Image } from 'astro:assets';
+import Button from '../components/button.astro';
+import Books from '../components/home/books.astro';
+import Projects from '../components/home/projects.astro';
+import Separator from '../components/home/separator.astro';
+import Writings from '../components/home/writings.astro';
+import Layout from '../layouts/main.astro';
 ---
 
-<Layout title="Bartosz Janiak">
+<Layout title='Bartosz Janiak'>
   <div
-    class="relative z-20 w-full max-w-4xl mx-auto mt-16 px-7 md:mt-24 lg:mt-32 xl:px-0"
+    class='relative z-20 w-full max-w-4xl mx-auto mt-16 px-7 md:mt-24 lg:mt-32 xl:px-0'
   >
-    <div class="flex flex-col items-center md:flex-row">
-      <div class="relative w-full md:w-1/2">
+    <div class='flex flex-col items-center md:flex-row'>
+      <div class='relative w-full md:w-1/2'>
         <h1
-          class="mb-5 text-4xl font-bold leading-tight md:text-4xl lg:text-6xl dark:text-white"
+          class='mb-5 text-4xl font-bold leading-tight md:text-4xl lg:text-6xl dark:text-white'
         >
           Cześć, jestem Bartosz.
         </h1>
-        <p class="mb-6 text-base text-neutral-600 dark:text-neutral-400">
+        <p class='mb-6 text-base text-neutral-600 dark:text-neutral-400'>
           Jestem Frontend Engineerem z 7-letnim doświadczeniem, mieszkającym we
-          Wrocławiu. Specjalizuję się w tworzeniu aplikacji webowych.
+          Wrocławiu.
         </p>
-        <p class="mb-2 font-semibold text-neutral-800 dark:text-neutral-200">
+        <p class='mb-2 font-semibold text-neutral-800 dark:text-neutral-200'>
           Co cenię sobie w moich projektach?
         </p>
         <ul
-          class="py-2 space-y-[3px] text-sm list-disc list-inside text-neutral-500 dark:text-neutral-400"
+          class='py-2 space-y-[3px] text-sm list-disc list-inside text-neutral-500 dark:text-neutral-400'
         >
           <li>Autentyczność</li>
           <li>Prostotę</li>
@@ -36,50 +36,50 @@ import Layout from "../layouts/main.astro";
           <li>Minimalizm</li>
         </ul>
         <Button
-          text="Znajdź mnie na LinkedIn"
-          link="https://www.linkedin.com/in/bartosz-janiak-super-dev"
+          text='Znajdź mnie na LinkedIn'
+          link='https://www.linkedin.com/in/bartosz-janiak-super-dev'
         />
       </div>
       <div
-        class="relative justify-end hidden w-full mt-10 md:flex md:pl-10 md:w-1/2 md:mt-0 md:translate-y-4 xl:translate-y-0"
+        class='relative justify-end hidden w-full mt-10 md:flex md:pl-10 md:w-1/2 md:mt-0 md:translate-y-4 xl:translate-y-0'
       >
-        <div class="relative z-50 w-full">
+        <div class='relative z-50 w-full'>
           <div
-            class="absolute bottom-0 z-40 w-16 h-16 -translate-x-6 -translate-y-1/2 lg:top-auto top-0 lg:-translate-y-[330px] rounded-full"
+            class='absolute bottom-0 z-40 w-16 h-16 -translate-x-6 -translate-y-1/2 lg:top-auto top-0 lg:-translate-y-[330px] rounded-full'
           >
             <span
-              class="relative z-20 flex items-center justify-center w-full h-full text-2xl border-8 border-white rounded-full dark:border-neutral-950 bg-neutral-100 dark:bg-neutral-900"
+              class='relative z-20 flex items-center justify-center w-full h-full text-2xl border-8 border-white rounded-full dark:border-neutral-950 bg-neutral-100 dark:bg-neutral-900'
             >
               <span
-                class="flex items-center justify-center w-full h-full bg-white border border-dashed rounded-full dark:bg-neutral-950 border-neutral-300 dark:border-neutral-700 animate-wave"
+                class='flex items-center justify-center w-full h-full bg-white border border-dashed rounded-full dark:bg-neutral-950 border-neutral-300 dark:border-neutral-700 animate-wave'
                 >👋</span
               >
             </span>
           </div>
-          <div class="relative z-30 px-1">
+          <div class='relative z-30 px-1'>
             <Image
-              src="/assets/images/photo2.png"
-              alt="Zdjęcie Bartosza Janiaka"
-              width="300"
-              height="344"
-              style="background-image: url(/assets/images/photo-pixelized.png); background-size: cover;"
-              class="relative z-30 w-full aspect-[1024/1246] md:max-w-md mx-auto"
+              src='/assets/images/photo2.png'
+              alt='Zdjęcie Bartosza Janiaka'
+              width='300'
+              height='344'
+              style='background-image: url(/assets/images/photo-pixelized.png); background-size: cover;'
+              class='relative z-30 w-full aspect-[1024/1246] md:max-w-md mx-auto'
             />
           </div>
           <div
-            class="absolute bottom-0 right-0 z-20 w-full h-full lg:h-[420px] translate-x-0 -translate-y-px border border-dashed rounded-2xl bg-gradient-to-r dark:from-neutral-950 dark:via-black dark:to-neutral-950 from-white via-neutral-50 to-white border-neutral-300 dark:border-neutral-700"
+            class='absolute bottom-0 right-0 z-20 w-full h-full lg:h-[420px] translate-x-0 -translate-y-px border border-dashed rounded-2xl bg-gradient-to-r dark:from-neutral-950 dark:via-black dark:to-neutral-950 from-white via-neutral-50 to-white border-neutral-300 dark:border-neutral-700'
           >
           </div>
         </div>
       </div>
     </div>
   </div>
-  <Separator text="Zobacz moje publikacje" />
+  <Separator text='Zobacz moje publikacje' />
   <Writings />
 
-  <Separator text="Zobacz projekty w których brałem udział" />
+  <Separator text='Zobacz projekty w których brałem udział' />
   <Projects />
 
-  <Separator text="Moja biblioteka, a raczej jej fragment" />
+  <Separator text='Moja biblioteka, a raczej jej fragment' />
   <Books />
 </Layout>
