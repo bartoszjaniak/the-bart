@@ -49,6 +49,6 @@ Cursor na pewno spełnia swoją rolę w fazie prototypowej – pomaga szybciej z
 
 ## Linki
 
-- [Strona projektu](https://pinktree.pl/)
+- [Strona projektu](https://pinktree.vercel.app/)
 - [Cursor](https://www.cursor.com/)
 - [Analog.js](https://analogjs.org/)
