@@ -4,6 +4,7 @@ title: "Od chaosu do artykułu - jak wykorzystałem AI jako swojego redaktora �
 description: Masz milion pomysłów na artykuł, ale nie potrafisz wydobyć z siebie talentu do pisania? A może czujesz, że Twoje pióro jest stępiałe i nie możesz uformować sensownej całości? Przekonaj się, jak wykorzystać sztuczną inteligencję jako inteligentnego asystenta, który pomoże Ci uporządkować chaos w głowie i stworzyć wartościowy tekst.
 image: /assets/images/posts/editor-copilot.jpeg
 createdAt: 2024-11-12
+tags: ['Zabawy z AI', 'Generatywna Sztuczna Inteligencja', 'Eksperyment']
 ---
 Nie każdy z nas rodzi się z talentem do pisania - czasami to żmudny proces, w którym próbujemy poskładać myśli i umiejętności w sensowną całość. Ale co jeśli zamiast zaczynać od zera, mielibyśmy inteligentnego asystenta, który poprowadzi nas przez ten chaos?
 
