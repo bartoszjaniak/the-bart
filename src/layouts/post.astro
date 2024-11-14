@@ -8,6 +8,7 @@ const description = frontmatter.description || 'Domyślny opis';
 //const image = entry.data?.image? || "/default-image.jpg"; // ścieżka do domyślnego obrazka, jeśli nie ma zdjęcia w artykule
 const url = new URL(Astro.request.url);
 const image = frontmatter.image || '/default-image.jpg';
+const tags = frontmatter.tags || [];
 ---
 
 <Layout title={frontmatter.title}>
@@ -46,9 +47,10 @@ const image = frontmatter.image || '/default-image.jpg';
         {frontmatter.title}
       </h1>
       {
+      tags &&
         (
           <div class='flex gap-2 mt-4 flex-wrap justify-center'>
-            {(frontmatter.tags ?? []).map((tag, index) => (
+            {tags.map((tag, index) => (
               <span
                 class={`inline-block px-2 py-1 rounded-full text-white text-xs font-medium 
                       ${index % 3 === 0 ? 'bg-blue-500' : index % 3 === 1 ? 'bg-green-500' : 'bg-red-500'}`}
