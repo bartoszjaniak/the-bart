@@ -4,7 +4,7 @@ import Button from "../button.astro";
 import Project from "../project.astro";
 const allProjects = await getCollection("project");
 
-const projects = allProjects.map((project) => {
+const projects = allProjects.sort((a, b) => a.data.order - b.data.order).map((project) => {
   return {
     ...(project.data || {}),
     link: `/project/${project.slug}`,

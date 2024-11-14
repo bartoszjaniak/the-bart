@@ -2,7 +2,7 @@
 import { getCollection } from "astro:content";
 const allProjects = await getCollection("project");
 
-const projectLoop = allProjects.map((project) => {
+const projectLoop = allProjects.sort((a, b) => a.data.order - b.data.order).map((project) => {
   return {
     ...(project.data || {}),
     link: `/project/${project.slug}`,

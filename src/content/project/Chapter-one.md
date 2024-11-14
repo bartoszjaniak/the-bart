@@ -4,6 +4,7 @@ name: Chapter One
 description: Platforma wspomagająca pisarzy w pracy
 image: /assets/images/projects/chapter-one.png
 tags: [Po godzinach, Angular, AI, Nest.js, Clear CSS]
+order: 3
 ---
 
 ![Obrazek aplikacji Chapter One](/assets/images/projects/chapter-one.png)

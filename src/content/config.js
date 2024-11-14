@@ -21,6 +21,7 @@ const projectCollection = defineCollection({
     description: z.string(),
     projectUrl: z.string().optional(),
     tags: z.array(z.string()).default([]),
+    order: z.number().default(100),
   }),
 });
 

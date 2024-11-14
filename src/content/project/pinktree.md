@@ -1,9 +1,10 @@
 ---
 layout: ../../layouts/project.astro
-name: "Frontendowy poligon: testowanie Cursora z analogowym twistem"
+name: "Ecommercowy poligon: testowanie Cursora z analogowym twistem"
 description: Platforma ecommerce dla rzemieślników
 image: /assets/images/projects/pinktree/main.png
 tags: [Po godzinach, Angular, Analog.js, Zoneless, Tailwind, Cursor]
+order: 2
 ---
 
 ![Strona główna](/assets/images/projects/pinktree/main.png)

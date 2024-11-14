@@ -4,6 +4,7 @@ name: TheBart - Strona na której jesteś
 description: Moje portfolio i blog w jednym
 image: /assets/images/projects/this-page.png
 tags: [Po godzinach, Astro, Tailwind, CI&CD]
+order: 1
 ---
 
 ![Fragment strony na której teraz jesteś](/assets/images/projects/this-page.png)
