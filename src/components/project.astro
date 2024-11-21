@@ -4,6 +4,10 @@ const { name, description, url, image, tags = [] } = Astro.props;
 const maxTagsToShow = 3;
 const remainingTags = tags.length - maxTagsToShow;
 const displayedTags = tags.slice(0, maxTagsToShow);
+// Add suffix -small to name
+const smallImage = image.replace(".png", "-small.jpeg");
+const imageAlt = name + ' - Obrazek projektu';
+
 ---
 
 <a
@@ -20,7 +24,7 @@ const displayedTags = tags.slice(0, maxTagsToShow);
     class="relative z-30 flex flex-col h-full duration-300 ease-out group-hover:-translate-x-1 group-hover:-translate-y-1"
   >
     <span class="block w-full">
-      <img src={image}  class="w-full h-auto rounded-lg aspect-[16/9]"  />
+      <img src={smallImage}  alt={imageAlt} class="w-full h-auto rounded-lg aspect-[16/9]"  />
     </span>
     <span class="flex flex-col flex-1 w-full px-1 mt-5 mb-1 sm:mt-3">
       <span
