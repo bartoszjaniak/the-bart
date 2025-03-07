@@ -1,6 +1,12 @@
-[
+[  {
+  "dates": "Marzec 2025 - obecnie",
+  "role": "Frontend Developer",
+  "company": "E Net Production",
+  "description": "Praca przy rozwoju aplikacji frontendowej jednego z największych sklepów z elektroniką w Polsce.",
+  "logo": "/assets/images/experiences/enp.svg"
+},
   {
-    "dates": "Luty 2018 · Obecnie",
+    "dates": "Luty 2018 · Marzec 2025",
     "role": "Full Stack Engineer",
     "company": "Ringier Axel Springer Tech",
     "description": "Rozwój aplikacji w Angular i Nest.js. Udział w projektach takich jak Moneteasy, Skapiec.pl, narzędzia do zarządzania importem feedów produktowych, panel OnetAds oraz analiza i wdrożenie TopicsAPI z Privacy Sandbox od Google.",
