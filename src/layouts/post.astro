@@ -9,6 +9,7 @@ const description = frontmatter.description || 'Domyślny opis';
 const url = new URL(Astro.request.url);
 const image = frontmatter.image || '/default-image.jpg';
 const tags = frontmatter.tags || [];
+const publicationDate = frontmatter.createdAt?.split('T')?.[0] ?? '';
 ---
 
 <Layout title={frontmatter.title}>
@@ -46,6 +47,25 @@ const tags = frontmatter.tags || [];
       >
         {frontmatter.title}
       </h1>
+<!-- publication date -->
+        <div class='flex items-center justify-center gap-2 text-neutral-500 dark:text-neutral-400'>
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            class='h-6 w-6'
+            fill='none'
+            viewBox='0 0 24 24'
+            stroke='currentColor'
+          >
+            <path
+              stroke-linecap='round'
+              stroke-linejoin='round'
+              stroke-width='2'
+              d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'
+            />
+          </svg>
+          <span class='text-sm'>{publicationDate}</span>
+      </div>
+
       {
       tags &&
         (
