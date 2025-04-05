@@ -75,11 +75,11 @@ import Layout from '../layouts/main.astro';
     </div>
   </div>
   <Separator text='Zobacz moje publikacje' />
-  <Writings />
+  <Writings cliet:idle />
 
   <Separator text='Zobacz projekty w których brałem udział' />
-  <Projects />
+  <Projects cliet:visible/>
 
   <Separator text='Moja biblioteka, a raczej jej fragment' />
-  <Books />
+  <Books cliet:visible/>
 </Layout>
