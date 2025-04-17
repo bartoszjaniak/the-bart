@@ -1,4 +1,6 @@
 ---
+import { Image } from "astro:assets";
+
 const { name, description, url, image, tags = [] } = Astro.props;
 
 const maxTagsToShow = 3;
@@ -24,7 +26,7 @@ const imageAlt = name + ' - Obrazek projektu';
     class="relative z-30 flex flex-col h-full duration-300 ease-out group-hover:-translate-x-1 group-hover:-translate-y-1"
   >
     <span class="block w-full">
-      <img src={smallImage}  alt={imageAlt} class="w-full h-auto rounded-lg aspect-[16/9]"  />
+      <Image src={smallImage}  alt={imageAlt} transition:name={name} width={400} height={300} class="w-full h-auto rounded-lg aspect-[16/9]"  />
     </span>
     <span class="flex flex-col flex-1 w-full px-1 mt-5 mb-1 sm:mt-3">
       <span

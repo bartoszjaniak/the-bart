@@ -1,6 +1,7 @@
 ---
 import Layout from "./main.astro";
 import Button from "../components/button.astro";
+import { Image } from "astro:assets";
 const { frontmatter } = Astro.props;
 ---
 
@@ -40,7 +41,7 @@ const { frontmatter } = Astro.props;
       </div>
     </div>
 
-    <img src={frontmatter.image} alt={frontmatter.imageAlt || frontmatter.name} class="w-full max-w-2xl mx-auto mb-6" />
+    <Image src={frontmatter.image} alt={frontmatter.imageAlt || frontmatter.name} width={600} height={400} transition:name={frontmatter.name} class="w-full max-w-2xl mx-auto mb-6" />
 
     <article
       class="w-full max-w-2xl mx-auto mb-20 prose-sm prose px-7 lg:px-0 lg:prose-lg dark:prose-invert"
