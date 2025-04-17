@@ -1,5 +1,4 @@
 ---
-layout: ../../layouts/post.astro
 title: "Cyfrowy minimalizm: 5 kroków do uporządkowania iPhone'a 📱"
 description: Zmęczony ciągłymi powiadomieniami i bałaganem na ekranie telefonu? Zobacz, jak w kilka minut przemienić swojego iPhone'a w narzędzie wspierające produktywność zamiast rozpraszające uwagę.
 image: /assets/images/posts/clean-iphone/hero.jpeg
@@ -11,6 +10,7 @@ createdAt: 2024-10-28
 
 Dziś chciałbym porozmawiać o aspekcie, który często pomijamy, choć jest nieodłączną częścią naszej codzienności - o minimalizmie na ekranie naszego telefonu.
 Zrób mały eksperyment: odblokuj swój telefon i przyjrzyj mu się krytycznym okiem. Ile z widocznych aplikacji naprawdę potrzebujesz "na już"? Zapewne, jak większość z nas, masz na ekranach głównych istny galimatias aplikacji instalowanych przez lata. I tak, celowo użyłem liczby mnogiej - choć "główny" z definicji powinien być jeden, prawda? 😉
+
 
 # Jak wprowadzić porządek w swoim iPhonie?
 

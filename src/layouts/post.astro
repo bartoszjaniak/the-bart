@@ -9,7 +9,9 @@ const description = frontmatter.description || 'Domyślny opis';
 const url = new URL(Astro.request.url);
 const image = frontmatter.image || '/default-image.jpg';
 const tags = frontmatter.tags || [];
-const publicationDate = frontmatter.createdAt?.split('T')?.[0] ?? '';
+console.log('frontmatter', frontmatter);
+const date = new Date(frontmatter.createdAt);
+const publicationDate = date.toLocaleDateString('pl-PL');
 ---
 
 <Layout title={frontmatter.title}>

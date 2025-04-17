@@ -1,5 +1,4 @@
 ---
-layout: ../../layouts/project.astro
 name: Moneteasy
 description: Kreator widgetów produktowych i narzędzie do monetyzacji treści wykorzystywane przez wydawców
 image: /assets/images/projects/moneteasy.png

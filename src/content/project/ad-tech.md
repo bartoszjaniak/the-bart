@@ -1,5 +1,4 @@
 ---
-layout: ../../layouts/project.astro
 name: Moje doświadczenie z branżą ad-tech
 description: Wyzwania i projekty w branży reklamy internetowej
 image: /assets/images/projects/ad-tech.webp

@@ -1,5 +1,4 @@
 ---
-layout: ../../layouts/project.astro
 name: Skapiec.pl
 description: Jedna z największych porównywarek cen w Polsce
 image: /assets/images/projects/skapiec.png

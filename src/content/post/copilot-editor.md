@@ -1,5 +1,4 @@
 ---
-layout: ../../layouts/post.astro
 title: "Od chaosu do artykułu - jak wykorzystałem AI jako swojego redaktora 🧑🏻‍💻"
 description: Masz milion pomysłów na artykuł, ale nie potrafisz wydobyć z siebie talentu do pisania? A może czujesz, że Twoje pióro jest stępiałe i nie możesz uformować sensownej całości? Przekonaj się, jak wykorzystać sztuczną inteligencję jako inteligentnego asystenta, który pomoże Ci uporządkować chaos w głowie i stworzyć wartościowy tekst.
 image: /assets/images/posts/editor-copilot.jpeg

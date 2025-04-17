@@ -1,5 +1,4 @@
 ---
-layout: ../../layouts/post.astro
 title: "Życie w harmonii - jak odnaleźć równowagę w świecie pozornych wartości 🧘🏻‍♂️"
 description: W dzisiejszych czasach trudno jest żyć w harmonii z samym sobą, otoczeni natłokiem informacji i naciskiem na posiadanie. Artykuł pokazuje, jak pomimo tych wyzwań można wypracować zrównoważony styl życia oparty na własnych wartościach.
 image: /assets/images/posts/harmony.jpeg

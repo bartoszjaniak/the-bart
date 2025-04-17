@@ -1,5 +1,4 @@
 ---
-layout: ../../layouts/project.astro
 name: "Ecommercowy poligon: testowanie Cursora z analogowym twistem"
 description: Platforma ecommerce dla rzemieślników
 image: /assets/images/projects/pinktree/main.png

@@ -1,5 +1,4 @@
 ---
-layout: ../../layouts/project.astro
 name: TheBart - Strona na której jesteś
 description: Moje portfolio i blog w jednym
 image: /assets/images/projects/this-page.png

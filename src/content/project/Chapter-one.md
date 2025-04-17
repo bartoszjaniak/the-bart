@@ -1,5 +1,4 @@
 ---
-layout: ../../layouts/project.astro
 name: Chapter One
 description: Platforma wspomagająca pisarzy w pracy
 image: /assets/images/projects/chapter-one.png
