@@ -6,8 +6,6 @@ image: /assets/images/projects/skapiec.png
 tags: [Preact.js, SSR, Nest.js, Mockups]
 ---
 
-![Logo Skapiec.pl](/assets/images/projects/skapiec.png)
-
 ## Opis projektu
 
 Skapiec.pl to popularna porównywarka cen z dużą konkurencją na polskim rynku. Naszym zadaniem było przepisanie całej aplikacji na nowo, aby odblokować możliwości dalszego rozwoju i poprawić wydajność serwisu.

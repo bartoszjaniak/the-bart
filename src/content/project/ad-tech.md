@@ -3,11 +3,10 @@ layout: ../../layouts/project.astro
 name: Moje doświadczenie z branżą ad-tech
 description: Wyzwania i projekty w branży reklamy internetowej
 image: /assets/images/projects/ad-tech.webp
+imageAlt: "Szaleństwo współczesnego Internetu"
 tags: [JS, HTML, Ad-Tech, Integracje, Skrypty]
 order: 1
 ---
-
-![Szaleństwo współczesnego Internetu](/assets/images/projects/ad-tech.webp)
 
 ## Rynek reklamy internetowej – stare mechanizmy w nowej rzeczywistości
 Rynek reklamy internetowej to dziwna bestia – jednocześnie stary i nowy. Wiele sprawdzonych praktyk i mechanizmów działa niezmiennie od lat, a pojęcia ukute kilkanaście lat temu wciąż pozostają aktualne. Jednak, jak przekonałem się podczas ostatniego roku pracy w projekcie poświęconym ad-techowi, jest to też rynek nieustających zmian.

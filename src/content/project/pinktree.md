@@ -7,8 +7,6 @@ tags: [Po godzinach, Angular, Analog.js, Zoneless, Tailwind, Cursor]
 order: 2
 ---
 
-![Strona główna](/assets/images/projects/pinktree/main.png)
-
 Od jakiegoś czasu myślę nad prototypem portalu ecommerce dla rzemieślników. Jest to jeden z projektów wyciągniętych z mojej “szuflady”. Chodziło mi o stworzenie czegoś więcej niż tylko kolejnego sklepu internetowego – to ma być przestrzeń, gdzie sprzedawcy mogą zaprezentować swoje produkty, pokazać swój warsztat, a także szczegółowo opisać, co ich wyróżnia. Przewiduję też przestrzeń zamkniętą dla twórców by mogli oni wymieniać się doświadczeniami czy nawet prowadzić pchli targ swoich usług i narzędzi. Na razie jest to tylko „strefa dla kupujących” – nie ma backendu, brakuje płatności, a tym bardziej funkcji przeznaczonych specjalnie dla sprzedawców. Dlatego traktuję ten projekt raczej jako poligon doświadczalny niż gotowy produkt. I jak to bywa z takimi „poligonami”, uznałem, że będzie to idealne miejsce do przetestowania Cursora oraz Analog.js.
 
 **Cursor jako asystent kodu – automatyzacja bez utraty kontroli**

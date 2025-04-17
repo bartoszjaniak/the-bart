@@ -3,11 +3,11 @@ layout: ../../layouts/project.astro
 name: Chapter One
 description: Platforma wspomagająca pisarzy w pracy
 image: /assets/images/projects/chapter-one.png
+imageAlt: "Obrazek aplikacji Chapter One"
 tags: [Po godzinach, Angular, AI, Nest.js, Clear CSS]
 order: 3
 ---
 
-![Obrazek aplikacji Chapter One](/assets/images/projects/chapter-one.png)
 ## Opis projektu
 
 Chapter One to osobisty, prywatny projekt rozwijany po godzinach. Główną cechą na której się skupiłem jest minimalizm co jest zarówno zaletą dla potencjalnych odbiorców jak i dla mnie jako twórcy. Skupia się na wsparciu pisarzy w ich twórczym procesie, oferując prostotę i funkcjonalność w jednym.

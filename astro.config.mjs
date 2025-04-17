@@ -10,6 +10,9 @@ import netlify from "@astrojs/netlify";
 export default defineConfig({
   site: "https://the-bart.com",
   integrations: [tailwind(), sitemap()],
+  legacy: {
+    collections: true // TODO: Upgrade this to the new collections API
+  },
   plugins: [
     ViteImageOptimizer({
       png: {
