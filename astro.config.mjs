@@ -10,6 +10,7 @@ import netlify from "@astrojs/netlify";
 export default defineConfig({
   site: "https://the-bart.com",
   integrations: [tailwind(), sitemap()],
+  prefetch: true,
   legacy: {
     collections: true // TODO: Upgrade this to the new collections API
   },
@@ -24,9 +25,5 @@ export default defineConfig({
         progressive: true,
       },
     }),
-  ],
-  adapter: netlify({
-    edgeMiddleware: true,
-    imageCDN: false,
-  }),
+  ]
 });
