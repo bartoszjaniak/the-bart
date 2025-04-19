@@ -26,6 +26,7 @@ const { name, url, image } = Astro.props;
       <Image
         src={image}
         alt={name}
+        loading="lazy"
         width="300"
         height="344"
         class="w-full h-auto rounded-lg"
