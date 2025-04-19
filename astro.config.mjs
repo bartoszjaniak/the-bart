@@ -8,7 +8,7 @@ import netlify from "@astrojs/netlify";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://the-bart.com",
+  site: "https://the-bart.com",  
   integrations: [tailwind(), sitemap()],
   prefetch: {
     prefetchAll: true,
