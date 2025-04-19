@@ -1,19 +1,16 @@
 ---
-import { getCollection } from "astro:content";
-import Layout from "../../layouts/post.astro";
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/post.astro';
 
-export async function getStaticPaths() {
-  const postEntries = await getCollection("post");
-  return postEntries.map((entry) => ({
-    params: { slug: entry.slug },
-    props: { entry },
-  }));
-}
+const posts = await getCollection('post');
 
-const { entry } = Astro.props;
-const { Content } = await entry.render();
+
+const { slug } = Astro.params;
+const post = posts.find((page) => page.slug === slug);
+if (!post) return Astro.redirect('/404');
+const { Content } = await post.render();
 ---
 
-<Layout title={entry.data.title} frontmatter={entry.data}>
+<Layout title={post.data.title} frontmatter={post.data}>
   <Content />
 </Layout>
