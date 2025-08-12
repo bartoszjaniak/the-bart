@@ -1,16 +1,11 @@
 ---
-layout: ../../layouts/project.astro
-name: janiakmeble.pl
-description: Strona firmowa producenta mebli tapicerowanych
+name: Strona firmowa producenta mebli tapicerowanych
+description: Statyczna strona WWW, dostosowana do WCAG i z maksymalnymi statystykami CWV.
 image: /assets/images/projects/janiakmeble.png
+imageAlt: "Podgląd fragmentu strony"
 projectUrl: https://janiakmeble.pl/
 tags: [Astro, DatoCMS, Dostępność (WCAG), UI]
 ---
-
-![Strona Janikmeble](/assets/images/projects/janiakmeble.png)
-
-# janiakmeble.pl - strona producenta mebli tapicerowanych
-
 Chciałbym się pochwalić swoją ostatnią realizacją – **zrobioną w niecałe 5 dni** 🔥.  
 Był to projekt pół-prywatny – na moim osobistym poligonie – **stronie moich rodziców**.  
 Poprzednia wersja była już leciwa i oparta na Angularze 6. Zamiast reanimować, postanowiłem postawić **coś zupełnie nowego**. Wykorzystałem framework Astro.js.
