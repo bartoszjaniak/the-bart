@@ -1,14 +1,12 @@
 ---
-import { getCollection } from 'astro:content';
+import { getEntry, render } from 'astro:content';
 import Layout from '../../layouts/project.astro';
 
-const projects = await getCollection('project');
-
-
 const { slug } = Astro.params;
-const project = projects.find((page) => page.slug === slug);
+if (!slug) return Astro.redirect('/404');
+const project = await getEntry('project', slug);
 if (!project) return Astro.redirect('/404');
-const { Content } = await project.render();
+const { Content } = await render(project);
 ---
 
 <Layout title={project.data.name} frontmatter={project.data}>

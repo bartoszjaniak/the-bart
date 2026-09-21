@@ -1,14 +1,12 @@
 ---
-import { getCollection } from 'astro:content';
+import { getEntry, render } from 'astro:content';
 import Layout from '../../layouts/post.astro';
 
-const posts = await getCollection('post');
-
-
 const { slug } = Astro.params;
-const post = posts.find((page) => page.slug === slug);
+if (!slug) return Astro.redirect('/404');
+const post = await getEntry('post', slug);
 if (!post) return Astro.redirect('/404');
-const { Content } = await post.render();
+const { Content } = await render(post);
 ---
 
 <Layout title={post.data.title} frontmatter={post.data}>
