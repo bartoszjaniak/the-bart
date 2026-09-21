@@ -1,0 +1,21 @@
+---
+interface Props {
+	src: string;
+	alt: string;
+	ratio?: "auto" | "16/9" | "3/4";
+	loading?: "lazy" | "eager";
+}
+
+const { src, alt, ratio = "auto", loading = "lazy" } = Astro.props;
+
+const ratioClass =
+	ratio === "16/9"
+		? "ratio-16x9"
+		: ratio === "3/4"
+			? "ratio-3x4"
+			: "ratio-auto";
+---
+
+<div class={`image-frame ${ratioClass}`}>
+  <img src={src} alt={alt} loading={loading} decoding="async" />
+</div>

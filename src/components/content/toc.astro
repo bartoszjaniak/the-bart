@@ -1,0 +1,48 @@
+---
+import type { MarkdownHeading } from "astro";
+
+interface Props {
+	headings: MarkdownHeading[];
+	/** `sidebar` (desktop) lub `mobile` (zwijane `<details>` nad treścią). */
+	variant?: "sidebar" | "mobile";
+}
+
+const { headings, variant = "sidebar" } = Astro.props;
+
+// Tylko H2; `slug` pochodzi z tego samego pipeline co `id` nagłówków.
+const items = headings.filter((heading) => heading.depth === 2);
+const pad = (n: number) => String(n).padStart(2, "0");
+---
+
+{
+  items.length > 0 &&
+    (variant === "mobile" ? (
+      <details class="toc-mobile not-prose">
+        <summary>Spis treści</summary>
+        <ol class="toc">
+          {items.map((heading, index) => (
+            <li>
+              <a href={`#${heading.slug}`}>
+                <b>{pad(index + 1)}</b>
+                <span>{heading.text}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </details>
+    ) : (
+      <nav class="sidebox toc-desktop" aria-label="Spis treści">
+        <h3>Spis treści</h3>
+        <ol class="toc">
+          {items.map((heading, index) => (
+            <li>
+              <a href={`#${heading.slug}`}>
+                <b>{pad(index + 1)}</b>
+                <span>{heading.text}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    ))
+}

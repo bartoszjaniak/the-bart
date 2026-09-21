@@ -1,8 +1,6 @@
 {
-    "extends": "astro/tsconfigs/base",
-    "compilerOptions": {
-        "types": [
-            "./src/types/global"
-        ]
-    }
+	"extends": "astro/tsconfigs/base",
+	"compilerOptions": {
+		"types": ["./src/types/global"]
+	}
 }

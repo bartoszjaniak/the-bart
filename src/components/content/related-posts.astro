@@ -1,0 +1,36 @@
+---
+import type { CollectionEntry } from "astro:content";
+import ArticleCard from "../cards/article-card.astro";
+import SectionHead from "../ui/section-head.astro";
+
+interface Props {
+	/** Powiązane wpisy (już przefiltrowane i ograniczone przez `lib/related.ts`). */
+	posts: CollectionEntry<"post">[];
+}
+
+const { posts } = Astro.props;
+---
+
+{
+  posts.length > 0 && (
+    <section class="related">
+      <SectionHead
+        title="Powiązane artykuły"
+        link="/posts"
+        linkText="Wszystkie artykuły →"
+      />
+      <div class="cards3">
+        {posts.map((post, index) => (
+          <ArticleCard
+            title={post.data.title}
+            description={post.data.description}
+            category={post.data.category}
+            date={post.data.createdAt}
+            link={`/post/${post.id}`}
+            index={index}
+          />
+        ))}
+      </div>
+    </section>
+  )
+}

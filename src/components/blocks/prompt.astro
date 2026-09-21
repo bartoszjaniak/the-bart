@@ -1,0 +1,23 @@
+---
+interface Props {
+	label?: string;
+}
+
+const { label = "Prompt" } = Astro.props;
+---
+
+<figure class="prompt not-prose" aria-label={label}>
+  <div class="prompt-head">
+    <span>{label}</span>
+    <button
+      type="button"
+      class="square-btn"
+      data-copy-prompt
+      aria-label="Kopiuj treść promptu"
+    >
+      <span aria-hidden="true">⧉</span>
+    </button>
+    <span class="sr-only" aria-live="polite" data-copy-feedback></span>
+  </div>
+  <div class="prompt-body"><slot /></div>
+</figure>

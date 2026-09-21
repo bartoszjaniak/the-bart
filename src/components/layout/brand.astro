@@ -1,0 +1,10 @@
+---
+// Brand: znak graficzny + wordmark (bez podtytułu).
+import { Image } from "astro:assets";
+import logoImage from "../../assets/images/logo-the-bart.png";
+---
+
+<a class="brand" href="/">
+  <Image src={logoImage} alt="" height={32} class="brand-mark" />
+  <span class="brand-logo">THE BART</span>
+</a>

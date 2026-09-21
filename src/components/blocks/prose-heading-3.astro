@@ -1,0 +1,13 @@
+---
+// MDX nie przekazuje poziomu nagłówka do komponentu (mapowanie `h3` → komponent
+// dostaje tylko `id`), więc poziom wiążemy jawnie. Reszta logiki w ProseHeading.
+import ProseHeading from "./prose-heading.astro";
+
+interface Props {
+	id?: string;
+}
+
+const { id } = Astro.props;
+---
+
+<ProseHeading id={id} level={3}><slot /></ProseHeading>

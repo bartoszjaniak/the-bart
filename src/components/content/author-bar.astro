@@ -1,0 +1,39 @@
+---
+interface Props {
+	/** Absolutny URL artykułu (do „kopiuj link" i share LinkedIn). */
+	url: string;
+}
+
+const { url } = Astro.props;
+const linkedInShare = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+	url,
+)}`;
+---
+
+<div class="authorbar not-prose">
+  <div class="mini-avatar" aria-hidden="true">BJ</div>
+  <div>
+    <b>Bartosz Janiak</b><br />
+    <small>Frontend Engineer · Tworzę lepszy internet.</small>
+  </div>
+  <div class="share">
+    <button
+      type="button"
+      class="square-btn"
+      data-copy-link
+      aria-label="Kopiuj link"
+    >
+      <span aria-hidden="true">⧉</span>
+    </button>
+    <a
+      class="square-btn"
+      href={linkedInShare}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Udostępnij na LinkedIn (otwiera w nowej karcie)"
+    >
+      <span aria-hidden="true">in</span>
+    </a>
+    <span class="sr-only" aria-live="polite" data-copy-feedback></span>
+  </div>
+</div>

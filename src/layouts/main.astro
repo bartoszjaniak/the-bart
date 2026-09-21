@@ -1,15 +1,19 @@
 ---
 import "../assets/css/main.css";
-import Footer from "../components/footer.astro";
-import Header from "../components/header.astro";
-import SquareLines from "../components/square-lines.astro";
-import { ClientRouter } from "astro:transitions";
+import { Font } from "astro:assets";
+import Footer from "../components/layout/footer.astro";
+import Header from "../components/layout/header.astro";
+import SkipLink from "../components/layout/skip-link.astro";
+
+interface Props {
+	title: string;
+}
 
 const { title } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="pl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -28,34 +32,21 @@ const { title } = Astro.props;
     gtag('config', 'G-WYPM73WT1W');
     </script>
 
-    <!-- Used to add dark mode right away, adding here prevents any flicker -->
-    <script is:inline>
-      if (typeof Storage !== "undefined") {
-        if (
-          localStorage.getItem("dark_mode") &&
-          localStorage.getItem("dark_mode") == "true"
-        ) {
-          document.documentElement.classList.add("dark");
-        }
-      }
-    </script>
+    <Font cssVariable="--font-anton" preload />
 
-    <style>
-      .prose img {
-        border-radius: 20px;
-      }
-    </style>
-    <link rel="icon" type="image/svg+xml" href="../assets/images/the-bart.svg" />
+    <link rel="icon" type="image/svg+xml" href="/assets/images/the-bart.svg" />
     <slot name="head" />
     <Fragment set:html={import.meta.env.HEADER_INJECT} />
 
   </head>
-  <body class="antialiased bg-white dark:bg-neutral-950">
-    <SquareLines />
+  <body class="antialiased">
+    <SkipLink />
     <Header />
     <slot />
     <Footer />
-    <script src="../assets/js/main.js"></script>
     <Fragment set:html={import.meta.env.FOOTER_INJECT} />
+    <script>
+      import "../assets/js/main.js";
+    </script>
   </body>
 </html>

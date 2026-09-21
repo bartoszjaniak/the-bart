@@ -1,0 +1,20 @@
+---
+interface Props {
+	tags?: string[];
+	/** Fallback, gdy wpis nie ma tagów. */
+	category?: string;
+}
+
+const { tags = [], category } = Astro.props;
+const items = tags.length > 0 ? tags : category ? [category] : [];
+---
+
+{
+  items.length > 0 && (
+    <div class="topic-tags">
+      {items.map((item) => (
+        <span>{item}</span>
+      ))}
+    </div>
+  )
+}

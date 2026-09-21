@@ -1,93 +1,76 @@
 ---
+export const prerender = true;
+
 import experiences from "../collections/experiences.json";
-import AboutExperience from "../components/about-experience.astro";
-import PageHeading from "../components/page-heading.astro";
+import Experience from "../components/about/experience.astro";
+import ImageFrame from "../components/ui/image-frame.astro";
+import SectionHead from "../components/ui/section-head.astro";
 import Layout from "../layouts/main.astro";
 
 const email = import.meta.env.PUBLIC_EMAIL;
 ---
 
 <Layout title="O mnie">
-  <section class="relative z-20 max-w-2xl mx-auto my-12 px-7 lg:px-0">
-    <PageHeading
-      title="O mnie"
-      description="Cześć 👋 Jestem Frontend Engineerem z Wrocławia."
-    />
+  <main id="main" tabindex="-1">
+    <section class="section">
+      <div class="container">
+        <SectionHead
+          title="O mnie"
+          level={1}
+          description="Cześć 👋 Jestem Frontend Engineerem z Wrocławia."
+        />
 
-    <img
-      src="/assets/images/about.png"
-      alt="Grafika przedstawiająca programistę przy pracy"
-      class="relative z-30 w-full my-10 rounded-xl"
-    />
+        <ImageFrame
+          src="/assets/images/about.png"
+          alt="Grafika przedstawiająca programistę przy pracy"
+          ratio="auto"
+        />
 
-    <h2 class="mb-2 text-2xl font-bold dark:text-neutral-200">Krótkie bio</h2>
-    <p
-      class="text-sm leading-6 text-gray-600 dark:text-neutral-400 sm:leading-7 lg:leading-8 sm:text-base lg:text-lg"
-    >
-      Frontend Engineer 🧑🏻‍💻 z 7-letnim doświadczeniem. Zjadłem zęby na
-      e-commerce. Lubię tworzyć projekty dla ludzi. W trakcie mojej kariery
-      tworzyłem aplikacje ułatwiające pracę, takie które były nastawione na
-      przynoszenie zysków i takie budujące świadomość marek. Mam doświadczenie w
-      pracy z systemami z których korzystają miliony użytkowników jak i takimi
-      dla pracowników wewnętrznych. Tworzyłem narzędzia umożliwiające dbanie o
-      jakość katalogu produktów oraz brałem udział w projektowaniu systemu
-      pozwalającego obsłużyć miliony aktualizacji ofert. Pasjonat nowych
-      technologii (staram się nadążyć za coraz szybciej zmieniającymi się
-      trendami), entuzjasta pracy zespołowej i ciągłego rozwoju. Prywatnie młody
-      ojciec, rowerzysta i fotograf amator 📸.
-    </p>
+        <h2>Krótkie bio</h2>
+        <p class="about-bio">
+          Frontend Engineer 🧑🏻‍💻 z 7-letnim doświadczeniem. Zjadłem zęby na
+          e-commerce. Lubię tworzyć projekty dla ludzi. W trakcie mojej kariery
+          tworzyłem aplikacje ułatwiające pracę, takie które były nastawione na
+          przynoszenie zysków i takie budujące świadomość marek. Mam
+          doświadczenie w pracy z systemami z których korzystają miliony
+          użytkowników jak i takimi dla pracowników wewnętrznych. Tworzyłem
+          narzędzia umożliwiające dbanie o jakość katalogu produktów oraz
+          brałem udział w projektowaniu systemu pozwalającego obsłużyć miliony
+          aktualizacji ofert. Pasjonat nowych technologii (staram się nadążyć za
+          coraz szybciej zmieniającymi się trendami), entuzjasta pracy zespołowej
+          i ciągłego rozwoju. Prywatnie młody ojciec, rowerzysta i fotograf
+          amator 📸.
+        </p>
 
-    <h2
-      class="mt-5 mb-2 text-2xl font-bold lg:mt-10 sm:mt-6 dark:text-neutral-200"
-    >
-      Moja kariera
-    </h2>
-    <div class="px-5 py-10">
-      {
-        experiences.map((experience, loop) => {
-          return (
-            <>
-              {loop == 0 || loop == 1 ? (
-                <div class="pb-10 border-l border-gray-200 dark:border-neutral-700">
-                  <AboutExperience
-                    dates={experience.dates}
-                    role={experience.role}
-                    company={experience.company}
-                    description={experience.description}
-                    logo={experience.logo}
-                  />
-                </div>
-              ) : (
-                <AboutExperience
-                  dates={experience.dates}
-                  role={experience.role}
-                  company={experience.company}
-                  description={experience.description}
-                  logo={experience.logo}
-                />
-              )}
-            </>
-          );
-        })
-      }
-    </div>
+        <h2>Moja kariera</h2>
+        <ol class="timeline">
+          {
+            experiences.map((experience) => (
+              <Experience
+                dates={experience.dates}
+                role={experience.role}
+                company={experience.company}
+                description={experience.description}
+                logo={experience.logo}
+              />
+            ))
+          }
+        </ol>
 
-    <h2
-      class="mt-5 mb-2 text-2xl font-bold lg:mt-10 sm:mt-6 dark:text-neutral-200"
-    >
-      Kontakt
-    </h2>
-    <p
-      class="text-sm leading-6 text-gray-600 dark:text-neutral-400 sm:leading-7 lg:leading-8 sm:text-base lg:text-lg"
-    >
-      Jeśli chcesz być na bieżąco z moją pracą, możesz <a
-        href="https://www.linkedin.com/in/bartosz-janiak-super-dev"
-        target="_blank"
-        class="text-indigo-600 underline">śledzić mnie na LinkedIn</a
-      >, lub wysłać mi <a
-        href={`mailto:${email}`}
-        class="text-indigo-600 underline">email</a
-      >. Z przyjemnością odpowiem na Twoją wiadomość.
-    </p>
-  </section>
+        <section id="kontakt" class="about-contact" aria-labelledby="kontakt-heading">
+          <h2 id="kontakt-heading">Kontakt</h2>
+          <p class="about-bio">
+            Jeśli chcesz być na bieżąco z moją pracą, możesz <a
+              href="https://www.linkedin.com/in/bartosz-janiak-super-dev"
+              target="_blank"
+              rel="noopener noreferrer">śledzić mnie na LinkedIn ↗<span
+                class="sr-only">(otwiera w nowej karcie)</span></a
+            >, lub wysłać mi {
+              email ? <a href={`mailto:${email}`}>email</a> : <span>email</span>
+            }. Z przyjemnością odpowiem na Twoją wiadomość.
+          </p>
+        </section>
+      </div>
+    </section>
+  </main>
 </Layout>

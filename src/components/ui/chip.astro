@@ -1,0 +1,14 @@
+---
+interface Props {
+	label: string;
+	variant?: "default" | "yellow" | "blue" | "pink";
+}
+
+const { label, variant = "default" } = Astro.props;
+
+const classes = ["chip", variant === "default" ? "" : variant]
+	.filter(Boolean)
+	.join(" ");
+---
+
+<span class={classes}>{label}</span>

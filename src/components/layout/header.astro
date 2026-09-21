@@ -1,0 +1,78 @@
+---
+import menus from "../../collections/menu.json";
+import Brand from "./brand.astro";
+
+// Normalizacja: `/posts/` → `/posts`, `/` zostaje `/`.
+function normalize(pathname: string): string {
+	if (pathname !== "/" && pathname.endsWith("/")) return pathname.slice(0, -1);
+	return pathname;
+}
+
+type CurrentState = "page" | "true" | null;
+
+// Stan aktywny liczony serwerowo. Pozycje z hashem nigdy nie są aktywne,
+// a dla tras szczegółów (`/post/*`, `/project/*`) ustawiamy `aria-current="true"`
+// na rodzicu (orientacja, nie „page").
+function currentState(url: string, pathname: string): CurrentState {
+	if (url.includes("#")) return null;
+	if (url === "/") return pathname === "/" ? "page" : null;
+	if (url === "/posts") {
+		return pathname === "/posts"
+			? "page"
+			: pathname.startsWith("/post/")
+				? "true"
+				: null;
+	}
+	if (url === "/projects") {
+		return pathname === "/projects"
+			? "page"
+			: pathname.startsWith("/project/")
+				? "true"
+				: null;
+	}
+	return pathname === url ? "page" : null;
+}
+
+const pathname = normalize(Astro.url.pathname);
+---
+
+<header id="site-header" class="header" data-header>
+  <div class="container header-inner">
+    <Brand />
+
+    <nav id="primary-nav" class="nav" aria-label="Nawigacja główna" data-menu>
+      {
+        menus.map((menu) => {
+          const state = currentState(menu.url, pathname);
+          return (
+            <a href={menu.url} aria-current={state ?? undefined}>
+              {menu.name}
+            </a>
+          );
+        })
+      }
+    </nav>
+
+    <div class="header-actions">
+      <a
+        class="btn blue compact"
+        href="https://www.linkedin.com/in/bartosz-janiak-super-dev"
+        target="_blank"
+        rel="noopener noreferrer"
+      >Znajdź mnie na LinkedIn ↗<span class="sr-only">(otwiera w nowej karcie)</span></a>
+
+      <button
+        id="menu-toggle"
+        class="menu-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="primary-nav"
+        aria-label="Menu"
+        data-menu-toggle
+      >
+        <span data-menu-icon="open" aria-hidden="true">☰</span>
+        <span data-menu-icon="close" aria-hidden="true">✕</span>
+      </button>
+    </div>
+  </div>
+</header>

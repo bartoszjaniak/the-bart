@@ -1,57 +1,66 @@
 ---
+import type { CollectionEntry } from "astro:content";
+import Button from "../components/ui/button.astro";
+import ImageFrame from "../components/ui/image-frame.astro";
+import Tag from "../components/ui/tag.astro";
 import Layout from "./main.astro";
-import Button from "../components/button.astro";
-import { Image } from "astro:assets";
-const { frontmatter } = Astro.props;
+
+interface Props {
+	project: CollectionEntry<"project">;
+}
+
+const { project } = Astro.props;
+const { name, description, image, imageAlt, projectUrl, tags } = project.data;
 ---
 
-<Layout title={frontmatter.name}>
-  <main
-    class="relative z-30 max-w-4xl pb-1 mx-auto mt-10 bg-white dark:bg-neutral-950 md:rounded-t-md text-neutral-900"
-  >
-    <div
-      class="relative flex flex-col px-5 pt-6 border-t border-b-0 md:border-r md:border-l md:pt-20 lg:px-0 justify-stretch md:rounded-t-2xl border-neutral-200 dark:border-neutral-800"
-    >
-      <div
-        class="absolute top-0 left-0 hidden w-px h-full mt-1 -translate-x-px md:block bg-gradient-to-b from-transparent to-white dark:to-neutral-950"
-      >
-      </div>
-      <div
-        class="absolute top-0 right-0 hidden w-px h-full mt-1 translate-x-px md:block bg-gradient-to-b from-transparent to-white dark:to-neutral-950"
-      >
-      </div>
+<Layout title={name}>
+  <meta slot="head" name="description" content={description} />
 
-      <h1
-        class="w-full max-w-2xl mx-auto text-3xl font-bold leading-tight tracking-tighter text-left md:text-4xl dark:text-neutral-100 lg:text-5xl md:leading-none"
-      >
-        {frontmatter.name}
-      </h1>
+  <main id="main" tabindex="-1" class="article-shell">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Ścieżka nawigacji">
+        <a href="/projects">Projekty</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{name}</span>
+      </nav>
 
-      <div class="flex gap-2 mt-4 flex-wrap justify-center">
+      <section class="article-main-head">
+        <h1 class="article-title">{name}</h1>
         {
-          frontmatter.tags.map((tag, index) => (
-            <span
-              class={`inline-block px-2 py-1 rounded-full text-white text-xs font-medium 
-                      ${index % 3 === 0 ? "bg-blue-500" : index % 3 === 1 ? "bg-green-500" : "bg-red-500"}`}
-            >
-              {tag}
-            </span>
-          ))
+          tags.length > 0 && (
+            <div class="tags">
+              {tags.map((tag) => (
+                <Tag label={tag} />
+              ))}
+            </div>
+          )
         }
+      </section>
+
+      <div class="project-visual">
+        <ImageFrame src={image} alt={imageAlt} ratio="16/9" />
       </div>
-    </div>
 
-    <Image src={frontmatter.image} alt={frontmatter.imageAlt || frontmatter.name} width={600} height={400} transition:name={frontmatter.name} class="w-full max-w-2xl mx-auto mb-6" />
+      <article class="prose project-prose">
+        <slot />
+      </article>
 
-    <article
-      class="w-full max-w-2xl mx-auto mb-20 prose-sm prose px-7 lg:px-0 lg:prose-lg dark:prose-invert"
-    >
-      <slot />
-    </article>
-    <div
-      class="flex items-center justify-center w-full max-w-2xl mx-auto mb-6 md:mb-12"
-    >
-      <Button text="wróć do listy projektów" link="/projects" />
+      {
+        projectUrl && (
+          <div class="actions project-cta">
+            <Button
+              text="Zobacz projekt ↗"
+              link={projectUrl}
+              variant="yellow"
+              external
+            />
+          </div>
+        )
+      }
+
+      <div class="actions article-back">
+        <Button text="← Wróć do projektów" link="/projects" />
+      </div>
     </div>
   </main>
 </Layout>

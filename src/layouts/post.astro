@@ -1,107 +1,101 @@
 ---
-import Button from '../components/button.astro';
-import Layout from './main.astro';
-const { frontmatter } = Astro.props;
-// Przyjmujemy, że entry ma pola takie jak title, description i image
-const title = frontmatter.title || 'Domyślny tytuł';
-const description = frontmatter.description || 'Domyślny opis';
-//const image = entry.data?.image? || "/default-image.jpg"; // ścieżka do domyślnego obrazka, jeśli nie ma zdjęcia w artykule
-const url = new URL(Astro.request.url);
-const image = frontmatter.image || '/default-image.jpg';
-const tags = frontmatter.tags || [];
-console.log('frontmatter', frontmatter);
-const date = new Date(frontmatter.createdAt);
-const publicationDate = date.toLocaleDateString('pl-PL');
+import type { CollectionEntry } from "astro:content";
+import type { MarkdownHeading } from "astro";
+import AuthorBar from "../components/content/author-bar.astro";
+import RelatedPosts from "../components/content/related-posts.astro";
+import Sidebox from "../components/content/sidebox.astro";
+import Toc from "../components/content/toc.astro";
+import TopicTags from "../components/content/topic-tags.astro";
+import Button from "../components/ui/button.astro";
+import Chip from "../components/ui/chip.astro";
+import ImageFrame from "../components/ui/image-frame.astro";
+import { formatDate } from "../lib/format";
+import { absoluteImageUrl } from "../lib/images";
+import { readingTime } from "../lib/reading-time";
+import Layout from "./main.astro";
+
+interface Props {
+	post: CollectionEntry<"post">;
+	headings: MarkdownHeading[];
+	related: CollectionEntry<"post">[];
+}
+
+const { post, headings, related } = Astro.props;
+const {
+	title,
+	description,
+	image,
+	imageAlt,
+	category,
+	tags,
+	createdAt,
+	stickyNote,
+} = post.data;
+
+const dateLabel = formatDate(createdAt);
+const minutes = readingTime(post.body ?? "");
+
+// OG/Twitter: absolutne URL-e; `og:url` z pathname (bez query stringa).
+const ogImage = absoluteImageUrl(image, Astro.site);
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
 ---
 
-<Layout title={frontmatter.title}>
-  <meta slot='head' name='description' content={description} />
+<Layout title={title}>
+  <meta slot="head" name="description" content={description} />
+  <meta slot="head" property="og:title" content={title} />
+  <meta slot="head" property="og:description" content={description} />
+  <meta slot="head" property="og:image" content={ogImage} />
+  <meta slot="head" property="og:url" content={canonical.href} />
+  <meta slot="head" property="og:type" content="article" />
+  <meta slot="head" name="twitter:card" content="summary_large_image" />
+  <meta slot="head" name="twitter:title" content={title} />
+  <meta slot="head" name="twitter:description" content={description} />
+  <meta slot="head" name="twitter:image" content={ogImage} />
 
-  <!-- Open Graph meta tags -->
-  <meta slot='head' property='og:title' content={title} />
-  <meta slot='head' property='og:description' content={description} />
-  <meta slot='head' property='og:image' content={image} />
-  <meta slot='head' property='og:url' content={url} />
-  <meta slot='head' property='og:type' content='article' />
+  <main id="main" tabindex="-1" class="article-shell">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Ścieżka nawigacji">
+        <a href="/posts">Artykuły</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{title}</span>
+      </nav>
 
-  <!-- Możesz też dodać meta tagi dla Twittera -->
-  <meta slot='head' name='twitter:card' content='summary_large_image' />
-  <meta slot='head' name='twitter:title' content={title} />
-  <meta slot='head' name='twitter:description' content={description} />
-  <meta slot='head' name='twitter:image' content={image} />
-
-  <main
-    class='relative z-30 max-w-4xl pb-1 mx-auto mt-10 bg-white dark:bg-neutral-950 md:rounded-t-md text-neutral-900'
-  >
-    <div
-      class='relative flex flex-col px-5 pt-6 border-t border-b-0 md:border-r md:border-l md:pt-20 lg:px-0 justify-stretch md:rounded-t-2xl border-neutral-200 dark:border-neutral-800'
-    >
-      <div
-        class='absolute top-0 left-0 hidden w-px h-full mt-1 -translate-x-px md:block bg-gradient-to-b from-transparent to-white dark:to-neutral-950'
-      >
-      </div>
-      <div
-        class='absolute top-0 right-0 hidden w-px h-full mt-1 translate-x-px md:block bg-gradient-to-b from-transparent to-white dark:to-neutral-950'
-      >
-      </div>
-      <h1
-        class='w-full max-w-2xl mx-auto text-3xl font-bold leading-tight tracking-tighter text-left md:mb-12 md:text-4xl dark:text-neutral-100 lg:text-5xl md:leading-none'
-      >
-        {frontmatter.title}
-      </h1>
-<!-- publication date -->
-        <div class='flex items-center justify-center gap-2 text-neutral-500 dark:text-neutral-400'>
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            class='h-6 w-6'
-            fill='none'
-            viewBox='0 0 24 24'
-            stroke='currentColor'
-          >
-            <path
-              stroke-linecap='round'
-              stroke-linejoin='round'
-              stroke-width='2'
-              d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'
-            />
-          </svg>
-          <span class='text-sm'>{publicationDate}</span>
-      </div>
-
-      {
-      tags &&
-        (
-          <div class='flex gap-2 mt-4 flex-wrap justify-center'>
-            {tags.map((tag, index) => (
-              <span
-                class={`inline-block px-2 py-1 rounded-full text-white text-xs font-medium 
-                      ${index % 3 === 0 ? 'bg-blue-500' : index % 3 === 1 ? 'bg-green-500' : 'bg-red-500'}`}
-              >
-                {tag}
-              </span>
-            ))}
+      <section class="article-hero">
+        <div class="article-main-head">
+          <div class="card-meta">
+            <Chip label={dateLabel} variant="yellow" />
+            <Chip label={category} />
+            <Chip label={`${minutes} min czytania`} />
           </div>
-        )
-      }
-    </div>
-    <div class='m-10'>
-      <img
-        src={frontmatter.image}
-        alt={frontmatter.imageAlt}
-        title={frontmatter.imageAlt}
-        class='w-full h-auto rounded-3xl'
-      />
-    </div>
+          <h1 class="article-title">{title}</h1>
+          <p class="article-dek">{description}</p>
+        </div>
+        <div class="article-visual">
+          <ImageFrame src={image} alt={imageAlt} ratio="auto" />
+          {stickyNote && <div class="sticky-note">{stickyNote}</div>}
+        </div>
+      </section>
 
-    <article
-      class='w-full max-w-2xl mx-auto mb-20 prose-sm prose px-7 lg:px-0 lg:prose-lg dark:prose-invert'
-    >
-      <slot />
-    </article>
-    <div
-      class='flex items-center justify-center w-full max-w-2xl mx-auto mb-6 md:mb-12'
-    >
-      <Button text='wróć do listy postów' link='/posts' />
+      <AuthorBar url={canonical.href} />
+
+      <div class="article-layout">
+        <Toc headings={headings} variant="mobile" />
+        <article class="prose">
+          <slot />
+        </article>
+        <aside class="sidebar">
+          <Toc headings={headings} />
+          <Sidebox title="Powiązane tematy">
+            <TopicTags tags={tags} category={category} />
+          </Sidebox>
+        </aside>
+      </div>
+
+      <RelatedPosts posts={related} />
+
+      <div class="actions article-back">
+        <Button text="← Wróć do artykułów" link="/posts" />
+      </div>
     </div>
   </main>
 </Layout>

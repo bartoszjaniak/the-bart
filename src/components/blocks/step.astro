@@ -1,0 +1,22 @@
+---
+interface Props {
+	title: string;
+	variant?: "yellow" | "blue" | "pink";
+}
+
+const { title, variant } = Astro.props;
+const hasBody = Astro.slots.has("default");
+---
+
+<li class={`step${variant ? ` ${variant}` : ""}`}>
+  <span class="step-num" aria-hidden="true"></span>
+  <b>
+    {title}
+    {hasBody && (
+      <>
+        <br />
+        <small><slot /></small>
+      </>
+    )}
+  </b>
+</li>

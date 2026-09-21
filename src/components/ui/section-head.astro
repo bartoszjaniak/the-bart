@@ -1,0 +1,19 @@
+---
+interface Props {
+	title: string;
+	level?: 1 | 2 | 3;
+	link?: string;
+	linkText?: string;
+	description?: string;
+}
+
+const { title, link, linkText, description, level = 2 } = Astro.props;
+const Heading = `h${level}` as const;
+---
+
+<div class="section-head">
+  <Heading>{title}</Heading>
+  <div class="rule" aria-hidden="true"></div>
+  {link && <a class="btn blue compact" href={link}>{linkText}</a>}
+  {description && <p class="section-desc">{description}</p>}
+</div>

@@ -1,0 +1,23 @@
+---
+// Nagłówek treści. `id` pochodzi z pipeline MDX (ten sam slug, który zwraca
+// `render().headings`) — nie generujemy własnego, żeby TOC trafiał w element.
+// `tabindex="-1"` — focus przenosi się na nagłówek po kliknięciu w TOC (§10).
+interface Props {
+	id?: string;
+	level?: 2 | 3;
+}
+
+const { id, level = 2 } = Astro.props;
+const Tag = `h${level}` as const;
+---
+
+<Tag id={id} tabindex="-1">
+  <slot />
+  {
+    id && (
+      <a class="heading-anchor" href={`#${id}`} aria-label="Bezpośredni link do sekcji">
+        <span aria-hidden="true">#</span>
+      </a>
+    )
+  }
+</Tag>

@@ -1,42 +1,43 @@
 ---
+export const prerender = true;
+
 import { getCollection } from "astro:content";
-const allProjects = await getCollection("project");
-
-const projectLoop = allProjects.sort((a, b) => a.data.order - b.data.order).map((project) => {
-  return {
-    ...(project.data || {}),
-    link: `/project/${project.id}`,
-  };
-});
-
-import PageHeading from "../components/page-heading.astro";
-import Project from "../components/project.astro";
+import ProjectCard from "../components/cards/project-card.astro";
+import SectionHead from "../components/ui/section-head.astro";
 import Layout from "../layouts/main.astro";
+
+const projects = (await getCollection("project")).sort(
+	(a, b) =>
+		a.data.order - b.data.order || a.data.name.localeCompare(b.data.name, "pl"),
+);
 ---
 
 <Layout title="Moje Projekty">
-  <section class="relative z-20 max-w-2xl mx-auto my-12 px-7 lg:px-0">
-    <PageHeading
-      title="Moje Projekty"
-      description="Witaj w świecie moich twórczych przedsięwzięć! Ta sekcja to skarbnica innowacji i pasji, gdzie każdy projekt opowiada własną historię kreatywności i determinacji."
-    />
-
-    <div
-      class="z-50 grid items-stretch w-full grid-cols-1 my-8 gap-7 sm:gap-5 sm:grid-cols-2"
-    >
-      {
-        projectLoop.map((project) => {
-          return (
-            <Project
-              name={project.name}
-              description={project.description}
-              image={project.image}
-              url={project.link}
-              tags={project.tags}
-            />
-          );
-        })
-      }
-    </div>
-  </section>
+  <main id="main" tabindex="-1">
+    <section class="section">
+      <div class="container">
+        <SectionHead
+          title="Moje Projekty"
+          level={1}
+          description="Witaj w świecie moich twórczych przedsięwzięć! Ta sekcja to skarbnica innowacji i pasji, gdzie każdy projekt opowiada własną historię kreatywności i determinacji."
+        />
+        <div class="projects">
+          {
+            projects.map((project, index) => (
+              <ProjectCard
+                name={project.data.name}
+                description={project.data.description}
+                image={project.data.image}
+                imageAlt={project.data.imageAlt}
+                icon={project.data.icon}
+                tags={project.data.tags}
+                link={`/project/${project.id}`}
+                index={index}
+              />
+            ))
+          }
+        </div>
+      </div>
+    </section>
+  </main>
 </Layout>

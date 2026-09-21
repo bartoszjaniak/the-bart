@@ -1,0 +1,1122 @@
+﻿<!DOCTYPE html>
+
+<html lang="pl">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Bart — Redesign neo-brutalistyczny</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#f5f0e8] text-[#1a1a1a] antialiased">
+<header class="sticky top-0 z-50 bg-[#f5f0e8] border-b-2 border-[#1a1a1a] px-4 md:px-8 py-3.5 flex items-center gap-3">
+  <div class="w-5 h-5 bg-[#e63b2e] border border-[#1a1a1a] shrink-0"></div>
+  <span class="font-['Space_Grotesk'] font-bold text-sm md:text-lg tracking-tight uppercase truncate">The Bart — Redesign neo-brutalistyczny</span>
+</header>
+
+<div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 lg:border-x-2 border-[#1a1a1a]">
+  <!-- Lewa kolumna: indeks dokumentu (budowany automatycznie z sekcji) -->
+  <aside class="lg:col-span-3 border-b-2 lg:border-b-0 lg:border-r-2 border-[#1a1a1a] bg-[#eee9e0] p-6 lg:p-8 sticky lg:top-[57px] self-start lg:h-[calc(100vh-57px)] overflow-y-auto font-['Space_Grotesk']">
+    <div class="flex items-center justify-between pb-3 border-b-2 border-[#1a1a1a] mb-5">
+      <span class="text-xs font-bold tracking-widest uppercase font-mono">Indeks dokumentu</span>
+      <div class="w-2.5 h-2.5 bg-[#0055ff]"></div>
+    </div>
+    <nav class="space-y-1 text-sm font-medium" id="toc-nav" aria-label="Indeks dokumentu"></nav>
+  </aside>
+
+  <!-- Prawa kolumna: dokument -->
+  <main class="lg:col-span-9 p-6 md:p-10 lg:p-12 bg-[#f5f0e8]" id="spec-content">
+    <section class="border-2 border-[#1a1a1a] bg-[#ffffff] p-6 md:p-8 shadow-[4px_4px_0px_#1a1a1a]">
+      <h1 class="font-['Space_Grotesk'] text-2xl md:text-4xl font-bold tracking-tight mb-4 leading-tight">The Bart — Redesign neo-brutalistyczny</h1>
+      <p class="font-['Inter'] text-base md:text-lg leading-relaxed text-[#1a1a1a]/90 max-w-4xl">Runda recenzji 1 naniesiona — gotowe do akceptacji użytkownika. Przebudowa warstwy prezentacji na styl neo-brutalistyczny: papierowe tło, grube obwódki, twarde cienie, akcenty żółty/niebieski/różowy, plakatowa typografia display.</p>
+    </section>
+
+    <section id="cel-i-uzasadnienie">
+  <h2>Cel i uzasadnienie</h2>
+  <p>Przebudowa warstwy prezentacji serwisu <strong>The Bart</strong> (portfolio + blog) na styl <strong>neo-brutalistyczny</strong> zgodny z prototypem w <code>the-bart-neo-brutal/</code>: papierowe tło, grube czarne obwódki, twarde cienie z przesunięciem, akcenty żółty/niebieski/różowy, plakatowa typografia display.</p>
+  <p>Efekt: spójny, rozpoznawalny wygląd wszystkich widoków (strona główna, listy, artykuł, projekt, o mnie), przy zachowaniu treści, dostępności i istniejącej infrastruktury Astro.</p>
+  <p><strong>Poza zakresem:</strong> zmiany backendu/hostingu poza włączeniem prerenderu, wielojęzyczność, nowe funkcje produktowe (wyszukiwanie, filtry tagów, newsletter).</p>
+</section>
+
+<section id="opis-problemu">
+  <h2>Opis problemu (kontekst)</h2>
+  <ul>
+    <li>Obecny wygląd („miękki minimalizm": zaokrąglenia, dashed borders, Spectral serif, tryb ciemny, dekoracyjna siatka <code>square-lines</code>) nie odpowiada dostarczonemu prototypowi neo-brutal.</li>
+    <li>Prototyp obejmuje tylko 2 widoki (home, artykuł) i jest statycznym HTML/CSS. Pozostałe widoki (<code>/projects</code>, <code>/about</code>, <code>/project/[slug]</code>, <code>/posts</code>) trzeba zaprojektować przez adaptację stylu.</li>
+    <li>Kilka elementów prototypu wymaga danych, których modele treści nie mają (kategoria, czas czytania, glif karty, dek, sticky-note, TOC).</li>
+    <li>Istnieją realne defekty, które redesign ujawni lub pogłębi (§13.5).</li>
+  </ul>
+  <p><strong>Stack:</strong> Astro 7.3.3 (<code>output: "server"</code>, adapter <code>@astrojs/vercel</code> z ISR), Tailwind CSS v4 (<code>@tailwindcss/vite</code>), TypeScript, Biome 1.7.3, content collections (<code>post</code>, <code>project</code>) z Markdowna. Zero testów. Node 22.12.0.</p>
+</section>
+
+<section id="przyjete-rozwiazania">
+  <h2>Przyjęte rozwiązania</h2>
+  <table>
+    <thead><tr><th>Obszar</th><th>Rozwiązanie</th></tr></thead>
+    <tbody>
+      <tr><td>Motyw</td><td><mark data-tone="danger">Tylko jasny</mark> (papierowy). Całkowite usunięcie trybu ciemnego i przełącznika Dzień/Noc. <code>color-scheme: light</code>.</td></tr>
+      <tr><td>Obrazy</td><td><strong>Hybryda</strong> — obrazy treściowe zostają (w neo-brutalistycznych ramkach o stałym <code>aspect-ratio</code>), elementy dekoracyjne → glify. Renderowane zwykłym <code>&lt;img&gt;</code> ze ścieżek <code>public/</code> (bez <code>astro:assets</code> na treści — patrz §7.5).</td></tr>
+      <tr><td>Shell</td><td><strong>Bez ramki „przeglądarki"</strong> (<code>.browser</code>/<code>.browserbar</code>/<code>.dot</code>). Kontener <code>min(100% − 44px, 1240px)</code>.</td></tr>
+      <tr><td>Newsletter</td><td><strong>Usunięty</strong> (brak backendu). Sidebar artykułu = TOC + tagi tematyczne (renderowane tylko, gdy są dane).</td></tr>
+      <tr><td>Modele treści</td><td><strong>Rozszerzone + backfill</strong> wszystkich 6 postów i 9 projektów (§7.3).</td></tr>
+      <tr><td>Bloki treści</td><td><strong>MDX</strong> (<code>@astrojs/mdx@8</code> w <code>integrations</code>) + komponenty Astro z propsami/wariantami (§7.4).</td></tr>
+      <tr><td>Style</td><td><strong>Tailwind v4 + warstwa semantycznych klas/tokenów</strong> z prototypu (<code>@theme</code> + <code>@layer components</code>) — §8.</td></tr>
+      <tr><td>Typografia</td><td>Webfont display <strong>Anton</strong> (natywne API fontów Astro 7). Body = stos systemowy (Arial).</td></tr>
+      <tr><td>Renderowanie</td><td><strong>Prerender tras treści</strong>; trasy <code>[slug]</code> wymagają <strong><code>getStaticPaths()</code></strong> (§6.1).</td></tr>
+      <tr><td>JS</td><td>Minimum: menu mobilne + „kopiuj link"/„kopiuj prompt". Bez hacka sticky header, bez dark mode.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="rozwazane-strategie">
+  <h2>Rozważane strategie implementacji</h2>
+  <ol>
+    <li><strong>Bloki treści</strong> — rozważano:
+      <ul>
+        <li>(a) <code>.md</code> + mapowanie komponentów przez <code>&lt;Content components={...} /&gt;</code> — <mark data-tone="danger">niewykonalne w Astro 7</mark>: prop <code>components</code> jest przekazywany wyłącznie dla <code>.mdx</code> (potwierdzone w <code>node_modules/astro/dist/content/runtime.js:486</code>, <code>if (id.endsWith("mdx"))</code>);</li>
+        <li>(b) dyrektywy natywnego procesora Sätteri (<code>:::callout{type=yellow}</code>) + własny plugin mdast/hast — zero zależności, ale ~30–50 linii kodu do utrzymania;</li>
+        <li>(c) <strong>MDX</strong> — wybrane. Kompatybilność zweryfikowana: <code>@astrojs/mdx@8.0.1</code> deklaruje peer <code>astro ^7.2.6</code>; peer <code>@astrojs/markdown-satteri@^0.4.0</code> spełniony przez zainstalowane <code>0.4.1</code>.</li>
+      </ul>
+    </li>
+    <li><strong>Style</strong> — port waniliowego <code>styles.css</code> 1:1 vs Tailwind v4 + tokeny. Wybrano Tailwind v4 z tokenami w <code>@theme</code> + <code>@layer components</code>.</li>
+    <li><strong>Fonty</strong> — Google Fonts <code>&lt;link&gt;</code> (odrzucone: prywatność, brak preloadu, FOUT), <code>@fontsource/anton</code> import, natywne <code>fonts</code> API Astro 7. Wybrano natywne API (preload, metryczny fallback, <code>cssVariable</code>). Fallback: <code>fontProviders.local()</code>, jeśli build offline ma działać bez sieci.</li>
+    <li><strong>Nawigacja</strong> — one-page z anchorami vs routy. Wybrano: nav mapuje na routy (jednoznaczny stan aktywny, działa bez JS); anchory pozostają w nav („Kontakt") i w CTA wewnątrz treści.</li>
+    <li><strong>Testy</strong> — Vitest/Playwright vs brak. Wybrano: brak frameworka; bramka = <code>astro check</code> + <code>astro build</code> + malutki skrypt kontroli treści + ręczny checklist (§11).</li>
+    <li><strong>Obrazy</strong> — migracja do <code>astro:assets</code> + <code>src/assets</code> vs pozostanie przy ścieżkach <code>public/</code>. Wybrano drugie (mniejszy zakres; hack <code>-small.jpeg</code> i tak znika — §7.5).</li>
+  </ol>
+</section>
+
+<section id="wzorce-architektoniczne">
+  <h2>Wzorce architektoniczne</h2>
+  <ul>
+    <li><strong>Separacja treść / prezentacja</strong> (koncepcyjnie Ports &amp; Adapters): schemat Zod + <code>src/content/**</code> = walidowana domena; <code>pages</code>/<code>layouts</code>/<code>components</code> = adapter prezentacji. Komponenty nie czytają Markdowna „same z siebie" — dostają dane z <code>getCollection</code>/<code>render</code>.</li>
+    <li><strong>Value Object na granicy</strong>: walidacja frontmatteru w Zod; <strong>do schematu trafia tylko treść, której nie da się wyliczyć</strong>. Wartości wyliczalne (czas czytania, glif, TOC, powiązane) i prezentacyjne (wariant koloru) <strong>nie są utrwalane w danych</strong>.</li>
+    <li><strong>Brak wzorców rozproszonych</strong> (CQRS, Event Sourcing, Saga) — nieadekwatne do statycznego systemu treściowego.</li>
+  </ul>
+</section>
+
+<section id="architektura">
+  <h2>Architektura</h2>
+  <h3>6.1 Trasy i renderowanie</h3>
+  <table>
+    <thead><tr><th>Route</th><th>Render</th><th>Zawartość</th></tr></thead>
+    <tbody>
+      <tr><td><code>/</code></td><td>prerender</td><td>one-page: hero → <code>#artykuly</code> (3 najnowsze) → footer</td></tr>
+      <tr><td><code>/posts</code></td><td>prerender</td><td>pełna lista artykułów (bez draftów)</td></tr>
+      <tr><td><code>/projects</code></td><td>prerender</td><td>pełna siatka projektów</td></tr>
+      <tr><td><code>/about</code></td><td>prerender</td><td>bio + timeline kariery + <code>#kontakt</code></td></tr>
+      <tr><td><code>/post/[slug]</code></td><td>prerender</td><td>artykuł: breadcrumb, hero (chip daty/kategorii/czasu czytania, dek, sticky-note), authorbar + share, prose, TOC, tagi, powiązane</td></tr>
+      <tr><td><code>/project/[slug]</code></td><td>prerender</td><td>projekt: nazwa, tagi, obraz, prose, CTA <code>projectUrl</code> (jeśli jest), powrót</td></tr>
+      <tr><td><code>/404</code></td><td>prerender</td><td>komunikat + powrót na <code>/</code> <mark data-tone="danger">(plik do dodania</mark> — dziś brak)</td></tr>
+    </tbody>
+  </table>
+  <blockquote data-tone="warn"><strong>Konsekwencje techniczne (krytyczne)</strong>
+    <ul>
+      <li>Wszystkie trasy dostają <code>export const prerender = true</code>.</li>
+      <li>Trasy dynamiczne <strong>muszą</strong> dostać <code>getStaticPaths()</code> enumerujące wpisy z <code>getCollection</code> i przekazujące wpis przez <code>props</code>; obecne <code>getEntry(...)</code> (tryb SSR) znika.</li>
+      <li><code>getStaticPaths()</code> <strong>filtruje <code>!data.isDraft</code></strong> → generowanych jest <strong>5 postów</strong> (bez <code>fit-office</code>). Bezpośredni URL draftu → <strong>404</strong>.</li>
+      <li>Po tym <code>output: "server"</code> zostaje (nie zmieniamy setupu adaptera), ale ISR (<code>isr: true</code>) i <code>imageService: true</code> stają się nieużywane. Opcjonalne sprzątanie poza zakresem; świadomie akceptujemy.</li>
+    </ul>
+  </blockquote>
+  <h4>Hero (strona główna)</h4>
+  <p>skład: eyebrow („Cześć,"), <code>h1</code> z żółtym markerem („jestem <strong>Bartosz</strong>."), lead, akapit opisowy, <strong>2 przyciski CTA</strong> (pierwotny: „Zobacz projekty →" → <code>/projects</code>; drugorzędny: „Najnowsze artykuły" → <code>#artykuly</code>) + <strong>trzeciorzędny link</strong> „◉ GitHub →" (zewnętrzny → §10). Obok <code>identity</code>: <code>avatar-card</code> z prawdziwym zdjęciem, <code>note-card</code> (cytat), <code>scribble</code> (<code>aria-hidden</code>, ukryty ≤680px).</p>
+  <p><strong>Zakres strony głównej:</strong> wyłącznie artykuły (sekcja „Najnowsze artykuły" + CTA do <code>/posts</code>). Projekty dostępne tylko na <code>/projects</code>, biblioteka i rząd wartości — usunięte (§16). <mark data-tone="info">AKTUALIZACJA</mark></p>
+  <p><strong>Brand:</strong> znak graficzny (<code>src/assets/images/logo-the-bart.png</code>) + wordmark „THE BART" z żółtym podkreśleniem; <strong>bez podtytułu</strong>, w nagłówku i w stopce (§16). <mark data-tone="info">AKTUALIZACJA</mark></p>
+
+  <h3>6.2 Nawigacja</h3>
+  <p><code>src/collections/menu.json</code> → pozycje mapowane na routy:</p>
+  <table>
+    <thead><tr><th>Label</th><th>URL</th><th>Aktywny gdy</th></tr></thead>
+    <tbody>
+      <tr><td>Start</td><td><code>/</code></td><td><code>pathname === "/"</code></td></tr>
+      <tr><td>Artykuły</td><td><code>/posts</code></td><td><code>pathname</code> w <code>/posts</code> lub <code>/post/*</code></td></tr>
+      <tr><td>Projekty</td><td><code>/projects</code></td><td><code>pathname</code> w <code>/projects</code> lub <code>/project/*</code></td></tr>
+      <tr><td>O mnie</td><td><code>/about</code></td><td><code>pathname === "/about"</code></td></tr>
+      <tr><td>Kontakt</td><td><code>/about#kontakt</code></td><td><mark data-tone="neutral">nigdy</mark> (hash nie trafia do <code>Astro.url.pathname</code>)</td></tr>
+    </tbody>
+  </table>
+  <ul>
+    <li>Stan aktywny liczony <strong>serwerowo</strong>, <code>aria-current="page"</code>. <strong>Wykluczenie kolizji:</strong> pozycje z hashem nie uczestniczą w detekcji (inaczej <code>/about</code> i <code>/about#kontakt</code> dają dwa aktywne wpisy).</li>
+    <li>Dla <code>/post/*</code> i <code>/project/*</code> ustawiamy <code>aria-current="true"</code> (orientacja, nie „page") na właściwym rodzicu.</li>
+    <li>Footer <strong>nie</strong> ma już <code>id="kontakt"</code> (dziś duplikat z sekcją na <code>/about</code>) — jeden cel kontaktu.</li>
+  </ul>
+
+  <h3>6.3 Struktura komponentów (docelowa)</h3>
+  <pre><code>src/components/
+  layout/   header.astro, footer.astro, brand.astro, skip-link.astro
+  ui/       button.astro, chip.astro, tag.astro, section-head.astro,
+            glyph.astro, image-frame.astro
+  cards/    article-card.astro, project-card.astro
+  content/  author-bar.astro, toc.astro, sidebox.astro, related-posts.astro,
+            topic-tags.astro
+  blocks/   callout.astro, prompt.astro, quote-block.astro, steps.astro,
+            step.astro, prose-heading.astro, styled-image.astro
+  home/     hero.astro, writings.astro
+  about/    experience.astro
+src/lib/    reading-time.ts, glyphs.ts, variants.ts, related.ts, images.ts
+scripts/    check-content.mjs</code></pre>
+  <p>Redukcje/usunięcia: <code>square.astro</code>, <code>square-line.astro</code>, <code>square-lines.astro</code> (dekoracja tła niezgodna z motywem), <code>logo.astro</code> (zastąpione tekstowym <code>brand.astro</code>; obraz logo zostaje jako favicon), <code>home/separator.astro</code> + <code>page-heading.astro</code> (scalone w <code>ui/section-head.astro</code>). <code>posts-loop.astro</code> rozbite na <code>cards/article-card.astro</code> + pętlę w miejscu użycia.</p>
+</section>
+
+<section id="model-tresci">
+  <h2>API / Interfejs — model treści</h2>
+  <h3>7.1 Schematy (<code>src/content.config.ts</code>)</h3>
+  <pre><code><span style="color:rgba(255,255,255,.4)">const postCollection = defineCollection({</span>
+  <span style="color:rgba(255,255,255,.4)">loader: glob({ base: "./src/content/post", pattern: "**/*.{md,mdx}" }),</span>
+  <span style="color:rgba(255,255,255,.4)">schema: z.object({</span>
+    <span style="color:rgba(255,255,255,.4)">title: z.string(),</span>
+    <span style="color:rgba(255,255,255,.4)">description: z.string(),</span>            <span style="color:#ffcc00;font-weight:700">// dek artykułu</span>
+    <span style="color:rgba(255,255,255,.4)">createdAt: z.date(),</span>
+    <span style="color:rgba(255,255,255,.4)">isDraft: z.boolean().default(false),</span>
+    <span style="color:rgba(255,255,255,.4)">category: z.string(),</span>               <span style="color:#ffcc00;font-weight:700">// NOWE, wymagane — jeden chip kategorii</span>
+    <span style="color:rgba(255,255,255,.4)">tags: z.array(z.string()).default([]),</span>
+    <span style="color:rgba(255,255,255,.4)">image: z.string(),</span>                  <span style="color:#ffcc00;font-weight:700">// ZMIANA: wymagane (wszystkie 6 postów ma obraz)</span>
+    <span style="color:rgba(255,255,255,.4)">imageAlt: z.string(),</span>               <span style="color:#ffcc00;font-weight:700">// NOWE, wymagane (a11y; spójne z wymaganym image)</span>
+    <span style="color:rgba(255,255,255,.4)">stickyNote: z.string().optional(),</span>  <span style="color:#ffcc00;font-weight:700">// NOWE — tekst karteczki w hero artykułu</span>
+  <span style="color:rgba(255,255,255,.4)">}),</span>
+<span style="color:rgba(255,255,255,.4)">});</span>
+
+<span style="color:rgba(255,255,255,.4)">const projectCollection = defineCollection({</span>
+  <span style="color:rgba(255,255,255,.4)">loader: glob({ base: "./src/content/project", pattern: "**/*.{md,mdx}" }),</span>
+  <span style="color:rgba(255,255,255,.4)">schema: z.object({</span>
+    <span style="color:rgba(255,255,255,.4)">name: z.string(),</span>
+    <span style="color:rgba(255,255,255,.4)">description: z.string(),</span>
+    <span style="color:rgba(255,255,255,.4)">image: z.string(),</span>
+    <span style="color:rgba(255,255,255,.4)">imageAlt: z.string(),</span>               <span style="color:#ffcc00;font-weight:700">// NOWE, wymagane</span>
+    <span style="color:rgba(255,255,255,.4)">icon: z.string().optional(),</span>        <span style="color:#ffcc00;font-weight:700">// NOWE — glif karty (fallback: domyślny glif)</span>
+    <span style="color:rgba(255,255,255,.4)">projectUrl: z.string().optional(),</span>
+    <span style="color:rgba(255,255,255,.4)">tags: z.array(z.string()).default([]),</span>
+    <span style="color:rgba(255,255,255,.4)">order: z.number().default(100),</span>
+  <span style="color:rgba(255,255,255,.4)">}),</span>
+<span style="color:rgba(255,255,255,.4)">});</span></code></pre>
+  <p><code>image</code> wymagane w poście → znika problem „<code>imageAlt</code> wymagane, ale <code>image</code> opcjonalne" i znika potrzebny fallback OG.</p>
+
+  <h3>7.2 Pola i reguły wyliczane (NIE w schemacie)</h3>
+  <table>
+    <thead><tr><th>Potrzeba designu</th><th>Sposób</th><th>Moduł</th></tr></thead>
+    <tbody>
+      <tr><td>Czas czytania („8 min czytania")</td><td><code>readingTime(body)</code> = słowa ÷ 200 wpm, <code>max(1, …)</code>. Uwaga: liczy surowe znaczniki MDX (przybliżenie — akceptowane).</td><td><code>src/lib/reading-time.ts</code></td></tr>
+      <tr><td>Glif karty artykułu</td><td>mapa <code>category → glif</code> z <strong>jawnym fallbackiem</strong> dla nieznanej kategorii (<code>▧</code>)</td><td><code>src/lib/glyphs.ts</code></td></tr>
+      <tr><td>Glif karty projektu</td><td><code>icon</code> z danych; <strong>fallback</strong>: wspólny glif domyślny</td><td><code>src/lib/glyphs.ts</code></td></tr>
+      <tr><td>Wariant koloru (tło ikony + krawędź cienia)</td><td><code>variantForIndex(i) = ['yellow','blue','pink'][i % 3]</code> — <strong>jedno źródło</strong>: jeden <code>variant</code> steruje jednocześnie kolorem tła ikony i koloru cienia karty.</td><td><code>src/lib/variants.ts</code></td></tr>
+      <tr><td>Spis treści (TOC)</td><td><code>render(entry).headings</code>; filtr <code>depth === 2</code>; numeracja <code>01…</code></td><td>—</td></tr>
+      <tr><td>Powiązane artykuły</td><td><strong>tylko</strong> ta sama <code>category</code>, potem najnowsze; wykluczyć bieżący; limit 3; sekcja znika, gdy 0 wyników</td><td><code>src/lib/related.ts</code></td></tr>
+      <tr><td>OG image / URL</td><td><code>new URL(image, Astro.site)</code> → absolutny URL (schemat gwarantuje istnienie <code>image</code>)</td><td><code>src/lib/images.ts</code></td></tr>
+      <tr><td>Sortowanie</td><td>posty: <code>createdAt</code> malejąco; projekty: <code>order</code> rosnąco, <strong>tie-break po <code>name</code></strong> (<code>localeCompare</code>)</td><td>—</td></tr>
+    </tbody>
+  </table>
+  <p>Odrzucone jako zbędne: <code>featured</code>, <code>updatedAt</code>, <code>heroVisual</code>, <code>readingTime</code>/<code>glyph</code> w danych, powiązane projekty.</p>
+
+  <h3>7.3 Backfill (6 postów + 9 projektów)</h3>
+  <p><strong>Posty</strong> — <code>category</code> (nowe), <code>imageAlt</code> (nowe), <code>stickyNote</code> (opcjonalne). Dodatkowo <strong>migracja nagłówków <code>#</code> → <code>##</code></strong> (a11y: jeden <code>&lt;h1&gt;</code>/stronę; dziś <code>clean-iphone.md</code> ma 3× H1, <code>gpt-personalization.md</code> 5× H1 — poza tym TOC z H2 byłby dla nich pusty).</p>
+  <table>
+    <thead><tr><th>Plik</th><th><code>category</code></th><th><code>imageAlt</code></th><th><code>stickyNote</code></th><th>Migracja H1</th></tr></thead>
+    <tbody>
+      <tr><td><code>copilot-editor.md</code></td><td>AI</td><td>„Ilustracja artykułu o AI jako redaktorze"</td><td><code>AI jako redaktor</code></td><td>—</td></tr>
+      <tr><td><code>gpt-personalization.md</code></td><td>AI</td><td>„Gadająca puszka (pozdro dla kumatych)" (już jest)</td><td><code>Mój asystent</code></td><td>5× <code>#</code> → <code>##</code></td></tr>
+      <tr><td><code>clean-iphone.md</code></td><td>TECH</td><td>„Ekran iPhone'a w trakcie porządkowania"</td><td><code>Cyfrowy minimalizm</code></td><td>3× <code>#</code> → <code>##</code></td></tr>
+      <tr><td><code>harmony.md</code></td><td>LIFESTYLE</td><td>„Ilustracja artykułu o życiu w harmonii"</td><td><code>Życie w harmonii</code></td><td>—</td></tr>
+      <tr><td><code>stool.md</code></td><td>LIFESTYLE</td><td>„Stołek biurowy zamiast krzesła"</td><td><code>Stołek zamiast krzesła</code></td><td>—</td></tr>
+      <tr><td><code>fit-office.md</code> (draft)</td><td>LIFESTYLE</td><td>„Trening w domu w trakcie pracy zdalnej"</td><td>—</td><td>—</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Projekty</strong> — <code>imageAlt</code> (brakuje w <code>pinktree</code>, <code>Skapiec</code>) i <code>icon</code>:</p>
+  <table>
+    <thead><tr><th>Plik</th><th><code>imageAlt</code> (nowe)</th><th><code>icon</code></th></tr></thead>
+    <tbody>
+      <tr><td><code>ad-tech.md</code></td><td>„Szaleństwo współczesnego Internetu" (już jest)</td><td><code>▥</code></td></tr>
+      <tr><td><code>this-page.md</code></td><td>„Fragment strony na której teraz jesteś" (już jest)</td><td><code>▣</code></td></tr>
+      <tr><td><code>pinktree.md</code></td><td>„Strona główna sklepu z rękodziełem"</td><td><code>▦</code></td></tr>
+      <tr><td><code>Chapter-one.md</code></td><td>„Obrazek aplikacji Chapter One" (już jest)</td><td><code>▤</code></td></tr>
+      <tr><td><code>Feed Management.md</code></td><td>„Logo projektu feedów" (już jest)</td><td><code>⚙︎</code></td></tr>
+      <tr><td><code>Moneteasy.md</code></td><td>„Logo Moneteasy" (już jest)</td><td><code>◉</code></td></tr>
+      <tr><td><code>Onetads.md</code></td><td>„Logo OnetAds" (już jest)</td><td><code>◀</code></td></tr>
+      <tr><td><code>Skapiec.md</code></td><td>„Logo porównywarki Skąpiec.pl"</td><td><code>◇</code></td></tr>
+      <tr><td><code>janiakmeble.md</code></td><td>„Podgląd fragmentu strony" (już jest)</td><td><code>▰</code></td></tr>
+    </tbody>
+  </table>
+  <blockquote data-tone="warn"><strong>Uwaga o glifach (twarda reguła)</strong><p>Glify muszą być <strong>monochromatyczne</strong> — glify emoji (<code>⚙</code>, <code>🛒</code>) renderują się kolorowo. Używamy tekstowej prezentacji (<code>\uFE0E</code> / <code>font-variant-emoji: text</code>); <code>🛒</code> zastąpione przez <code>▦</code>. Glify są <strong>dekoracyjne</strong> (<code>aria-hidden</code>) — znaczenie niesie chip/etykieta, nigdy sam glif.</p></blockquote>
+  <p>Duplikat <code>order: 1</code> (<code>ad-tech</code>, <code>this-page</code>) → rozwiązany tie-breakiem po <code>name</code> (§7.2).</p>
+
+  <h3>7.4 Bloki treści — komponenty MDX</h3>
+  <p>Integracja: <code>@astrojs/mdx</code> dodane do <code>integrations</code> w <code>astro.config.mjs</code>. Komponenty w <code>src/components/blocks/</code>, mapowane dla treści przez <code>components</code> na <code>&lt;Content&gt;</code> (autor <strong>nie</strong> importuje ich w treści). Gdyby TS zgłaszał nieznane nazwy w <code>.mdx</code>, fallback = jawne importy w plikach treści (bez zmian semantyki).</p>
+  <table>
+    <thead><tr><th>Komponent</th><th>Semantyka (a11y)</th><th>Props</th></tr></thead>
+    <tbody>
+      <tr><td><code>&lt;Callout variant="yellow|blue" title="…"&gt;</code></td><td><code>&lt;aside role="note"&gt;</code> + <code>h3</code></td><td><code>variant</code>, <code>title</code>, slot</td></tr>
+      <tr><td><code>&lt;Prompt label="Prompt"&gt;</code></td><td><code>&lt;figure&gt;</code> / blok z <code>aria-label</code>; przycisk „Kopiuj" z <code>aria-label</code> + feedback <code>aria-live</code></td><td><code>label</code>, slot</td></tr>
+      <tr><td><code>&lt;QuoteBlock&gt;</code></td><td><code>&lt;blockquote&gt;</code> (+ ewent. <code>cite</code>)</td><td>slot</td></tr>
+      <tr><td><code>&lt;Steps&gt;</code> / <code>&lt;Step title="…"&gt;</code></td><td><code>&lt;ol&gt;</code> / <code>&lt;li&gt;</code> (numery wynikają z listy, nie z CSS)</td><td><code>title</code>, slot</td></tr>
+      <tr><td><code>&lt;StyledImage src alt /&gt;</code></td><td><code>&lt;img&gt;</code> w <code>image-frame</code> (stałe <code>aspect-ratio</code>)</td><td><code>src</code>, <code>alt</code></td></tr>
+      <tr><td><code>ProseHeading</code> (mapowany na <code>h2</code>/<code>h3</code>)</td><td><code>id</code> <strong>skonsumowany z pipeline</strong> (<code>headings[].slug</code>), nie regenerowany; <code>scroll-margin-top</code>; dostępna nazwa linku</td><td>—</td></tr>
+    </tbody>
+  </table>
+  <ul>
+    <li>Bloki dostają <code>not-prose</code> na granicy, żeby <code>@tailwindcss/typography</code> nie nadpisywał ich typografii.</li>
+    <li>Kontrakt <code>id</code>: nagłówki w treści renderują <code>id</code> pochodzący z MDX/markdown pipeline (ten sam, który zwraca <code>render().headings</code>), więc TOC zawsze trafia w istniejący element.</li>
+    <li>Surowy HTML w <code>.mdx</code> jest dozwolony, ale <strong>preferowane są bloki</strong>; inline <code>style</code> i <code>class</code> w treści są niedozwolone (zakaz z §8).</li>
+    <li><strong>Migracja <code>clean-iphone.md</code>:</strong> <code>&lt;aside&gt;</code> → <code>&lt;Callout&gt;</code>, 4× <code>&lt;img style="…"&gt;</code> → <code>&lt;StyledImage&gt;</code> (usunięcie inline <code>style</code>). Pozostałe pliki → <code>.mdx</code> bez zmian treści.</li>
+  </ul>
+
+  <h3>7.5 Obrazy</h3>
+  <ul>
+    <li>Wszystkie obrazy treściowe pozostają w <code>public/assets/images/**</code> i są renderowane zwykłym <code>&lt;img&gt;</code> wewnątrz <code>ui/image-frame.astro</code> (obwódka 3px + <code>shadow-brutal-sm</code> + <strong>stałe <code>aspect-ratio</code></strong>: projekty 16/9, okładki 3/4, hero/portret wg oryginału).</li>
+    <li>Brak potrzeby ręcznego <code>width</code>/<code>height</code> (wynika z <code>aspect-ratio</code> ramki) → problem CLS rozwiązany na poziomie komponentu, a nie danych.</li>
+    <li>Znika hack <code>image.replace(".png","-small.jpeg")</code> (<code>src/components/project.astro:10</code>) — pliki <code>*-small.jpeg</code> przestają być potrzebne.</li>
+    <li><code>astro:assets</code> <code>Image</code> przestaje być używany dla treści (obrazy w <code>public/</code> i tak nie były optymalizowane po ścieżce stringiem). <code>adapter.imageService: true</code> staje się nieużywane — opcjonalne sprzątanie.</li>
+  </ul>
+</section>
+
+<section id="design-tokens">
+  <h2>Design tokens i komponenty (skrót)</h2>
+  <p>Pełny dokument: <code>docs/ui/design-system.md</code> (wymaga synchronizacji po decyzji o foncie — patrz §12).</p>
+  <pre><code>--color-paper:#f5f2e8   --color-surface:#fffefa  --color-ink:#111111
+--color-yellow:#ffd629  --color-blue:#13a8f4    --color-pink:#ff3f78
+--color-muted:#e8ebf0   --color-dark:#1a1a1a
+--color-ink-soft:#252934  --color-ink-muted:#565b65
+--color-blue-tint:#bde8ff --color-pink-tint:#ffb0c8
+--color-on-accent:#111111 --color-on-dark:#fffefa
+--font-display: var(--font-anton), Impact, "Arial Black", sans-serif   <span style="color:#ffcc00;font-weight:700">/* cssVariable z API fontów Astro */</span>
+--font-body: Arial, Helvetica, system-ui, sans-serif
+--shadow-brutal: 7px 7px 0 var(--color-ink)   --shadow-brutal-sm: 4px 4px 0 var(--color-ink)
+--shadow-brutal-lg: 10px 10px 0 var(--color-ink)
+--shadow-edge-yellow/blue/pink: 0 7px 0 &lt;kolor&gt;
+--radius-brutal: 7px    --radius-brutal-sm: 2px
+--breakpoint-tablet: 980px   --breakpoint-mobile: 680px
+--container-max: 1240px      --spacing: 4px (siatka)</code></pre>
+  <ul>
+    <li><code>--text-chip</code> = <strong>11px</strong> (12px ≤680) — spójnie z wymaganiem a11y chipów.</li>
+    <li>Nagłówki display: line-height <strong>≥ .95</strong> (nie <code>.88</code>) — Anton obcina ogonki Ą/Ę/Ż/Ź i akcenty Ó przy zbyt ciasnej interlinii. Do weryfikacji przy pierwszym renderze.</li>
+    <li><strong>Focus ring (mapa powierzchnia → kolor pierścienia, SC 1.4.11):</strong> na <code>paper</code>/<code>surface</code>/<code>muted</code> → pierścień <strong>ink</strong>; na <code>ink</code>/<code>black</code>/<code>dark</code> → pierścień <strong>yellow</strong> lub <strong>pink</strong>; na <code>blue</code> → pierścień <strong>ink</strong> (yellow na blue ≈ 1.8:1 — niedopuszczalne). Nigdy <code>outline:none</code> bez zamiennika.</li>
+    <li><strong>Kontrast:</strong> tekst na <code>yellow</code> i <code>blue</code> = <strong>ink</strong>; biały tekst tylko na <code>pink</code> przy tekście dużym/bold (≥18.66px) oraz na <code>black</code>/<code>dark</code>. Biel na blue (2.4:1) niedopuszczalna.</li>
+    <li><strong>Glify:</strong> monochromatyczne, <code>aria-hidden</code>; warianty kart różnią się kolorem, ale <strong>nie</strong> glif jako nośnik znaczenia.</li>
+    <li><strong>Zakazy przenoszenia z prototypu:</strong> <code>.browser*</code>, <code>!important</code>, inline <code>style</code>, kolorowanie <code>nth-child</code>, <code>Comic Sans</code>, duplikaty szarości, toggle dark mode.</li>
+    <li><code>overflow-wrap: anywhere</code> dla długich nieprzerywalnych ciągów; <code>Steps</code> na <code>repeat(auto-fit, minmax(200px, 1fr))</code> (obsługa 3–6 kroków); <code>Prompt</code> zawija (<code>white-space: pre-wrap</code> + <code>overflow-wrap: anywhere</code>) zamiast poziomego scrolla.</li>
+    <li>≤680px: <code>note-card</code>/<code>avatar-card</code> — zdjęta rotacja lub zbity cień; <code>body { overflow-x: clip }</code>.</li>
+  </ul>
+</section>
+
+<section id="przeplywy-danych">
+  <h2>Przepływy danych</h2>
+  <figure>
+    <figcaption>Od frontmatteru do prerendered HTML</figcaption>
+    <svg viewBox="0 0 720 520" role="img" style="min-width:640px">
+      <defs>
+        <pattern id="pd-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" opacity="0.18" stroke="#1a1a1a" stroke-dasharray="2,4" stroke-width="0.3"></path>
+        </pattern>
+        <marker id="pd-arrow" markerWidth="6" markerHeight="6" orient="auto-start-reverse" refX="6" refY="5" viewBox="0 0 10 10">
+          <path d="M 0 1 L 10 5 L 0 9 z" fill="#1a1a1a"></path>
+        </marker>
+      </defs>
+      <rect width="720" height="520" fill="#f5f0e8" stroke="#1a1a1a" stroke-width="2"></rect>
+      <rect width="720" height="520" fill="url(#pd-grid)"></rect>
+
+      <!-- frontmatter -->
+      <g transform="translate(30, 30)">
+        <rect width="280" height="86" fill="#ffffff" stroke="#1a1a1a" stroke-width="2"></rect>
+        <rect width="280" height="24" fill="#1a1a1a"></rect>
+        <text x="10" y="16" fill="#ffffff" font-size="10" font-weight="bold">01 // DANE</text>
+        <text x="12" y="48" fill="#1a1a1a" font-size="10">frontmatter (.md/.mdx)</text>
+        <text x="12" y="66" fill="#1a1a1a" font-size="10">--Zod schema--&gt;</text>
+      </g>
+      <path d="M 310 73 L 355 73" stroke="#1a1a1a" stroke-width="2.5" marker-end="url(#pd-arrow)"></path>
+
+      <!-- getCollection -->
+      <g transform="translate(360, 30)">
+        <rect width="330" height="86" fill="#ffffff" stroke="#1a1a1a" stroke-width="2"></rect>
+        <rect width="330" height="24" fill="#0055ff"></rect>
+        <text x="10" y="16" fill="#ffffff" font-size="10" font-weight="bold">02 // KOLEKCJA</text>
+        <text x="12" y="48" fill="#1a1a1a" font-size="10">getCollection('post'|'project')</text>
+        <text x="12" y="66" fill="#1a1a1a" font-size="10">walidacja + backfill danych</text>
+      </g>
+
+      <!-- getStaticPaths -->
+      <g transform="translate(30, 170)">
+        <rect width="280" height="86" fill="#ffffff" stroke="#1a1a1a" stroke-width="2"></rect>
+        <rect width="280" height="24" fill="#ffcc00"></rect>
+        <text x="10" y="16" fill="#1a1a1a" font-size="10" font-weight="bold">03 // PRERENDER</text>
+        <text x="12" y="48" fill="#1a1a1a" font-size="10">getStaticPaths()</text>
+        <text x="12" y="66" fill="#1a1a1a" font-size="10">filter !isDraft → 404</text>
+      </g>
+      <path d="M 310 114 L 310 155 L 525 155 L 525 73" stroke="#1a1a1a" stroke-width="2.5" fill="none" marker-end="url(#pd-arrow)"></path>
+      <text x="418" y="146" fill="#1a1a1a" font-size="9" font-weight="bold">props / treść</text>
+
+      <!-- render / entry.data column -->
+      <g transform="translate(30, 310)">
+        <rect width="280" height="170" fill="#ffffff" stroke="#1a1a1a" stroke-width="2"></rect>
+        <rect width="280" height="26" fill="#1a1a1a"></rect>
+        <text x="10" y="17" fill="#ffffff" font-size="10" font-weight="bold">04a // render(entry)</text>
+        <text x="12" y="52" fill="#1a1a1a" font-size="10">• Content (MDX + components)</text>
+        <text x="12" y="72" fill="#1a1a1a" font-size="10">• headings → &lt;Toc&gt;</text>
+        <text x="12" y="92" fill="#1a1a1a" font-size="10">• &lt;Content components={blocks}&gt;</text>
+        <path d="M 12 120 L 268 120" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3,3"></path>
+        <text x="12" y="142" fill="#1a1a1a" font-size="10">id z pipeline (slug)</text>
+        <text x="12" y="160" fill="#1a1a1a" font-size="10">depth === 2, numeracja 01…</text>
+      </g>
+      <g transform="translate(410, 310)">
+        <rect width="280" height="170" fill="#ffffff" stroke="#1a1a1a" stroke-width="2"></rect>
+        <rect width="280" height="26" fill="#e63b2e"></rect>
+        <text x="10" y="17" fill="#ffffff" font-size="10" font-weight="bold">04b // entry.data</text>
+        <text x="12" y="52" fill="#1a1a1a" font-size="10">• derived: readingTime</text>
+        <text x="12" y="72" fill="#1a1a1a" font-size="10">• derived: glyph</text>
+        <text x="12" y="92" fill="#1a1a1a" font-size="10">• derived: variant</text>
+        <path d="M 12 120 L 268 120" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3,3"></path>
+        <text x="12" y="142" fill="#1a1a1a" font-size="10">related(category) → limit 3</text>
+        <text x="12" y="160" fill="#1a1a1a" font-size="10">absolutne URL (OG)</text>
+      </g>
+      <path d="M 310 256 L 170 256 L 170 305" stroke="#1a1a1a" stroke-width="2.5" fill="none" marker-end="url(#pd-arrow)"></path>
+      <path d="M 310 256 L 550 256 L 550 305" stroke="#1a1a1a" stroke-width="2.5" fill="none" marker-end="url(#pd-arrow)"></path>
+      <text x="332" y="180" fill="#1a1a1a" font-size="9" font-weight="bold">render / data</text>
+
+      <!-- output -->
+      <g transform="translate(30, 440)">
+        <rect width="660" height="56" fill="#ffffff" stroke="#1a1a1a" stroke-width="2"></rect>
+        <rect width="660" height="24" fill="#1a1a1a"></rect>
+        <text x="10" y="16" fill="#ffffff" font-size="10" font-weight="bold">05 // WYJŚCIE</text>
+        <text x="12" y="48" fill="#1a1a1a" font-size="10">page/layout —&gt; komponenty —&gt; HTML (prerender) —&gt; Vercel</text>
+      </g>
+      <path d="M 170 480 L 170 500" stroke="#1a1a1a" stroke-width="2.5" marker-end="url(#pd-arrow)"></path>
+      <path d="M 550 480 L 550 500" stroke="#1a1a1a" stroke-width="2.5" marker-end="url(#pd-arrow)"></path>
+      <text x="440" y="512" fill="#1a1a1a" font-size="9">złączenie render i data w locie</text>
+    </svg>
+  </figure>
+  <p>Interakcje klienta (JS): menu mobilne (toggle <code>aria-expanded</code>), „Kopiuj link" (<code>navigator.clipboard</code> + fallback <code>execCommand</code>, feedback <code>aria-live="polite"</code>), „Kopiuj prompt" (delegacja zdarzeń na <code>.prompt</code>). Sticky header = czysty CSS <code>position: sticky</code>.</p>
+</section>
+
+<section id="wymagania-niefunkcjonalne">
+  <h2>Wymagania niefunkcjonalne</h2>
+  <h4>Dostępność (WCAG 2.2 AA, must-have)</h4>
+  <ul>
+    <li><code>&lt;html lang="pl"&gt;</code> (dziś błędnie <code>en</code>).</li>
+    <li>Skip link „Przejdź do treści" → <code>#main</code>; <code>#main</code> ma <code>tabindex="-1"</code>, żeby focus faktycznie się przenosił.</li>
+    <li>Landmarki: <code>header</code>, <code>nav[aria-label]</code>, <code>main#main</code>, <code>footer</code>, <code>aside</code> (sidebar artykułu).</li>
+    <li>Dokładnie jeden <code>&lt;h1&gt;</code> na stronę (wymusza migrację H1 w treści — §7.3), brak przeskoków poziomów.</li>
+    <li><code>:focus-visible</code> wg mapy z §8; <strong>Focus Not Obscured</strong> (SC 2.4.11) — sticky header nie może zasłaniać focusowanego elementu (poza TOC).</li>
+    <li><strong>Touch targets ≥ 24×24 CSS px</strong> (rekomendowane 44×44) — przyciski ikonowe (kopiuj/share/toggle menu), klikalne chipy i tagi, linki w stopce.</li>
+    <li>Kontrast wg reguły z §8; chipy ≥11px i wyłącznie jako metadane.</li>
+    <li><code>aria-label</code> dla przycisków ikonowych; glify dekoracyjne <code>aria-hidden="true"</code>.</li>
+    <li>Linki zewnętrzne (GitHub, LinkedIn, projectUrl, lubimyczytac): <code>target="_blank" rel="noopener noreferrer"</code> + wizualny wskaźnik ↗ + <code>sr-only</code> „(otwiera w nowej karcie)".</li>
+    <li>Menu mobilne: <code>&lt;button aria-expanded aria-controls&gt;</code>, zamykanie <code>Escape</code>, powrót focusu do toggle.</li>
+    <li>TOC: desktop = sidebar <code>nav[aria-label="Spis treści"]</code> + <code>&lt;ol&gt;</code>; mobile = zwijany <code>&lt;details&gt;/&lt;summary&gt;</code> nad treścią. <code>scroll-margin-top</code> ~90px; docelowy nagłówek ma <code>tabindex="-1"</code>.</li>
+    <li>Blockquote/Steps/Callout z semantyką wg §7.4.</li>
+    <li><code>prefers-reduced-motion</code>: wyłączone <code>scroll-behavior:smooth</code>, transformacje i rotacje.</li>
+    <li><code>color-scheme: light</code>.</li>
+  </ul>
+  <h4>Wydajność / SEO</h4>
+  <ul>
+    <li>Obrazy: ramka z <code>aspect-ratio</code> + <code>object-fit</code> przeciw CLS; <code>alt</code> wymagany schematem.</li>
+    <li>Font display: <code>preload</code> (przez <code>&lt;Font&gt;</code>), <code>font-display: swap</code>, metryczny fallback (API Astro), subset <strong><code>latin-ext</code></strong> jawnie (inaczej ą ć ę ł ń ó ś ź ż polecą z fallbacku).</li>
+    <li>OG/Twitter: <strong>absolutne</strong> URL-e (<code>new URL(image, Astro.site)</code>), <code>og:url</code> bez query stringa.</li>
+    <li>Prerender tras treści.</li>
+  </ul>
+  <h4>Jakość kodu</h4>
+  <p>Biome (<code>npm run check</code>), <code>astro check</code> bez błędów, brak <code>console.log</code> w produkcji.</p>
+</section>
+
+<section id="strategia-testowania">
+  <h2>Strategia testowania i przypadki testowe</h2>
+  <p><strong>Decyzja:</strong> bez frameworka testowego (Vitest/Playwright). Bramka jakości:</p>
+  <ol>
+    <li><code>npm run build</code> = <code>astro check &amp;&amp; astro build</code> z prerenderem — build realnie renderuje <strong>5 postów</strong> (bez draftu) + 9 projektów + 5 stron statycznych + <code>/404</code>.</li>
+    <li><code>npm run check:content</code> — malutki skrypt <code>scripts/check-content.mjs</code> (Node, zero zależności): dla każdego <code>.md</code>/<code>.mdx</code> sprawdza, że <code>image</code> wskazuje istniejący plik w <code>public/</code> i że <code>imageAlt</code> jest niepusty.</li>
+    <li>Ręczny checklist wizualny na szerokościach <strong>360 / 680 / 980 / 1280 / 1920</strong>.</li>
+    <li>Playwright dopiero, gdy regresje wizualne zaczną się powtarzać (wtedy 1 smoke: 7 tras × 3 viewporty, brak błędów konsoli, obrazy 200).</li>
+  </ol>
+  <h4>Automatycznie weryfikowalne kryteria akceptacji</h4>
+  <ul>
+    <li><input type="checkbox"/>Build bez błędów i ostrzeżeń (brak <code>console.log</code>).</li>
+    <li><input type="checkbox"/>Prerender generuje 5 postów (draft wykluczony) i 9 projektów.</li>
+    <li><input type="checkbox"/><code>check:content</code> przechodzi (istniejące obrazy, niepuste <code>imageAlt</code>).</li>
+    <li><input type="checkbox"/>Draft (<code>fit-office</code>) nieobecny na <code>/posts</code>, <code>/</code>, i pod <code>/post/fit-office</code> (404).</li>
+    <li><input type="checkbox"/>TOC generuje się z H2 i linkuje do istniejących <code>id</code>; posty z migracją H1 mają niepuste TOC.</li>
+    <li><input type="checkbox"/><code>readingTime</code> &gt; 0 dla każdego posta.</li>
+    <li><input type="checkbox"/>Bloki (<code>Callout</code>, <code>Prompt</code>, <code>QuoteBlock</code>, <code>Steps</code>) renderują się w poście, który ich używa (wszystkie cztery używane w <code>copilot-editor.mdx</code>, żeby nie pozostawały nieprzetestowane).</li>
+    <li><input type="checkbox"/>Na <code>/about</code> dokładnie jeden element nav z <code>aria-current</code>; na <code>/post/*</code> <code>aria-current="true"</code> na „Artykuły".</li>
+  </ul>
+  <h4>Przypadki brzegowe (oczekiwane zachowanie)</h4>
+  <table>
+    <thead><tr><th>#</th><th>Scenariusz</th><th>Oczekiwanie</th></tr></thead>
+    <tbody>
+      <tr><td>A1</td><td>Post bez <code>tags</code> (4 z 6)</td><td>brak pustego kontenera tagów; brak „undefined"</td></tr>
+      <tr><td>A2</td><td>Post bez <code>image</code></td><td><strong>niemożliwe</strong> (schemat wymaga) — kontrakt egzekwowany przez Zod</td></tr>
+      <tr><td>A3</td><td><code>isDraft: true</code> (<code>fit-office</code>)</td><td>nieobecny na listach i pod bezpośrednim URL → <strong>404</strong></td></tr>
+      <tr><td>A4</td><td>Post z 0 nagłówków H2</td><td>TOC ukryty (brak pustego panelu)</td></tr>
+      <tr><td>A5</td><td>Duplikat / znaki PL w tytułach H2</td><td>unikalne, poprawne <code>id</code>; TOC trafia w nagłówek</td></tr>
+      <tr><td>A6</td><td>Post bardzo krótki</td><td><code>readingTime</code> = 1</td></tr>
+      <tr><td>A7</td><td>Kategoria spoza mapy glifów</td><td>glif domyślny (<code>▧</code>), brak <code>undefined</code></td></tr>
+      <tr><td>A8</td><td>Post z H1 w treści (przed migracją)</td><td>po migracji brak podwójnego <code>h1</code>; jeden <code>h1</code> na stronę</td></tr>
+      <tr><td>B1</td><td>Projekt bez <code>projectUrl</code></td><td>brak pustego CTA na stronie szczegółów</td></tr>
+      <tr><td>B2</td><td>Projekt z <code>projectUrl</code></td><td>link zewnętrzny z <code>target=_blank</code> + <code>rel=noopener noreferrer</code> + ↗ + <code>sr-only</code></td></tr>
+      <tr><td>B3</td><td>Projekt <code>.webp</code> / brak pliku <code>-small</code></td><td>brak cichego 404; hack <code>-small</code> usunięty</td></tr>
+      <tr><td>B4</td><td>Projekt bez <code>icon</code></td><td>glif domyślny</td></tr>
+      <tr><td>B5</td><td>Dwa projekty z tym samym <code>order</code></td><td>deterministyczna kolejność (tie-break po <code>name</code>)</td></tr>
+      <tr><td>C1</td><td>OG image / <code>og:url</code></td><td>absolutne URL-e, <code>og:url</code> bez query stringa</td></tr>
+      <tr><td>C2</td><td>Brak <code>default-image.jpg</code></td><td>referencja usunięta; OG zawsze z istniejącego <code>image</code></td></tr>
+      <tr><td>D1</td><td>Pozostały listener <code>darkToggle</code></td><td><strong>brak</strong> — cały blok kodu dark mode usunięty (nie guardowany), brak <code>TypeError</code></td></tr>
+      <tr><td>D2</td><td>„Kopiuj link" na HTTP / bez <code>navigator.clipboard</code></td><td>fallback <code>execCommand</code> (jedna droga, nie „fallback lub ukrycie") + feedback</td></tr>
+      <tr><td>D3</td><td>„Kopiuj prompt"</td><td>kopiuje treść promptu</td></tr>
+      <tr><td>E1</td><td>Powiązane przy &lt;3 postach w kategorii / wykluczenie bieżącego</td><td>sekcja niepusta i bez „self"; przy 0 wynikach sekcja ukryta</td></tr>
+      <tr><td>F1</td><td>Długie tytuły/opisy (karty 3-kol, <code>.section-head h2</code>)</td><td>brak przepełnienia / poziomego scrolla; <code>overflow-wrap: anywhere</code></td></tr>
+      <tr><td>F2</td><td>Rotacje (<code>note-card</code>/<code>avatar-card</code>) na 360px</td><td>brak wyjścia poza viewport (rotacja zdjęta ≤680)</td></tr>
+      <tr><td>F3</td><td><code>.steps</code> przy 3 i 6 krokach</td><td><code>auto-fit minmax(200px,1fr)</code> — brak sztywnego 4</td></tr>
+      <tr><td>F4</td><td>Prompt z długimi liniami</td><td>zawijanie (<code>pre-wrap</code>), bez poziomego scrolla</td></tr>
+      <tr><td>F5</td><td>Zapamiętane <code>localStorage.dark_mode=true</code></td><td>brak efektu ubocznego (martwy skrypt usunięty)</td></tr>
+      <tr><td>G1</td><td>Trasa <code>/404</code></td><td>istnieje i renderuje się</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Checklista manualna (człowiek):</strong> kontrast wszystkich par tła (żółty/niebieski/różowy/czarny), widoczność focusu na każdym tle + Focus Not Obscured, pełna ścieżka klawiaturą (skip link → nav → menu mobilne → TOC → kopiuj), <strong>Escape</strong> zamyka menu + powrót focusu, <strong>dokładnie jeden <code>&lt;h1&gt;</code></strong>, brak poziomego scrolla na 5 szerokościach, sticky header nie zasłania anchorów, test czytnikiem ekranu (NVDA/VoiceOver), zoom/reflow 200% i 400%, <code>prefers-reduced-motion</code>, touch targets, druk artykułu. Progi: Lighthouse a11y ≥ 95, zero błędów konsoli, LCP &lt; 2.5 s.</p>
+</section>
+
+<section id="decyzje-uzytkownika">
+  <h2>Decyzje użytkownika</h2>
+  <p>Ustalenia z sesji specyfikacyjnej (wiążące):</p>
+  <ol>
+    <li><strong>Tryb ciemny</strong> — usunąć całkowicie; zostaje tylko jasny, papierowy motyw.</li>
+    <li><strong>Obrazy</strong> — hybryda: zdjęcia treściowe zostają (obramowane neo-brutalistycznie), elementy dekoracyjne → glify.</li>
+    <li><strong>Ramka „przeglądarki"</strong> z kropkami — usunąć.</li>
+    <li><strong>Box newslettera „Bądź na bieżąco"</strong> — usunąć (brak backendu).</li>
+    <li><strong>Modele treści</strong> — rozszerzyć i uzupełnić wszystkie istniejące wpisy (6 postów, 9 projektów).</li>
+    <li><strong>Bloki treści</strong> (callout, prompt, cytat, kroki) — pełne wsparcie, autorowane jako <strong>komponenty z propsami (MDX)</strong>.</li>
+    <li><strong>Style</strong> — Tailwind v4 + warstwa semantycznych klas/design tokenów (nie przenosimy waniliowego CSS 1:1).</li>
+    <li><strong>Typografia</strong> — dodać webfont display dla nagłówków.</li>
+    <li><strong>Renderowanie</strong> — włączyć prerender tras treści.</li>
+  </ol>
+  <h4>Decyzje podjęte przez lidera (rozstrzygnięcia sporów Rady)</h4>
+  <ul>
+    <li><code>.md</code> + <code>components</code> (Gandalf) — <strong>odrzucone</strong>; Legolas wykazał w źródle Astro 7, że prop <code>components</code> działa tylko dla <code>.mdx</code> → <strong>MDX</strong>.</li>
+    <li>Font: Anton (Galadriela) dostarczony <strong>natywnym API fontów Astro 7</strong> (Legolas) — <code>--font-display</code> musi odwołać się do generowanej <code>var(--font-anton)</code>. <code>docs/ui/design-system.md</code> wymaga synchronizacji.</li>
+    <li>Body bez dodatkowego webfontu — akceptujemy syntetyczny bold Arial (bez Inter).</li>
+    <li><code>imageAlt</code> i <code>category</code> — <strong>wymagane</strong>; <code>image</code> w poście również <strong>wymagane</strong> (spójność + OG).</li>
+    <li><code>icon</code> w projekcie — <strong>opcjonalny</strong> z fallbackiem (bez backfillu niemożliwego do pominięcia); glif posta <strong>wyliczany z kategorii</strong>.</li>
+    <li>Warianty kolorów — <strong>jawne</strong> z jednego źródła (<code>variantForIndex</code>), sterują <strong>jednocześnie</strong> tłem ikony i cieniem krawędzi.</li>
+    <li>Bezwzględnie usuwamy blok dark mode (nie guardujemy) — inaczej <code>TypeError</code> zabija pozostały JS.</li>
+    <li>Weryfikacja faktów: <mark data-tone="neutral">fałszywy alarm</mark> Legolasa o „mojibake" — pliki <code>.md</code> są poprawnym UTF-8 (potwierdzone hexami). Nieprawdziwe też „brakujące assety <code>photo2.png</code>/<code>photo-pixelized.png</code>" — istnieją w <code>public/assets/images/</code>.</li>
+  </ul>
+</section>
+
+<section id="otwarte-pytania">
+  <h2>Otwarte pytania i decyzje</h2>
+  <ol>
+    <li><strong>Book-card i rząd wartości</strong> — usunięte na życzenie użytkownika (§16); pytanie nieaktualne.</li>
+    <li><strong>Kategorie postów</strong> (§7.3) i <strong>glify</strong> (§7.3) — propozycje lidera; do korekty przez autora treści.</li>
+    <li><strong>Font Anton</strong> — wybór potwierdzony; do wizualnej weryfikacji: obcinanie polskich diakrytyków przy ciasnej interlinii (line-height ≥ .95, §8).</li>
+    <li><strong>Container queries</strong> dla kart (rekomendacja Galadrieli) — odroczone; w pierwszej iteracji media queries <code>980/680</code>, ale trzeba jawnie zdefiniować reguły dla wąskiego kontekstu sidebara (mniejszy tytuł karty, inny <code>margin-right</code> ikony).</li>
+    <li><strong><code>@tailwindcss/typography</code></strong> — zostaje z punktowymi overrides + <code>not-prose</code> na blokach. Jeśli konfliktów będzie dużo, wyciąć plugin i utrzymać własny <code>.prose</code>.</li>
+    <li><strong>Sprzątanie po prerenderze</strong> — <code>isr</code>/<code>imageService</code> w adapterze stają się nieużywane; opcjonalne usunięcie poza zakresem.</li>
+  </ol>
+</section>
+
+<section id="runda-recenzji-1">
+  <h2>Runda recenzji 1 — naniesione poprawki</h2>
+  <p><mark data-tone="neutral">ANEKS · METADANE PROCESU</mark> Runda 1.</p>
+  <h4>Przyjęte (krytyczne)</h4>
+  <table>
+    <thead><tr><th>Źródło</th><th>Uwaga</th><th>Naniesione</th></tr></thead>
+    <tbody>
+      <tr><td>samwise</td><td><code>prerender</code> na <code>[slug]</code> wymaga <code>getStaticPaths()</code></td><td>§6.1 — jawnie wymagane; <code>getEntry</code> znika</td></tr>
+      <tr><td>samwise</td><td>sprzeczność draftu (5 vs 6 postów)</td><td>§6.1/§7.3/§11 — draft filtrowany, URL → 404; rozstrzygnięte (dawne pytanie 3)</td></tr>
+      <tr><td>samwise</td><td>podwójny <code>&lt;h1&gt;</code> w treści (2 pliki)</td><td>§7.3 — migracja <code>#</code>→<code>##</code> + przypadki A8, checklista</td></tr>
+      <tr><td>aragorn</td><td>kolizja <code>aria-current</code> (<code>/about</code> + <code>/about#kontakt</code>)</td><td>§6.2 — hash-linki nieaktywne + <code>aria-current="true"</code> dla <code>/post/*</code></td></tr>
+      <tr><td>galadriela</td><td><code>--font-display</code> musi wskazywać <code>var(--font-anton)</code></td><td>§8</td></tr>
+      <tr><td>galadriela</td><td>focus ring yellow na blue (1.8:1)</td><td>§8 — mapa powierzchnia→kolor pierścienia</td></tr>
+      <tr><td>galadriela</td><td>chip 10px vs wymóg ≥11px</td><td>§8 — 11px (12px ≤680)</td></tr>
+      <tr><td>gandalf</td><td><code>image</code> opcjonalne + <code>imageAlt</code> wymagane</td><td>§7.1 — <code>image</code> wymagane w poście</td></tr>
+      <tr><td>gandalf</td><td>brak fallbacku glifu dla kategorii</td><td>§7.2/§7.3 — glif domyślny <code>▧</code>; <code>🛒</code>→<code>▦</code> (emoji)</td></tr>
+      <tr><td>gandalf</td><td>strategia obrazów / martwy <code>imageService</code></td><td>§7.5 — <code>&lt;img&gt;</code> + stałe <code>aspect-ratio</code>, bez <code>astro:assets</code> na treści</td></tr>
+      <tr><td>gandalf</td><td><code>components</code> MDX a <code>astro check</code></td><td>§7.4 — provider + udokumentowany fallback (jawne importy)</td></tr>
+      <tr><td>gandalf</td><td>brak <code>@astrojs/mdx</code> w <code>integrations</code></td><td>§7.4 — jawny krok</td></tr>
+      <tr><td>gandalf</td><td><code>typography</code> vs bloki MDX</td><td>§7.4/§13.5 — <code>not-prose</code></td></tr>
+      <tr><td>gandalf</td><td>niespójność tokenu radius</td><td>§8 — <code>--radius-brutal</code>/<code>--radius-brutal-sm</code></td></tr>
+      <tr><td>gandalf</td><td>nieokreślone źródło OG / tie-break / books</td><td>§7.2, §6.1</td></tr>
+      <tr><td>aragorn</td><td>brak touch targets</td><td>§10 + checklista</td></tr>
+      <tr><td>aragorn</td><td>hero nierozstrzygnięte</td><td>§6.1 — skład hero</td></tr>
+      <tr><td>aragorn</td><td>TOC mobile <code>&lt;details&gt;</code> poza treścią specu</td><td>§10</td></tr>
+      <tr><td>aragorn</td><td><code>related(category/tags)</code> niespójne</td><td>§7.2/§9 — tylko <code>category</code></td></tr>
+      <tr><td>aragorn</td><td><code>tabindex="-1"</code> na <code>#main</code> i nagłówkach</td><td>§10</td></tr>
+      <tr><td>aragorn</td><td>semantyka bloków</td><td>§7.4</td></tr>
+      <tr><td>galadriela</td><td><code>Steps</code> sztywne 4 / E4 scroll w prompt</td><td>§8 — <code>auto-fit</code>, <code>pre-wrap</code></td></tr>
+      <tr><td>galadriela</td><td>E2 rotacje na 360px</td><td>§8</td></tr>
+      <tr><td>samwise</td><td><code>check:content</code> zamiast ręcznej kontroli obrazów</td><td>§11.2</td></tr>
+      <tr><td>samwise</td><td>brakujące <code>imageAlt</code> dla pinktree/Skapiec</td><td>§7.3</td></tr>
+      <tr><td>samwise</td><td>A2/D2 niejednoznaczne</td><td>§11 — doprecyzowane</td></tr>
+    </tbody>
+  </table>
+  <h4>Odrzucone / odroczone</h4>
+  <ul>
+    <li><strong>Mikro-test <code>node:test</code> na logikę pochodną</strong> — odroczony; <code>check:content</code> + prerender pokrywają krytyczne ryzyka. Dodać, gdy <code>readingTime</code>/<code>related</code> zaczną się zmieniać.</li>
+    <li><strong>Migracja do <code>astro:assets</code> + <code>src/assets</code></strong> — odrzucona w tej iteracji (większy zakres; stały <code>aspect-ratio</code> rozwiązuje CLS).</li>
+    <li><strong>Container queries</strong> — odroczone (§13.4).</li>
+    <li><strong>Zmiana <code>output: "server"</code> na <code>"static"</code></strong> — odrzucona (per-route <code>prerender</code> wystarcza, mniejszy diff).</li>
+  </ul>
+</section>
+
+<section id="runda-recenzji-2">
+  <h2>Runda recenzji 2 — bramki implementacji</h2>
+  <p><mark data-tone="neutral">ANEKS · METADANE PROCESU</mark> Runda 2 — Frodo + Sauron.</p>
+  <p>Po zakończeniu jednostek A–E uruchomiono bramki. Werdykty: Frodo — „nadaje się do commita po naniesieniu uwag Wysokich, bez większej przeróbki"; Sauron — „zgodne ze specyfikacją, z zastrzeżeniami nieblokującymi". Wszystkie uwagi wg poniższej tabeli zostały naniesione.</p>
+  <h4>Niezgodności ze specyfikacją (Sauron)</h4>
+  <table>
+    <thead><tr><th>#</th><th>Wymaganie</th><th>Poprawka</th></tr></thead>
+    <tbody>
+      <tr><td>S1</td><td>§10 — docelowy nagłówek TOC bez <code>tabindex="-1"</code></td><td>dodane w <code>prose-heading.astro</code></td></tr>
+      <tr><td>S2</td><td>§8 — brak <code>body { overflow-x: clip }</code> ≤680</td><td>dodane</td></tr>
+      <tr><td>S3</td><td>§8/§11-F2 — <code>note-card</code> zachowywał rotację ≤680</td><td>rotacja zdjęta ≤680</td></tr>
+      <tr><td>S4</td><td>§6.1 — GitHub miał być linkiem trzeciorzędnym</td><td>zamienione na link trzeciorzędny</td></tr>
+      <tr><td>S7</td><td>§7.4 — mapowany tylko <code>h2</code></td><td>dodane mapowanie <code>h3</code></td></tr>
+      <tr><td>S8</td><td>§7.4 — <code>project/[slug]</code> renderował <code>&lt;Content /&gt;</code> bez <code>components</code></td><td>bloki działają też w projektach</td></tr>
+      <tr><td>S10</td><td>§7.5 — martwe <code>*-small.*</code></td><td>usunięte</td></tr>
+      <tr><td>S12</td><td>§8 — martwy token <code>--animate-wave</code></td><td>usunięty</td></tr>
+    </tbody>
+  </table>
+  <h4>Jakość kodu (Frodo)</h4>
+  <table>
+    <thead><tr><th>#</th><th>Uwaga</th><th>Poprawka</th></tr></thead>
+    <tbody>
+      <tr><td>F1</td><td><code>biome check</code> nie przechodzi (format/organizeImports/<code>useOptionalChain</code>)</td><td><code>npm run check</code> uruchomiony, czysto</td></tr>
+      <tr><td>F2</td><td><code>components.css</code> 1391 linii</td><td>rozbite na <code>primitives.css</code> / <code>layout.css</code> / <code>article.css</code></td></tr>
+      <tr><td>F3</td><td>brak <code>interface Props</code> w kilku komponentach (implicit <code>any</code>)</td><td>dodane interfejsy</td></tr>
+      <tr><td>F4</td><td>martwe tokeny (<code>--container-gutter</code>, <code>--radius-full</code>, breakpointy bez użycia)</td><td>użyte lub usunięte</td></tr>
+      <tr><td>F5</td><td>duplikacja <code>line-height</code> między tokenami a komponentami</td><td>jedno źródło prawdy (<code>var(--text-*--line-height)</code>)</td></tr>
+      <tr><td>F6</td><td>duplikacja formatowania daty</td><td><code>src/lib/format.ts</code></td></tr>
+      <tr><td>F7</td><td>duplikacja filtra/sortu postów w ≥3 miejscach</td><td><code>src/lib/posts.ts</code></td></tr>
+      <tr><td>F9/F10</td><td>martwy CSS (<code>.callouts</code>, <code>.image-frame &gt; picture &gt; img</code>)</td><td>usunięte</td></tr>
+      <tr><td>F11</td><td>ręcznie odtworzony <code>SectionHead</code> w <code>related-posts</code></td><td>użyty komponent</td></tr>
+      <tr><td>F12</td><td>relatywna ścieżka faviconu (<code>../assets/…</code>)</td><td>absolutna <code>/assets/images/the-bart.svg</code></td></tr>
+    </tbody>
+  </table>
+  <h4>Świadomie zaakceptowane / poza zakresem</h4>
+  <ul>
+    <li><strong>F8 — katalog <code>the-bart-neo-brutal/</code></strong> w rootcie: to artefakt dostarczony przez użytkownika i udokumentowane źródło prawdy wizualnej; <strong>nie usuwamy</strong> (decyzja do potwierdzenia w bramce użytkownika).</li>
+    <li><strong>F17 — nieużywane zależności pre-existing</strong> (<code>@astrojs/netlify</code>, <code>dayjs</code>, <code>vite-plugin-image-optimizer</code>) — poza zakresem redesignu.</li>
+    <li><strong>S13 — <code>mailto:undefined</code></strong> przy braku <code>PUBLIC_EMAIL</code> — pre-existing; dodano guard.</li>
+    <li><strong>S9 — 15× <code>[WARN] use astro:head-inject</code></strong> dla <code>.mdx</code> — artefakt Astro 7 + <code>@astrojs/mdx@8</code> (rolldown), nie pochodzi z kodu projektu; udokumentowane jako znane ograniczenie.</li>
+    <li><strong>S6 — numeracja kroków przez CSS counter</strong> przy zachowanej semantyce <code>&lt;ol&gt;</code> — akceptowalna interpretacja §7.4.</li>
+    <li><strong>S5/S11 — nieścisłości dokumentów</strong> (lokalizacja <code>values.astro</code> w <code>§6.3</code>, <code>--focus-ring</code> w design-system) — zsynchronizowane w dokumentach.</li>
+  </ul>
+  <p><strong>Domyknięcie luki testowej bloków:</strong> <code>Prompt</code>, <code>QuoteBlock</code> i <code>Steps</code> nie były używane w żadnej treści → dodane do <code>copilot-editor.mdx</code> zgodnie z prototypem (ten post jest pierwowzorem <code>article.html</code>), tak aby wszystkie cztery bloki były faktycznie renderowane w prerenderze. Treść redakcyjnie do korekty przez autora.</p>
+</section>
+
+<section id="runda-recenzji-3">
+  <h2>Runda 3 — uwagi użytkownika (po implementacji)</h2>
+  <p><mark data-tone="neutral">ANEKS · METADANE PROCESU</mark> Runda 3 — po implementacji.</p>
+  <table>
+    <thead><tr><th>#</th><th>Uwaga użytkownika</th><th>Poprawka</th></tr></thead>
+    <tbody>
+      <tr><td>U1</td><td>Nagłówek karty projektu zbyt blisko/dotyka zdjęcia</td><td>Przyczyna: <code>h3</code> dziedziczył <code>margin-top: 0</code> ze wspólnej reguły z kartą artykułu (gdzie nad <code>h3</code> jest jeszcze <code>card-meta</code>). Dodana reguła <code>.project-card h3 { margin-top: 12px }</code> — naprawa w jednym miejscu, obejmuje home i <code>/projects</code>.</td></tr>
+      <tr><td>U2</td><td>Usunąć sekcję „Moja biblioteka"</td><td>Usunięte: <code>home/books.astro</code>, <code>cards/book-card.astro</code>, sekcja <code>.books</code>/<code>.book-card</code> z CSS, okładki <code>public/assets/images/books/**</code>.</td></tr>
+      <tr><td>U3</td><td>Przy brandzie nie ma być napisu „portfolio / blog / frontend engineer" (nagłówek i stopka)</td><td>Usunięty podtytuł brandu (<code>brand-sub</code>) w obu miejscach; reguła CSS usunięta.</td></tr>
+      <tr><td>U4</td><td>Przywrócić stare logo obok „THE BART" w nagłówku i stopce</td><td><code>brand.astro</code> renderuje znak graficzny (<code>logo-the-bart.png</code>) + wordmark; stopka używa tego samego komponentu <code>Brand</code>.</td></tr>
+      <tr><td>U5</td><td>Usunąć rząd 5 wartości (Autentyczność, Prostota, Skupienie na użytkowniku, Pomysłowość, Minimalizm)</td><td>Usunięte: <code>home/values.astro</code>, sekcja <code>.values</code>/<code>.value</code>/<code>.value-icon</code> z CSS, martwe tokeny <code>--text-value*</code>.</td></tr>
+      <tr><td>U6</td><td>Na stronie głównej tylko artykuły; projekty wyłącznie w osobnej zakładce</td><td>Usunięte <code>&lt;Projects /&gt;</code> z <code>index.astro</code>, usunięty <code>home/projects.astro</code>; CTA hero „Zobacz projekty →" prowadzi do <code>/projects</code> (wcześniej <code>#projekty</code>); siatka <code>.projects</code> zostaje (używana na <code>/projects</code>).</td></tr>
+    </tbody>
+  </table>
+  <blockquote data-tone="ink"><strong>Skutki dla dokumentu</strong><p>Strona główna to hero + najnowsze artykuły + stopka; usunięte komponenty nie mają już odpowiedników w design-system (zaktualizowane). Wszystkie bramki po zmianach: <code>astro check</code> (0/0/1 hint), <code>npm run build</code> (19 tras, draft wykluczony), <code>npm run check:content</code> (15 plików, 0 naruszeń), <code>npm run check</code> (Biome czysto).</p></blockquote>
+</section>
+
+    <footer class="border-2 border-[#1a1a1a] bg-[#ffffff] p-6 shadow-[4px_4px_0px_#1a1a1a] flex flex-wrap items-center justify-between gap-4 font-['Space_Grotesk']">
+      <span class="font-mono text-xs uppercase text-[#1a1a1a]/70">The Bart — Redesign neo-brutalistyczny</span>
+      <a class="font-mono text-xs font-bold underline underline-offset-4 hover:bg-[#ffcc00]" href="docs/specs/neo-brutal-redesign.md">Źródło: docs/specs/neo-brutal-redesign.md</a>
+    </footer>
+  </main>
+</div>
+
+<!-- Komentarze: dymek edycyjny (pozycja wyliczana przy kliknieciu) -->
+<div id="sc-bubble" hidden role="dialog" aria-label="Komentarz do elementu">
+  <div class="sc-bubble-head">
+    <span class="sc-bubble-title">Komentarz</span>
+    <button id="sc-close" type="button" title="Zamknij (Esc)" aria-label="Zamknij">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+  <textarea id="sc-input" placeholder="Treść komentarza..." aria-label="Treść komentarza"></textarea>
+  <div class="sc-bubble-actions">
+    <button id="sc-delete" type="button" hidden title="Usuń ten komentarz" aria-label="Usuń komentarz">
+      <span class="material-symbols-outlined">delete</span>
+    </button>
+    <span class="sc-hint">Enter = zapisz · Shift+Enter = nowa linia</span>
+    <button id="sc-save" type="button" title="Zapisz komentarz (Enter)" aria-label="Zapisz komentarz">
+      <span class="material-symbols-outlined">check</span>
+    </button>
+  </div>
+</div>
+
+<!-- Komentarze: indykatory istniejacych komentarzy (pozycje wyliczane w JS) -->
+<div id="sc-markers"></div>
+
+<!-- Komentarze: licznik (klik = kopiuj JSON do schowka) -->
+<div id="sc-widget">
+  <button id="sc-count" type="button" hidden></button>
+</div>
+<div id="sc-toast" role="status" aria-live="polite" hidden></div>
+
+<!-- ================== KONIEC TRESCI ==================
+     Powyzej konczy sie tresc dokumentu. Ponizszy blok stylow i skrypt pochodza w calosci
+     z szablonu. NIE EDYTUJ i NIE CZYTAJ go przy generowaniu podgladu. ================== -->
+<style>
+  /* Paleta: krem #f5f0e8 | panel #eee9e0 | karta #ffffff | tusz #1a1a1a
+     akcenty: żółty #ffcc00 | niebieski #0055ff | czerwony #e63b2e
+     Zasady: brak zaokrągleń, obramowania 2px, twardy cień offsetowy (shadow-[4px_4px_0px_#1a1a1a]). */
+  html, body { margin: 0; padding: 0; }
+  body { overscroll-behavior: none; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: #1a1a1a; }
+  ::selection { background: #ffcc00; color: #1a1a1a; }
+  /* Style ponizej sa celowo w czystym CSS - elementy nawigacji naglowkow sekcji dokladane sa przez JS
+     po starcie Tailwind JIT (dynamiczne klasy moga nie zostac skompilowane). */
+  .sec-head { display: flex; align-items: center; gap: .75rem; border-bottom: 2px solid #1a1a1a; padding-bottom: .5rem; }
+  .sec-dot { width: 1rem; height: 1rem; border: 1px solid #1a1a1a; flex: none; }
+  .sec-num { font-family: "JetBrains Mono", monospace; font-weight: 700; margin-right: .5rem; }
+  .toc-item { display: block; padding: .375rem .625rem; border-left: 2px solid transparent; color: rgba(26,26,26,.8); transition: all .15s; }
+  .toc-item:hover { border-left-color: #1a1a1a; background: #f5f0e8; }
+  .toc-item.is-active { border-left-color: #1a1a1a; background: #f5f0e8; color: #1a1a1a; font-weight: 700; }
+  /* --- WARSTWA SEMANTYCZNA (obowiazujaca) ---
+     Agent pisze CZYSTY HTML bez klas - te reguly styluja elementy wewnatrz #spec-content.
+     Jedyne sygnaly, jakie moze dodac, to id sekcji oraz atrybut data-tone (danger|warn|info|neutral|ink). */
+  #spec-content { display: flex; flex-direction: column; gap: 3rem; }
+  #spec-content section { display: flex; flex-direction: column; gap: 1rem; }
+  #spec-content h2 { margin: 0; font-family: "Space_Grotesk", sans-serif; font-weight: 700; font-size: 1.5rem; line-height: 2rem; letter-spacing: -.01em; text-transform: uppercase; }
+  #spec-content h3 { margin: 0; font-family: "Space_Grotesk", sans-serif; font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: .02em; }
+  #spec-content h4 { margin: 0; font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: .8125rem; text-transform: uppercase; letter-spacing: .06em; color: rgba(26,26,26,.75); }
+  #spec-content p, #spec-content li { margin: 0; font-family: "Inter", sans-serif; font-size: .9375rem; line-height: 1.7; color: rgba(26,26,26,.92); }
+  #spec-content ul, #spec-content ol { margin: 0; padding-left: 1.25rem; display: flex; flex-direction: column; gap: .375rem; }
+  #spec-content ul { list-style: square; }
+  #spec-content ol > li::marker { font-family: "JetBrains Mono", monospace; font-weight: 700; color: #0055ff; }
+  #spec-content strong { font-weight: 600; }
+  #spec-content a { color: #1a1a1a; text-decoration: underline; text-underline-offset: 3px; }
+  #spec-content a:hover { background: #ffcc00; }
+  #spec-content hr { width: 100%; margin: 0; border: 0; border-top: 2px solid #1a1a1a; }
+  #spec-content code { font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: .8125em; background: #eee9e0; border: 1px solid #1a1a1a; padding: 0 .25rem; }
+  #spec-content mark { background: #ffcc00; border: 1px solid #1a1a1a; padding: .125rem .5rem; font-family: "JetBrains Mono", monospace; font-size: .75rem; font-weight: 700; white-space: nowrap; }
+  #spec-content mark[data-tone="danger"] { background: #e63b2e; color: #ffffff; }
+  #spec-content mark[data-tone="info"] { background: #0055ff; color: #ffffff; }
+  #spec-content mark[data-tone="neutral"] { background: #eee9e0; }
+  #spec-content mark[data-tone="ink"] { background: #1a1a1a; color: #ffffff; }
+  #spec-content blockquote { margin: 0; border: 2px solid #1a1a1a; background: #ffffff; padding: 1.25rem; box-shadow: 4px 4px 0 #1a1a1a; }
+  #spec-content blockquote[data-tone="danger"] { background: #e63b2e; color: #ffffff; }
+  #spec-content blockquote[data-tone="warn"] { background: #ffcc00; }
+  #spec-content blockquote[data-tone="ink"] { background: #1a1a1a; color: #ffffff; }
+  #spec-content blockquote > p:first-child > strong:first-child,
+  #spec-content blockquote > strong:first-child { display: block; margin-bottom: .25rem; font-family: "JetBrains Mono", monospace; font-size: .6875rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  #spec-content .table-wrap { border: 2px solid #1a1a1a; background: #ffffff; overflow-x: auto; box-shadow: 4px 4px 0 #1a1a1a; }
+  #spec-content table { width: 100%; border-collapse: collapse; font-family: "Inter", sans-serif; font-size: .8125rem; text-align: left; }
+  #spec-content thead th { padding: .75rem; background: #1a1a1a; color: #ffffff; font-family: "Space_Grotesk", sans-serif; font-size: .75rem; font-weight: 700; text-transform: uppercase; }
+  #spec-content tbody td { padding: .75rem; border-top: 2px solid #1a1a1a; vertical-align: top; }
+  #spec-content tbody tr:hover { background: #f5f0e8; }
+  #spec-content tbody td:first-child { font-weight: 600; }
+  #spec-content pre { position: relative; margin: 0; padding: 1.25rem; overflow-x: auto; border: 2px solid #1a1a1a; background: #1a1a1a; color: #e2ddd4; box-shadow: 4px 4px 0 #1a1a1a; font-family: "JetBrains Mono", monospace; font-size: .8125rem; line-height: 1.6; }
+  #spec-content pre code { background: none; border: 0; padding: 0; font-size: inherit; font-weight: 400; color: inherit; }
+  #spec-content pre .copy-btn { position: absolute; top: .5rem; right: .5rem; border: 1px solid rgba(255,255,255,.25); background: #262626; color: #ffcc00; padding: .125rem .5rem; font-family: "JetBrains Mono", monospace; font-size: .6875rem; font-weight: 700; cursor: pointer; }
+  #spec-content pre .copy-btn:hover { background: #ffcc00; color: #1a1a1a; }
+  #spec-content figure { margin: 0; border: 2px solid #1a1a1a; background: #ffffff; padding: 1.25rem; box-shadow: 4px 4px 0 #1a1a1a; }
+  #spec-content figcaption { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-bottom: .75rem; margin-bottom: 1rem; border-bottom: 2px solid #1a1a1a; font-family: "JetBrains Mono", monospace; font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+  #spec-content figure svg { width: 100%; height: auto; font-family: "JetBrains Mono", monospace; }
+  #spec-content figure ul { flex-direction: row; flex-wrap: wrap; gap: 1rem; margin-top: .75rem; padding: .5rem 0 0; border-top: 1px solid #1a1a1a; list-style: none; font-family: "JetBrains Mono", monospace; font-size: .75rem; }
+  #spec-content figure ul li { display: flex; align-items: center; gap: .375rem; font-size: .75rem; }
+  #spec-content ul:has(> li > input[type="checkbox"]) { padding-left: 0; list-style: none; gap: .75rem; }
+  #spec-content li:has(> input[type="checkbox"]) { display: flex; align-items: flex-start; gap: .75rem; }
+  #spec-content input[type="checkbox"] { margin-top: .25rem; width: 1rem; height: 1rem; flex: none; accent-color: #1a1a1a; }
+  #spec-content .checklist-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-bottom: .75rem; margin-bottom: 1rem; border-bottom: 2px solid #1a1a1a; font-family: "JetBrains Mono", monospace; font-size: .75rem; font-weight: 700; text-transform: uppercase; }
+  #spec-content .checklist-head .count { background: #ffcc00; border: 1px solid #1a1a1a; padding: .125rem .625rem; }
+  /* --- Warstwa klas: LEGACY (utrzymana tylko dla dokumentow wygenerowanych wczesniej).
+     Nowe dokumenty nie uzywaja klas - patrz warstwa semantyczna powyzej. */
+  .card { border: 2px solid #1a1a1a; background: #ffffff; padding: 1.25rem; box-shadow: 4px 4px 0 #1a1a1a; }
+  .card.tight { padding: 1rem; box-shadow: 3px 3px 0 #1a1a1a; }
+  .card.ink { background: #1a1a1a; color: #ffffff; }
+  .card.danger { background: #e63b2e; color: #ffffff; }
+  .card.warn { background: #ffcc00; color: #1a1a1a; }
+  .label { font-family: "JetBrains Mono", monospace; font-size: .6875rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .label.out { color: rgba(26,26,26,.6); }
+  .title { font-family: "Space_Grotesk", sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: -.01em; }
+  .prose { font-family: "Inter", sans-serif; font-size: .9375rem; line-height: 1.7; color: rgba(26,26,26,.92); }
+  .prose strong { font-weight: 600; }
+  code.ic { font-family: "JetBrains Mono", monospace; font-weight: 700; background: #eee9e0; border: 1px solid #1a1a1a; padding: 0 .25rem; }
+  .grid-2 { display: grid; gap: 1.5rem; grid-template-columns: 1fr; }
+  .grid-3 { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+  @media (min-width: 768px) { .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .chip { display: inline-block; padding: .125rem .5rem; font-family: "JetBrains Mono", monospace; font-size: .75rem; font-weight: 700; }
+  .chip.k { background: #1a1a1a; color: #ffffff; }
+  .chip.y { background: #ffcc00; color: #1a1a1a; border: 1px solid #1a1a1a; }
+  .chip.b { background: #0055ff; color: #ffffff; }
+  .chip.r { background: #e63b2e; color: #ffffff; }
+  .chip.n { background: #eee9e0; color: #1a1a1a; border: 1px solid #1a1a1a; }
+  .table-wrap { border: 2px solid #1a1a1a; background: #ffffff; overflow-x: auto; box-shadow: 4px 4px 0 #1a1a1a; }
+  .tbl { width: 100%; border-collapse: collapse; font-family: "Inter", sans-serif; font-size: .8125rem; text-align: left; }
+  .tbl thead th { background: #1a1a1a; color: #ffffff; font-family: "Space_Grotesk", sans-serif; font-weight: 700; text-transform: uppercase; font-size: .75rem; padding: .75rem; }
+  .tbl tbody td { padding: .75rem; border-top: 2px solid #1a1a1a; vertical-align: top; }
+  .tbl tbody tr:hover { background: #f5f0e8; }
+  .tbl td.k { font-weight: 600; }
+  .tbl td.v { font-family: "JetBrains Mono", monospace; font-weight: 700; color: #0055ff; }
+  .tbl td.n { font-family: "JetBrains Mono", monospace; font-size: .75rem; color: rgba(26,26,26,.75); }
+  .metric { font-family: "JetBrains Mono", monospace; font-size: 1.5rem; font-weight: 700; }
+  .codeblock { border: 2px solid #1a1a1a; background: #1a1a1a; color: #ffffff; box-shadow: 4px 4px 0 #1a1a1a; }
+  .cb-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .625rem 1rem; background: #262626; border-bottom: 2px solid #1a1a1a; font-family: "JetBrains Mono", monospace; font-size: .75rem; }
+  .codeblock pre { margin: 0; padding: 1.25rem; overflow-x: auto; font-family: "JetBrains Mono", monospace; font-size: .8125rem; line-height: 1.6; color: #e2ddd4; }
+  .figure { border: 2px solid #1a1a1a; background: #ffffff; padding: 1.25rem; box-shadow: 4px 4px 0 #1a1a1a; }
+  .figure-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-bottom: .75rem; margin-bottom: 1rem; border-bottom: 2px solid #1a1a1a; font-family: "JetBrains Mono", monospace; font-size: .75rem; }
+  .figure svg { width: 100%; height: auto; font-family: "JetBrains Mono", monospace; }
+  .figure .legend { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: .75rem; padding-top: .5rem; border-top: 1px solid #1a1a1a; font-family: "JetBrains Mono", monospace; font-size: .75rem; }
+  .steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1rem; }
+  .step { display: flex; gap: 1rem; }
+  .step .n { font-family: "JetBrains Mono", monospace; font-weight: 700; color: #0055ff; }
+  .checklist { display: flex; flex-direction: column; gap: .75rem; font-family: "Inter", sans-serif; font-size: .875rem; }
+  .checklist label { display: flex; gap: .75rem; align-items: flex-start; cursor: pointer; }
+  .checklist .sub { display: block; font-family: "JetBrains Mono", monospace; font-size: .75rem; color: rgba(26,26,26,.7); }
+  .check-item { margin-top: .25rem; width: 1rem; height: 1rem; accent-color: #1a1a1a; }
+  /* --- Komentarze: indykatory + dymek + licznik --- */
+  #sc-widget { position: fixed; right: 1.25rem; bottom: 1.25rem; z-index: 60; }
+  #sc-widget button, #sc-bubble button, .sc-marker { display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-family: inherit; border: 2px solid #1a1a1a; }
+  #sc-widget .material-symbols-outlined, #sc-bubble .material-symbols-outlined, .sc-marker .material-symbols-outlined { line-height: 1; }
+  #sc-count { height: 2.5rem; padding: 0 .75rem; gap: .375rem; background: #ffcc00; color: #1a1a1a; font-family: "JetBrains Mono", monospace; font-size: .875rem; font-weight: 700; box-shadow: 3px 3px 0 #1a1a1a; }
+  #sc-count:hover { background: #f5f0e8; }
+  #sc-count .material-symbols-outlined { font-size: 1.125rem; }
+  [hidden] { display: none !important; }
+  #sc-markers { position: absolute; top: 0; left: 0; width: 100%; height: 0; z-index: 55; pointer-events: none; }
+  .sc-marker { position: absolute; width: 1.5rem; height: 1.5rem; background: #ffcc00; color: #1a1a1a; box-shadow: 2px 2px 0 #1a1a1a; pointer-events: auto; }
+  .sc-marker:hover { background: #0055ff; color: #ffffff; }
+  .sc-marker .material-symbols-outlined { font-size: .9375rem; }
+  #sc-bubble { position: fixed; z-index: 65; width: min(24rem, calc(100vw - 2rem)); background: #ffffff; border: 2px solid #1a1a1a; box-shadow: 4px 4px 0 #1a1a1a; padding: .75rem; display: flex; flex-direction: column; gap: .625rem; }
+  .sc-bubble-head { display: flex; align-items: center; justify-content: space-between; gap: .5rem; border-bottom: 2px solid #1a1a1a; padding-bottom: .5rem; }
+  .sc-bubble-title { font-family: "JetBrains Mono", monospace; font-size: .6875rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  #sc-close { width: 1.75rem; height: 1.75rem; background: #eee9e0; color: #1a1a1a; border-width: 1.5px; }
+  #sc-close:hover { background: #1a1a1a; color: #ffffff; }
+  #sc-close .material-symbols-outlined { font-size: 1.125rem; }
+  #sc-input { width: 100%; box-sizing: border-box; resize: vertical; min-height: 5rem; border: 2px solid #1a1a1a; padding: .5rem .625rem; font-family: "Inter", sans-serif; font-size: .875rem; line-height: 1.375rem; color: #1a1a1a; background: #f5f0e8; }
+  #sc-input:focus { outline: 3px solid #0055ff; outline-offset: -3px; }
+  .sc-bubble-actions { display: flex; align-items: center; gap: .5rem; }
+  .sc-hint { flex: 1; font-family: "JetBrains Mono", monospace; font-size: .625rem; line-height: .875rem; text-transform: uppercase; letter-spacing: .04em; color: rgba(26,26,26,.6); }
+  #sc-save { width: 2.25rem; height: 2.25rem; background: #1a1a1a; color: #ffffff; }
+  #sc-save:hover { background: #0055ff; }
+  #sc-save .material-symbols-outlined { font-size: 1.25rem; }
+  #sc-delete { width: 2.25rem; height: 2.25rem; background: #e63b2e; color: #ffffff; }
+  #sc-delete:hover { background: #1a1a1a; }
+  #sc-toast { position: fixed; left: 50%; bottom: 1.5rem; transform: translateX(-50%); z-index: 70; max-width: calc(100vw - 2rem); background: #1a1a1a; color: #ffffff; border-left: 6px solid #ffcc00; padding: .625rem 1rem; font-family: "JetBrains Mono", monospace; font-size: .75rem; font-weight: 500; }
+  @media print { header, aside, [data-copy], #sc-widget, #sc-bubble, #sc-toast, #sc-markers { display: none !important; } .lg\:col-span-3 { display: none !important; } .lg\:col-span-9 { grid-column: span 12 / span 12 !important; } }
+</style>
+<script>
+  // 1. Indeks dokumentu + naglowki sekcji (kolorowy kwadrat, numer, linia) - budowane z sekcji.
+  const ACCENTS = ['#ffcc00', '#0055ff', '#e63b2e'];
+  const sections = Array.from(document.querySelectorAll('#spec-content section[id]'));
+  const toc = document.getElementById('toc-nav');
+  sections.forEach((section, index) => {
+    const h2 = section.querySelector('h2');
+    if (!h2) return;
+    // Numeracja zrodla ("1. Tytul") jest usuwana - numer generuje szablon, zeby nie bylo "01. 1. Tytul".
+    const rawTitle = h2.textContent;
+    const label = rawTitle.replace(/^\s*\d+\s*[.)]\s*/, '').trim();
+    if (label !== rawTitle.trim()) h2.textContent = label;
+    const number = String(index + 1).padStart(2, '0') + '.';
+
+    const head = document.createElement('div');
+    head.className = 'sec-head';
+    const dot = document.createElement('span');
+    dot.className = 'sec-dot';
+    dot.style.background = ACCENTS[index % ACCENTS.length];
+    const num = document.createElement('span');
+    num.className = 'sec-num';
+    num.textContent = number;
+
+    h2.parentNode.insertBefore(head, h2);
+    head.appendChild(dot);
+    head.appendChild(h2);
+    h2.insertBefore(num, h2.firstChild);
+
+    toc.insertAdjacentHTML('beforeend',
+      '<a class="toc-item" href="#' + section.id + '">' + number + ' ' + label + '</a>');
+  });
+
+  // 2. Podswietlanie aktywnej sekcji w indeksie.
+  const tocLinks = Array.from(document.querySelectorAll('.toc-item'));
+  function highlightCurrent() {
+    let current = '';
+    sections.forEach(section => {
+      if (window.scrollY >= section.offsetTop - 140) current = section.id;
+    });
+    tocLinks.forEach(link => link.classList.toggle('is-active', link.getAttribute('href') === '#' + current));
+  }
+  window.addEventListener('scroll', highlightCurrent);
+  highlightCurrent();
+
+  // 3. Normalizacja tresci: agent pisze czysty HTML, skrypt doklada to, co potrzebne wizualnie.
+  // 3a. Tabele w ramke z przewijaniem.
+  document.querySelectorAll('#spec-content table').forEach(table => {
+    const parent = table.parentElement;
+    if (parent && parent.classList.contains('table-wrap')) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'table-wrap';
+    table.parentNode.insertBefore(wrap, table);
+    wrap.appendChild(table);
+  });
+
+  // 3b. Przycisk kopiowania w kazdym bloku kodu.
+  document.querySelectorAll('#spec-content pre').forEach(pre => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'copy-btn';
+    btn.textContent = 'Kopiuj';
+    btn.addEventListener('click', () => {
+      try { navigator.clipboard.writeText(pre.innerText); } catch (error) { /* brak dostepu do schowka */ }
+      btn.textContent = 'Skopiowano!';
+      setTimeout(() => { btn.textContent = 'Kopiuj'; }, 2000);
+    });
+    pre.appendChild(btn);
+  });
+
+  // 4. Licznik listy kontrolnej: <ul> zawierajaca <li> z <input type="checkbox">.
+  const isTaskList = list => Array.from(list.children).some(item => item.querySelector('input[type="checkbox"]'));
+  document.querySelectorAll('#spec-content ul').forEach(list => {
+    if (!isTaskList(list)) return;
+    const boxes = Array.from(list.querySelectorAll('input[type="checkbox"]'));
+    const head = document.createElement('div');
+    head.className = 'checklist-head';
+    head.innerHTML = '<span>Lista kontrolna</span><span class="count"></span>';
+    const count = head.querySelector('.count');
+    const update = () => {
+      const checked = boxes.filter(box => box.checked).length;
+      count.textContent = checked + ' / ' + boxes.length + ' (' + Math.round((checked / boxes.length) * 100) + '%)';
+    };
+    boxes.forEach(box => box.addEventListener('change', update));
+    update();
+    list.parentNode.insertBefore(head, list);
+  });
+
+  // 5. Komentarze do specyfikacji - tryb staly: klik w dowolny element dokumentu otwiera dymek.
+  // Zapis w localStorage (klucz per plik) - komentarze nie wchodza do pliku HTML.
+  // Klik na licznik kopiuje caly zestaw jako JSON (z kontekstem: sekcja, selektor, cytat).
+  (function () {
+    const markers = document.getElementById('sc-markers');
+    const widget = document.getElementById('sc-widget');
+    if (!widget || !markers) return;
+
+    const countBtn = document.getElementById('sc-count');
+    const bubble = document.getElementById('sc-bubble');
+    const input = document.getElementById('sc-input');
+    const saveBtn = document.getElementById('sc-save');
+    const deleteBtn = document.getElementById('sc-delete');
+    const closeBtn = document.getElementById('sc-close');
+    const toast = document.getElementById('sc-toast');
+
+    const STORAGE_KEY = 'sw-spec-comments:' + location.pathname;
+    const CONTENT = document.getElementById('spec-content');
+    let comments = load();
+    let anchor = null;
+    let markerEls = [];
+    let toastTimer = null;
+
+    function load() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        return Array.isArray(raw) ? raw : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function store() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(comments));
+      } catch (error) {
+        // np. zablokowany localStorage na file:// - komentarze zostaja tylko w tej sesji
+      }
+      render();
+    }
+
+    function plural(count) {
+      if (count === 1) return 'komentarz';
+      const last = count % 10;
+      const teens = count % 100;
+      return last >= 2 && last <= 4 && (teens < 10 || teens >= 20) ? 'komentarze' : 'komentarzy';
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.hidden = false;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { toast.hidden = true; }, 2600);
+    }
+
+    function cssPath(element) {
+      const parts = [];
+      let node = element;
+      while (node && node !== document.body) {
+        if (node.id) {
+          parts.unshift(node.tagName.toLowerCase() + '#' + node.id);
+          break;
+        }
+        const parent = node.parentElement;
+        const index = parent ? Array.prototype.indexOf.call(parent.children, node) + 1 : 1;
+        parts.unshift(node.tagName.toLowerCase() + ':nth-child(' + index + ')');
+        node = parent;
+      }
+      return parts.join(' > ');
+    }
+
+    function describe(element) {
+      const section = element.closest('section[id]');
+      const heading = section ? section.querySelector('h2') : null;
+      const text = (element.innerText || element.textContent || '').replace(/\s+/g, ' ').trim();
+      return {
+        sectionId: section ? section.id : null,
+        sectionTitle: heading ? heading.textContent.replace(/^\s*\d+\.\s*/, '').trim() : null,
+        selector: cssPath(element),
+        tag: element.tagName.toLowerCase(),
+        text: text.slice(0, 240)
+      };
+    }
+
+    function findBySelector(selector) {
+      try { return document.querySelector(selector); } catch (error) { return null; }
+    }
+
+    // Indykatory w ukladzie dokumentu (absolute) - przewijanie nie wymaga przeliczania pozycji.
+    function positionMarkers() {
+      markerEls.forEach(function (marker) {
+        const target = findBySelector(marker.entry.selector);
+        if (!target) { marker.button.hidden = true; return; }
+        marker.button.hidden = false;
+        const rect = target.getBoundingClientRect();
+        marker.button.style.top = (rect.top + (window.scrollY || 0) - 10) + 'px';
+        marker.button.style.left = Math.max(0, rect.left + (window.scrollX || 0) + rect.width - 10) + 'px';
+      });
+    }
+
+    function render() {
+      countBtn.hidden = comments.length === 0;
+      countBtn.innerHTML = '<span class="material-symbols-outlined">forum</span><span>' + comments.length + '</span>';
+      countBtn.title = comments.length + ' ' + plural(comments.length) + ' — kliknij, aby skopiować JSON do schowka';
+
+      markers.innerHTML = '';
+      markerEls = comments.map(function (entry) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'sc-marker';
+        button.title = 'Komentarz — kliknij, aby edytować lub usunąć';
+        button.innerHTML = '<span class="material-symbols-outlined">chat_bubble</span>';
+        button.addEventListener('click', function (event) {
+          event.stopPropagation();
+          const target = findBySelector(entry.selector);
+          if (target) openFor(target);
+          else showToast('Nie znaleziono elementu dla tego komentarza');
+        });
+        markers.appendChild(button);
+        return { button: button, entry: entry };
+      });
+      positionMarkers();
+    }
+
+    function openFor(element) {
+      anchor = describe(element);
+      const existing = comments.find(function (entry) { return entry.selector === anchor.selector; });
+      input.value = existing ? existing.comment : '';
+      deleteBtn.hidden = !existing;
+      bubble.hidden = false;
+
+      const rect = element.getBoundingClientRect();
+      const box = bubble.getBoundingClientRect();
+      bubble.style.left = Math.min(Math.max(8, rect.left), Math.max(8, window.innerWidth - box.width - 8)) + 'px';
+      bubble.style.top = (rect.bottom + box.height + 16 > window.innerHeight
+        ? Math.max(8, rect.top - box.height - 8)
+        : rect.bottom + 8) + 'px';
+      input.focus();
+    }
+
+    function close() {
+      bubble.hidden = true;
+      anchor = null;
+    }
+
+    function save() {
+      if (!anchor) return;
+      const text = input.value.trim();
+      if (!text) { close(); return; }
+      const existing = comments.find(function (entry) { return entry.selector === anchor.selector; });
+      const stamp = new Date().toISOString();
+      if (existing) {
+        existing.comment = text;
+        existing.updatedAt = stamp;
+      } else {
+        comments.push(Object.assign({ id: 'c' + Date.now().toString(36), comment: text, createdAt: stamp }, anchor));
+      }
+      store();
+      close();
+      showToast('Komentarz zapisany (' + comments.length + ')');
+    }
+
+    function remove() {
+      if (!anchor) return;
+      comments = comments.filter(function (entry) { return entry.selector !== anchor.selector; });
+      store();
+      close();
+      showToast('Komentarz usunięty (' + comments.length + ')');
+    }
+
+    function fallbackCopy(text) {
+      const area = document.createElement('textarea');
+      area.value = text;
+      area.style.position = 'fixed';
+      area.style.opacity = '0';
+      document.body.appendChild(area);
+      area.select();
+      let copied = false;
+      try { copied = document.execCommand('copy'); } catch (error) { copied = false; }
+      area.remove();
+      return copied;
+    }
+
+    function copyAll() {
+      if (!comments.length) return;
+      const sourceLink = document.querySelector('a[href$=".md"]');
+      const payload = {
+        spec: document.title,
+        source: sourceLink ? sourceLink.getAttribute('href') : null,
+        exportedAt: new Date().toISOString(),
+        count: comments.length,
+        comments: comments
+      };
+      const json = JSON.stringify(payload, null, 2);
+      const done = function (copied) {
+        showToast(copied
+          ? 'Skopiowano do schowka: ' + comments.length + ' ' + plural(comments.length) + ' (JSON)'
+          : 'Nie udało się skopiować — sprawdź uprawnienia schowka');
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(json).then(function () { done(true); }, function () { done(fallbackCopy(json)); });
+      } else {
+        done(fallbackCopy(json));
+      }
+    }
+
+    // Tryb komentarza jest staly - klik w tresc dokumentu otwiera dymek.
+    // Wyjatki: linki, przyciski i pola formularza dzialaja normalnie; zaznaczanie tekstu nie otwiera dymku.
+    document.addEventListener('click', function (event) {
+      const target = event.target;
+      if (!CONTENT || target.closest('#sc-widget, #sc-bubble, #sc-markers, #sc-toast')) return;
+      if (target.closest('a[href], button, input, label, select, textarea')) return;
+      if (window.getSelection && window.getSelection().toString()) return;
+      const element = target.closest('#spec-content *');
+      if (!element) return;
+      event.preventDefault();
+      event.stopPropagation();
+      openFor(element);
+    }, true);
+
+    countBtn.addEventListener('click', copyAll);
+    saveBtn.addEventListener('click', save);
+    deleteBtn.addEventListener('click', remove);
+    closeBtn.addEventListener('click', close);
+    input.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') { close(); return; }
+      if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); save(); }
+    });
+    window.addEventListener('resize', positionMarkers);
+    window.addEventListener('load', positionMarkers);
+
+    render();
+    if (!comments.length) showToast('Kliknij dowolny element dokumentu, aby dodać komentarz');
+  }());
+</script>
+</body>
+</html>

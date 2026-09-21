@@ -1,0 +1,35 @@
+---
+interface Props {
+	text: string;
+	link: string;
+	variant?: "default" | "blue" | "yellow" | "pink" | "black";
+	compact?: boolean;
+	external?: boolean;
+}
+
+const {
+	text,
+	link,
+	variant = "default",
+	compact = false,
+	external = false,
+} = Astro.props;
+
+const classes = [
+	"btn",
+	variant === "default" ? "" : variant,
+	compact ? "compact" : "",
+]
+	.filter(Boolean)
+	.join(" ");
+---
+
+<a
+  class={classes}
+  href={link}
+  target={external ? "_blank" : undefined}
+  rel={external ? "noopener noreferrer" : undefined}
+>
+  {text}
+  {external && <span class="sr-only">(otwiera w nowej karcie)</span>}
+</a>

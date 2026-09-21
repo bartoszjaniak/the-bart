@@ -1,0 +1,18 @@
+---
+export const prerender = true;
+
+import Button from "../components/ui/button.astro";
+import Layout from "../layouts/main.astro";
+---
+
+<Layout title="Nie znaleziono strony">
+  <main id="main" tabindex="-1" class="section">
+    <div class="container notfound">
+      <h1 class="notfound-code">404</h1>
+      <p class="section-desc">
+        Nie znaleziono strony, której szukasz. Może wrócić na stronę główną?
+      </p>
+      <Button text="Wróć na stronę główną →" link="/" variant="yellow" />
+    </div>
+  </main>
+</Layout>

@@ -1,0 +1,14 @@
+---
+import ImageFrame from "../ui/image-frame.astro";
+
+interface Props {
+	src: string;
+	alt: string;
+}
+
+const { src, alt } = Astro.props;
+---
+
+<div class="not-prose">
+  <ImageFrame src={src} alt={alt} ratio="auto" />
+</div>

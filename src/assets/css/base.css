@@ -1,0 +1,62 @@
+/*
+ * Reset uzupełniający + ustawienia bazowe dla jasnego motywu "papierowego".
+ */
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Domyślna obwódka = ink (design-system §3: wszystkie obwódki = ink). */
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-ink);
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    /* Długie nieprzerywalne ciągi (URL, tokeny) nie rozpychają layoutu. */
+    overflow-wrap: anywhere;
+  }
+
+  ::selection {
+    background-color: var(--color-yellow);
+    color: var(--color-ink);
+  }
+
+  /* Sticky header nie zasłania celu anchoru (nagłówki treści i sekcje z #id). */
+  :where([id]) {
+    scroll-margin-top: 90px;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 680px) {
+    /* Rotacje i cienie kart nie mogą wypychać layoutu poza viewport. */
+    body {
+      overflow-x: clip;
+    }
+
+    /* Węższy gutter kontenera na mobile — jedno źródło (--container-gutter). */
+    :root {
+      --container-gutter: 28px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}

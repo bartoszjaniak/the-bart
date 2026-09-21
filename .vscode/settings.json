@@ -1,6 +1,4 @@
 {
-    "workbench.colorCustomizations": {},
-    "cSpell.enableFiletypes": [
-        "!markdown"
-    ]
+	"workbench.colorCustomizations": {},
+	"cSpell.enableFiletypes": ["!markdown"]
 }

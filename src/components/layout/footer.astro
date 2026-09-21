@@ -1,0 +1,45 @@
+---
+import Brand from "./brand.astro";
+
+const socials = [
+	{
+		label: "Instagram",
+		glyph: "◎",
+		url: "https://www.instagram.com/kliszone/",
+	},
+	{ label: "GitHub", glyph: "◉", url: "https://github.com/bartoszjaniak" },
+	{
+		label: "LinkedIn",
+		glyph: "in",
+		url: "https://www.linkedin.com/in/bartosz-janiak-super-dev",
+	},
+];
+---
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <Brand />
+
+    <div class="footer-social">
+      {
+        socials.map((social) => (
+          <a
+            href={social.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${social.label} (otwiera w nowej karcie)`}
+          >
+            <span aria-hidden="true">{social.glyph}</span>
+            {social.label}
+            <span aria-hidden="true">↗</span>
+          </a>
+        ))
+      }
+    </div>
+
+    <div class="footer-copy">
+      © {new Date().getFullYear()} Bartosz Janiak<br />
+      Tworzę lepszy internet. <span class="heart" aria-hidden="true">♥</span>
+    </div>
+  </div>
+</footer>

@@ -1,18 +1,41 @@
 ---
-import PageHeading from "../components/page-heading.astro";
-import PostsLoop from "../components/posts-loop.astro";
+export const prerender = true;
+
+import { getCollection } from "astro:content";
+import ArticleCard from "../components/cards/article-card.astro";
+import SectionHead from "../components/ui/section-head.astro";
 import Layout from "../layouts/main.astro";
+import { publishedPosts, sortByDateDesc } from "../lib/posts";
+
+const posts = sortByDateDesc(publishedPosts(await getCollection("post")));
 ---
 
 <Layout title="Moje piśmiennictwo">
-  <section class="relative z-20 max-w-2xl mx-auto my-12 px-7 lg:px-0">
-    <PageHeading
-      title="Moje piśmiennictwo"
-      description="Odkryj różnorodny świat moich przemyśleń i doświadczeń. Od tajników programowania po fascynujące zjawiska codziennego życia - moje artykuły to podróż przez różnorodne tematy, które mnie inspirują i intrygują. Zapraszam do lektury i wspólnego odkrywania nowych perspektyw."
-    />
-
-    <div class="z-50 flex flex-col items-stretch w-full gap-5 my-8">
-      <PostsLoop count="999999999" />
-    </div>
-  </section>
+  <main id="main" tabindex="-1">
+    <section class="section">
+      <div class="container">
+        <SectionHead
+          title="Moje piśmiennictwo"
+          level={1}
+          description="Odkryj różnorodny świat moich przemyśleń i doświadczeń. Od tajników programowania po fascynujące zjawiska codziennego życia - moje artykuły to podróż przez różnorodne tematy, które mnie inspirują i intrygują. Zapraszam do lektury i wspólnego odkrywania nowych perspektyw."
+        />
+        {
+          posts.length > 0 && (
+            <div class="cards3">
+              {posts.map((post, index) => (
+                <ArticleCard
+                  title={post.data.title}
+                  description={post.data.description}
+                  category={post.data.category}
+                  date={post.data.createdAt}
+                  link={`/post/${post.id}`}
+                  index={index}
+                />
+              ))}
+            </div>
+          )
+        }
+      </div>
+    </section>
+  </main>
 </Layout>

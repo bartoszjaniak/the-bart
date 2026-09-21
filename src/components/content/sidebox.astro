@@ -1,0 +1,13 @@
+---
+interface Props {
+	title: string;
+	class?: string;
+}
+
+const { title, class: className } = Astro.props;
+---
+
+<div class={`sidebox${className ? ` ${className}` : ""}`}>
+  <h3>{title}</h3>
+  <slot />
+</div>

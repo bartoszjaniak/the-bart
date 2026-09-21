@@ -1,0 +1,44 @@
+---
+import { formatDate } from "../../lib/format";
+import { categoryGlyph } from "../../lib/glyphs";
+import { type CardVariant, variantForIndex } from "../../lib/variants";
+import Chip from "../ui/chip.astro";
+import Glyph from "../ui/glyph.astro";
+
+interface Props {
+	title: string;
+	description: string;
+	category: string;
+	date: Date | string;
+	link: string;
+	index?: number;
+	variant?: CardVariant;
+}
+
+const {
+	title,
+	description,
+	category,
+	date,
+	link,
+	index = 0,
+	variant,
+} = Astro.props;
+
+// Jedno źródło wariantu: kolor tła glifu i kolor cienia krawędzi karty.
+const cardVariant = variant ?? variantForIndex(index);
+const formattedDate = formatDate(date);
+---
+
+<a class={`article-card ${cardVariant}`} href={link}>
+  <div class="card-meta">
+    <Chip label={formattedDate} variant="yellow" />
+    <Chip label={category} />
+  </div>
+  <span class={`card-icon ${cardVariant}`} aria-hidden="true">
+    <Glyph value={categoryGlyph(category)} />
+  </span>
+  <h3>{title}</h3>
+  <p>{description}</p>
+  <div class="card-arrow" aria-hidden="true">→</div>
+</a>

@@ -1,14 +1,22 @@
 [
 	{
-        "name": "Blog",
+		"name": "Start",
+		"url": "/"
+	},
+	{
+		"name": "Artykuły",
 		"url": "/posts"
 	},
 	{
-        "name": "Projekty",
+		"name": "Projekty",
 		"url": "/projects"
 	},
 	{
-        "name": "O mnie",
+		"name": "O mnie",
 		"url": "/about"
+	},
+	{
+		"name": "Kontakt",
+		"url": "/about#kontakt"
 	}
 ]

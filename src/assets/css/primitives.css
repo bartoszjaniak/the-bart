@@ -1,0 +1,256 @@
+/*
+ * Primitives (neo-brutalizm) — klasy bazowe wg docs/ui/design-system.md §4–6.
+ * Kolejność kaskady: theme → base → primitives → layout → article (main.css).
+ */
+@layer components {
+  /* ── Button ─────────────────────────────────────────── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 11px;
+    border: var(--border-w) solid var(--color-ink);
+    border-radius: var(--radius-brutal-sm);
+    padding: 12px 18px;
+    font-weight: 900;
+    cursor: pointer;
+    background: var(--color-surface);
+    color: var(--color-ink);
+    box-shadow: var(--shadow-brutal-sm);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .btn:hover,
+  .btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--color-ink);
+  }
+
+  .btn.blue {
+    background: var(--color-blue);
+    color: var(--color-on-accent);
+  }
+
+  .btn.yellow {
+    background: var(--color-yellow);
+    color: var(--color-on-accent);
+  }
+
+  /* Wariant pink: tekst ink — biel na pink jest dopuszczalna tylko dla dużego/bold (design-system §6). */
+  .btn.pink {
+    background: var(--color-pink);
+    color: var(--color-ink);
+  }
+
+  .btn.black {
+    background: var(--color-ink);
+    color: var(--color-on-dark);
+  }
+
+  .btn.compact {
+    padding: 9px 13px;
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+  }
+
+  /* Focus na ciemnym tle → pierścień yellow (design-system §6). */
+  .btn.black:focus-visible {
+    outline-color: var(--color-yellow);
+  }
+
+  /* Link trzeciorzędny (np. GitHub w hero) — bez obwódki i cienia. */
+  .link-tertiary {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 24px;
+    font-weight: 800;
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .link-tertiary:hover {
+    background: var(--color-yellow);
+  }
+
+  /* ── Chip ───────────────────────────────────────────── */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    border: 1.5px solid var(--color-ink);
+    border-radius: var(--radius-brutal-sm);
+    padding: 4px 7px;
+    background: var(--color-muted);
+    color: var(--color-ink);
+    font-size: var(--text-chip);
+    font-weight: var(--text-chip--font-weight);
+    letter-spacing: var(--text-chip--letter-spacing);
+    line-height: var(--text-chip--line-height);
+    text-transform: uppercase;
+  }
+
+  .chip.yellow {
+    background: var(--color-yellow);
+  }
+
+  .chip.blue {
+    background: var(--color-blue-tint);
+  }
+
+  .chip.pink {
+    background: var(--color-pink-tint);
+  }
+
+  a.chip:hover {
+    background: var(--color-ink);
+    color: var(--color-on-dark);
+  }
+
+  /* ── Tag ────────────────────────────────────────────── */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 7px;
+    background: var(--color-muted);
+    color: var(--color-ink);
+    border-radius: var(--radius-brutal-sm);
+    font-size: var(--text-chip);
+    font-weight: 800;
+    line-height: var(--text-chip--line-height);
+  }
+
+  /* ── Marker / Eyebrow / Rule ────────────────────────── */
+  .marker {
+    box-shadow: inset 0 -0.17em 0 var(--color-yellow);
+  }
+
+  .eyebrow {
+    text-transform: uppercase;
+    font-weight: var(--text-eyebrow--font-weight);
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    font-size: var(--text-eyebrow);
+    line-height: var(--text-eyebrow--line-height);
+    margin-bottom: 7px;
+  }
+
+  .rule {
+    height: var(--border-w);
+    background: var(--color-ink);
+  }
+
+  /* ── Karty: meta / ikony / strzałka ─────────────────── */
+  .card-meta {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  .card-icon {
+    display: grid;
+    place-items: center;
+    border: var(--border-w-thin) solid var(--color-ink);
+    background: var(--color-yellow);
+    color: var(--color-ink);
+  }
+
+  .card-icon {
+    position: absolute;
+    right: 14px;
+    top: 14px;
+    width: 45px;
+    height: 45px;
+    font-size: 22px;
+  }
+
+  .card-icon.yellow {
+    background: var(--color-yellow);
+  }
+
+  .card-icon.blue {
+    background: var(--color-blue);
+  }
+
+  .card-icon.pink {
+    background: var(--color-pink);
+  }
+
+  .card-arrow {
+    font-size: 25px;
+    font-weight: 900;
+  }
+
+  /* ── Image-frame ────────────────────────────────────── */
+  .image-frame {
+    display: block;
+    overflow: hidden;
+    border: var(--border-w) solid var(--color-ink);
+    border-radius: var(--radius-brutal);
+    box-shadow: var(--shadow-brutal-sm);
+    background: var(--color-surface);
+  }
+
+  .image-frame img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .image-frame.ratio-16x9 {
+    aspect-ratio: 16 / 9;
+  }
+
+  .image-frame.ratio-3x4 {
+    aspect-ratio: 3 / 4;
+  }
+
+  .image-frame.ratio-auto {
+    aspect-ratio: auto;
+  }
+
+  .image-frame.ratio-auto img {
+    height: auto;
+  }
+
+  /* ── Glif (wymusza monochromatyczną prezentację) ─────── */
+  .glyph {
+    font-variant-emoji: text;
+  }
+
+  /* ── Skip-link ──────────────────────────────────────── */
+  .skip-link {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    z-index: 100;
+    padding: 10px 16px;
+    background: var(--color-yellow);
+    color: var(--color-ink);
+    border: var(--border-w) solid var(--color-ink);
+    border-radius: var(--radius-brutal-sm);
+    box-shadow: var(--shadow-brutal-sm);
+    font-weight: 900;
+    transform: translateY(-200%);
+    transition: transform 0.15s ease;
+  }
+
+  .skip-link:focus-visible {
+    transform: translateY(0);
+  }
+
+  /* ── Responsywność ──────────────────────────────────── */
+  @media (max-width: 680px) {
+    .chip {
+      font-size: 12px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn:hover,
+    .btn:active {
+      transform: none;
+    }
+  }
+}

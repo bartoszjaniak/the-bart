@@ -1,12 +1,19 @@
-
-export { };
+export type {};
 
 declare global {
-    interface Window {
-        dataLayer: any[];
-        gtag: (command: string, targetId?: string | Date, config?: any) => void;
-    }
-    
-    // Global gtag function
-    function gtag(command: string, targetId?: string | Date, config?: any): void;
+	interface Window {
+		dataLayer: unknown[];
+		gtag: (
+			command: string,
+			targetId?: string | Date,
+			config?: Record<string, unknown>,
+		) => void;
+	}
+
+	// Global gtag function
+	function gtag(
+		command: string,
+		targetId?: string | Date,
+		config?: Record<string, unknown>,
+	): void;
 }
