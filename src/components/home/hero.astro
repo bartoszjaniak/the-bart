@@ -3,21 +3,17 @@ import Button from "../ui/button.astro";
 ---
 
 <section class="hero">
-  <div class="container hero-grid">
+  <div class="wrap hero-grid">
     <div>
       <p class="eyebrow">Cześć,</p>
       <h1>jestem <span class="marker">Bartosz.</span></h1>
       <p class="hero-lead">
-        Jestem Frontend Engineerem z 7-letnim doświadczeniem, mieszkającym we
-        Wrocławiu.
-      </p>
-      <p class="hero-copy">
-        Tworzę użyteczne rozwiązania, piszę o technologii i szukam prostych
-        odpowiedzi na złożone problemy. Mniej szumu, więcej wartości.
+        Na co dzień buduję oprogramowanie, a hobbystycznie bazgrzę coś na tym
+        blogu.
       </p>
       <div class="actions">
-        <Button text="Zobacz projekty →" link="/projects" variant="yellow" />
-        <Button text="Najnowsze artykuły" link="#artykuly" />
+        <Button text="Najnowsze artykuły" link="#artykuly" variant="yellow" />
+        <Button text="Zobacz projekty" link="/projects" />
         <a
           class="link-tertiary"
           href="https://github.com/bartoszjaniak"
@@ -32,19 +28,19 @@ import Button from "../ui/button.astro";
 
     <div class="identity">
       <div class="scribble" aria-hidden="true">
-        KOD<br />POMYSŁY<br />LEPSZY<br />INTERNET
+        IDEA<br />BUILD<br />TEST<br />REPEAT
       </div>
       <div class="avatar-card">
         <img
-          src="/assets/images/photo2.png"
+          src="/assets/images/hero.webp"
           alt="Bartosz Janiak"
-          width="1024"
-          height="1246"
+          width="1254"
+          height="1254"
           loading="eager"
           decoding="async"
         />
       </div>
-      <div class="note-card">Technologia ma sens wtedy, gdy służy ludziom.</div>
+      <div class="note-card">Najpierw sens, potem kod.</div>
     </div>
   </div>
 </section>

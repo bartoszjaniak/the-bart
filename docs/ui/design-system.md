@@ -2,11 +2,11 @@
 
 Źródło prawdy wizualnej: `the-bart-neo-brutal/index.html`, `article.html`, `styles.css`.
 Stack: Astro 7 + Tailwind CSS v4. Tylko tryb jasny ("papierowy").
-Zakres: `/`, `/posts`, `/projects`, `/about`, `/post/[slug]`, `/project/[slug]`.
+Zakres: `/`, `/posts`, `/projects`, `/post/[slug]`, `/project/[slug]`.
 
 Zasady wiążące:
 - Brak trybu ciemnego, brak `.browser`/`.browserbar`/`.dot`, brak boxu newslettera.
-- Obrazy: treściowe (hero, o mnie, okładki książek, zrzuty projektów, obrazy w treści) w neo-brutalistycznych ramkach; dekoracje → glify tekstowe.
+- Obrazy: treściowe (hero, okładki książek, zrzuty projektów, obrazy w treści) w neo-brutalistycznych ramkach; dekoracje → glify tekstowe.
 - Zero `!important`, zero inline style, zero `nth-child` do kolorowania (→ jawne warianty).
 
 ---

@@ -4,19 +4,11 @@
 		"url": "/"
 	},
 	{
-		"name": "Artykuły",
+		"name": "Blog",
 		"url": "/posts"
 	},
 	{
 		"name": "Projekty",
 		"url": "/projects"
-	},
-	{
-		"name": "O mnie",
-		"url": "/about"
-	},
-	{
-		"name": "Kontakt",
-		"url": "/about#kontakt"
 	}
 ]

@@ -1,5 +1,5 @@
 /*
- * Layout (neo-brutalizm) — siatki, shell, hero, sekcje, stopka, O mnie, 404.
+ * Layout (neo-brutalizm) — siatki, shell, hero, sekcje, stopka, 404.
  * Kolejność kaskady: theme → base → primitives → layout → article (main.css).
  */
 @layer components {
@@ -97,8 +97,10 @@
     white-space: nowrap;
   }
 
-  /* ── Layout: container / header / brand / nav ───────── */
-  .container {
+  /* ── Layout: wrap / header / brand / nav ────────────── */
+  /* Nazwa `wrap`, nie `container` — Tailwind generuje własną klasę `.container`
+     (layer utilities), która nadpisywała gutter i sklejała treść do krawędzi. */
+  .wrap {
     width: min(calc(100% - var(--container-gutter)), var(--container-max));
     margin: 0 auto;
   }
@@ -236,13 +238,6 @@
     line-height: var(--text-lead--line-height);
     font-weight: 800;
     max-width: 720px;
-    margin: 0 0 8px;
-  }
-
-  .hero-copy {
-    font-size: var(--text-body-lg);
-    line-height: var(--text-body-lg--line-height);
-    max-width: 690px;
     margin: 0 0 22px;
   }
 
@@ -382,83 +377,6 @@
     color: var(--color-pink);
   }
 
-  /* ── Timeline kariery (O mnie) ──────────────────────── */
-  .timeline {
-    display: grid;
-    gap: 16px;
-    margin: 18px 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .experience {
-    display: grid;
-    grid-template-columns: 72px 1fr;
-    gap: 16px;
-    align-items: start;
-    border: var(--border-w) solid var(--color-ink);
-    border-radius: var(--radius-brutal);
-    background: var(--color-surface);
-    box-shadow: var(--shadow-brutal-sm);
-    padding: 16px;
-  }
-
-  .experience-logo {
-    display: grid;
-    place-items: center;
-    width: 72px;
-    height: 72px;
-    border: var(--border-w-thin) solid var(--color-ink);
-    border-radius: var(--radius-brutal-sm);
-    background: var(--color-muted);
-    padding: 8px;
-  }
-
-  .experience-logo img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-  }
-
-  .experience h3 {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: var(--text-card-title);
-    line-height: var(--text-card-title--line-height);
-    margin: 8px 0 2px;
-  }
-
-  .experience-company {
-    font-weight: 800;
-    margin: 0 0 6px;
-  }
-
-  .experience-body p {
-    font-size: var(--text-sm);
-    line-height: var(--text-sm--line-height);
-    color: var(--color-ink-soft);
-    margin: 0;
-  }
-
-  .about-bio {
-    font-size: var(--text-body-lg);
-    line-height: var(--text-body-lg--line-height);
-    color: var(--color-ink-soft);
-    margin: 0 0 22px;
-  }
-
-  .about-contact {
-    margin-top: 32px;
-  }
-
-  .about-contact h2 {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: var(--text-h2);
-    line-height: var(--text-h2--line-height);
-    margin: 0 0 10px;
-  }
-
   /* ── 404 ────────────────────────────────────────────── */
   .notfound {
     display: grid;
@@ -539,11 +457,7 @@
   }
 
   @media (max-width: 680px) {
-    .container {
-      /* Gutter z tokenu — nadpisany w base.css (`:root`). */
-      width: min(calc(100% - var(--container-gutter)), var(--container-max));
-    }
-
+    /* Gutter kontenera na mobile nadpisuje token w base.css (`:root`). */
     .header-inner {
       min-height: 65px;
     }
@@ -573,11 +487,6 @@
       font-size: 20px;
     }
 
-    .hero-copy {
-      font-size: var(--text-body);
-      line-height: var(--text-body--line-height);
-    }
-
     .avatar-card {
       width: 85%;
       height: 260px;
@@ -597,10 +506,6 @@
 
     .cards3,
     .projects {
-      grid-template-columns: 1fr;
-    }
-
-    .experience {
       grid-template-columns: 1fr;
     }
 

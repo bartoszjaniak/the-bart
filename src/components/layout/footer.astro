@@ -1,23 +1,43 @@
 ---
 import Brand from "./brand.astro";
 
+const email = import.meta.env.PUBLIC_EMAIL;
+
 const socials = [
 	{
 		label: "Instagram",
 		glyph: "◎",
 		url: "https://www.instagram.com/kliszone/",
+		external: true,
 	},
-	{ label: "GitHub", glyph: "◉", url: "https://github.com/bartoszjaniak" },
+	{
+		label: "GitHub",
+		glyph: "◉",
+		url: "https://github.com/bartoszjaniak",
+		external: true,
+	},
 	{
 		label: "LinkedIn",
 		glyph: "in",
 		url: "https://www.linkedin.com/in/bartosz-janiak-super-dev",
+		external: true,
 	},
 ];
+
+// Mailto tylko gdy `PUBLIC_EMAIL` jest ustawione; nie otwiera nowej karty,
+// więc nie dziedziczy komunikatu „(otwiera w nowej karcie)".
+if (email) {
+	socials.push({
+		label: "Email",
+		glyph: "✉",
+		url: `mailto:${email}`,
+		external: false,
+	});
+}
 ---
 
 <footer class="footer">
-  <div class="container footer-inner">
+  <div class="wrap footer-inner">
     <Brand />
 
     <div class="footer-social">
@@ -25,13 +45,17 @@ const socials = [
         socials.map((social) => (
           <a
             href={social.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${social.label} (otwiera w nowej karcie)`}
+            target={social.external ? "_blank" : undefined}
+            rel={social.external ? "noopener noreferrer" : undefined}
+            aria-label={
+              social.external
+                ? `${social.label} (otwiera w nowej karcie)`
+                : undefined
+            }
           >
             <span aria-hidden="true">{social.glyph}</span>
             {social.label}
-            <span aria-hidden="true">↗</span>
+            {social.external && <span aria-hidden="true">↗</span>}
           </a>
         ))
       }
