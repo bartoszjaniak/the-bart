@@ -28,6 +28,7 @@ const { posts } = Astro.props;
             date={post.data.createdAt}
             link={`/post/${post.id}`}
             index={index}
+            badge={post.data.badge}
           />
         ))}
       </div>

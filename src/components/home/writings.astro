@@ -6,7 +6,7 @@ import SectionHead from "../ui/section-head.astro";
 
 const posts = sortByDateDesc(publishedPosts(await getCollection("post"))).slice(
 	0,
-	3,
+	6,
 );
 ---
 
@@ -28,6 +28,7 @@ const posts = sortByDateDesc(publishedPosts(await getCollection("post"))).slice(
               date={post.data.createdAt}
               link={`/post/${post.id}`}
               index={index}
+              badge={post.data.badge}
             />
           ))}
         </div>

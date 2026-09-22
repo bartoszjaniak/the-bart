@@ -30,6 +30,7 @@ const posts = sortByDateDesc(publishedPosts(await getCollection("post")));
                   date={post.data.createdAt}
                   link={`/post/${post.id}`}
                   index={index}
+                  badge={post.data.badge}
                 />
               ))}
             </div>

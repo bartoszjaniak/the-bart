@@ -107,6 +107,78 @@
     color: var(--color-on-dark);
   }
 
+  /* ── Badge ──────────────────────────────────────────── */
+  /* Duży wyróżnik artykułu (max jeden); tło pink + tekst ink wg reguły kontrastu (§6). */
+  .badge {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    align-self: center;
+    border: var(--border-w) solid var(--color-ink);
+    border-radius: var(--radius-brutal-sm);
+    padding: 4px 9px;
+    background: var(--color-pink);
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: 20px;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    box-shadow: var(--shadow-brutal-sm);
+  }
+
+  .badge-tip {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 20;
+    width: max-content;
+    /* Nigdy szerszy niż viewport — dymek nie wychodzi poza ramkę okna. */
+    max-width: min(280px, calc(100vw - 2 * var(--container-gutter)));
+    padding: 9px 11px;
+    background: var(--color-surface);
+    color: var(--color-ink);
+    border: var(--border-w-thin) solid var(--color-ink);
+    border-radius: var(--radius-brutal-sm);
+    box-shadow: var(--shadow-brutal-sm);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 400;
+    line-height: var(--text-sm--line-height);
+    letter-spacing: 0;
+    text-transform: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.12s;
+  }
+
+  .badge:hover .badge-tip,
+  .badge:focus-visible .badge-tip {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Dymek trzyma się badge'a i odbija od krawędzi viewportu (Baseline 2026).
+     `--badge-anchor` nadaje `ui/badge.astro` — unikalne per instancja.
+     Bez wsparcia zostaje pozycjonowanie z bloku wyżej (krawędź nadal chroni clamp `max-width`). */
+  @supports (position-anchor: --x) {
+    .badge {
+      anchor-name: var(--badge-anchor);
+    }
+
+    .badge-tip {
+      /* `fixed` → containing blockiem jest viewport, więc odbicie od krawędzi ma sens.
+         Przy `absolute` containing blockiem byłby badge (~80px) i fallback nigdy nie zadziała. */
+      position: fixed;
+      position-anchor: var(--badge-anchor);
+      top: anchor(bottom);
+      left: anchor(left);
+      margin-top: 8px;
+      /* Brak miejsca po prawej → przełóż dymek na prawą krawędź badge'a (rośnie w lewo). */
+      position-try-fallbacks: flip-inline;
+    }
+  }
+
   /* ── Tag ────────────────────────────────────────────── */
   .tag {
     display: inline-flex;
@@ -139,41 +211,13 @@
     background: var(--color-ink);
   }
 
-  /* ── Karty: meta / ikony / strzałka ─────────────────── */
+  /* ── Karty: meta / strzałka ─────────────────────────── */
   .card-meta {
     display: flex;
+    align-items: center;
     gap: 7px;
     flex-wrap: wrap;
     margin-bottom: 12px;
-  }
-
-  .card-icon {
-    display: grid;
-    place-items: center;
-    border: var(--border-w-thin) solid var(--color-ink);
-    background: var(--color-yellow);
-    color: var(--color-ink);
-  }
-
-  .card-icon {
-    position: absolute;
-    right: 14px;
-    top: 14px;
-    width: 45px;
-    height: 45px;
-    font-size: 22px;
-  }
-
-  .card-icon.yellow {
-    background: var(--color-yellow);
-  }
-
-  .card-icon.blue {
-    background: var(--color-blue);
-  }
-
-  .card-icon.pink {
-    background: var(--color-pink);
   }
 
   .card-arrow {

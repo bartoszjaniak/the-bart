@@ -1,0 +1,34 @@
+---
+import { nextId } from "../../lib/uid";
+
+interface Props {
+	label: string;
+	comment?: string;
+	/** W kartach badge siedzi w `<a>` — zagnieżdżony focusable jest błędem, więc tam `interactive={false}`. */
+	interactive?: boolean;
+}
+
+const { label, comment, interactive = true } = Astro.props;
+
+// `anchor-name` musi być unikalny w dokumencie — inaczej wszystkie dymki wiążą się
+// z ostatnim badge'em (dwa „AI SLOB" na /posts). Nazwę nadaje licznik modułu.
+const anchorName = nextId("--badge");
+
+// `id` tylko dla triggera focusowalnego — w kartach (interactive=false) nie ma `aria-describedby`,
+// a dwa identyczne badge'e na jednej stronie (np. lista) dałyby duplikat `id`.
+// ponytail: id z etykiety; kolizja możliwa tylko przy dwóch identycznych badge'ach na jednej stronie.
+const focusable = interactive && Boolean(comment);
+const tipId = focusable
+	? `badge-tip-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`
+	: undefined;
+---
+
+<span
+  class="badge"
+  style={`--badge-anchor: ${anchorName}`}
+  tabindex={focusable ? 0 : undefined}
+  aria-describedby={tipId}
+>
+  {label}
+  {comment && <span class="badge-tip" id={tipId} role="tooltip">{comment}</span>}
+</span>

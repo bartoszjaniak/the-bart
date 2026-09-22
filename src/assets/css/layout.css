@@ -40,7 +40,7 @@
     font-family: var(--font-display);
     font-size: var(--text-card-title);
     line-height: var(--text-card-title--line-height);
-    margin: 0 44px 10px 0;
+    margin: 0 0 10px;
   }
 
   /* Karta projektu: nad nagłówkiem jest obraz — potrzebny odstęp. */
@@ -62,9 +62,14 @@
     color: inherit;
   }
 
+  /* Przesunięcie przez `top/left`, nie `transform` — transform ustanawia containing block
+     dla potomków `position: fixed` i rozbiłby kotwiczenie tooltipa badge'a.
+     `z-index` na czas hover, żeby karta wylądowała nad sąsiadami z siatki. */
   a.article-card:hover,
   a.project-card:hover {
-    transform: translate(-2px, -2px);
+    top: -2px;
+    left: -2px;
+    z-index: 1;
   }
 
   .tags {
@@ -629,7 +634,8 @@
   @media (prefers-reduced-motion: reduce) {
     a.article-card:hover,
     a.project-card:hover {
-      transform: none;
+      top: 0;
+      left: 0;
     }
   }
 }

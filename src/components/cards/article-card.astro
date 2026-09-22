@@ -1,9 +1,8 @@
 ---
 import { formatDate } from "../../lib/format";
-import { categoryGlyph } from "../../lib/glyphs";
 import { type CardVariant, variantForIndex } from "../../lib/variants";
+import Badge from "../ui/badge.astro";
 import Chip from "../ui/chip.astro";
-import Glyph from "../ui/glyph.astro";
 
 interface Props {
 	title: string;
@@ -13,6 +12,7 @@ interface Props {
 	link: string;
 	index?: number;
 	variant?: CardVariant;
+	badge?: { label: string; comment?: string };
 }
 
 const {
@@ -23,6 +23,7 @@ const {
 	link,
 	index = 0,
 	variant,
+	badge,
 } = Astro.props;
 
 // Jedno źródło wariantu: kolor tła glifu i kolor cienia krawędzi karty.
@@ -34,10 +35,8 @@ const formattedDate = formatDate(date);
   <div class="card-meta">
     <Chip label={formattedDate} variant="yellow" />
     <Chip label={category} />
+    {badge && <Badge label={badge.label} comment={badge.comment} interactive={false} />}
   </div>
-  <span class={`card-icon ${cardVariant}`} aria-hidden="true">
-    <Glyph value={categoryGlyph(category)} />
-  </span>
   <h3>{title}</h3>
   <p>{description}</p>
   <div class="card-arrow" aria-hidden="true">→</div>

@@ -6,6 +6,7 @@ import RelatedPosts from "../components/content/related-posts.astro";
 import Sidebox from "../components/content/sidebox.astro";
 import Toc from "../components/content/toc.astro";
 import TopicTags from "../components/content/topic-tags.astro";
+import Badge from "../components/ui/badge.astro";
 import Button from "../components/ui/button.astro";
 import Chip from "../components/ui/chip.astro";
 import ImageFrame from "../components/ui/image-frame.astro";
@@ -30,6 +31,7 @@ const {
 	tags,
 	createdAt,
 	stickyNote,
+	badge,
 } = post.data;
 
 const dateLabel = formatDate(createdAt);
@@ -66,6 +68,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
             <Chip label={dateLabel} variant="yellow" />
             <Chip label={category} />
             <Chip label={`${minutes} min czytania`} />
+            {badge && <Badge label={badge.label} comment={badge.comment} />}
           </div>
           <h1 class="article-title">{title}</h1>
           <p class="article-dek">{description}</p>

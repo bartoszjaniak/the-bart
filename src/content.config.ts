@@ -14,6 +14,13 @@ const postCollection = defineCollection({
 		image: z.string(),
 		imageAlt: z.string(),
 		stickyNote: z.string().optional(),
+		// Maks. jeden badge na artykuł — wymusza to kształt schematu (obiekt, nie tablica).
+		badge: z
+			.object({
+				label: z.string(),
+				comment: z.string().optional(),
+			})
+			.optional(),
 	}),
 });
 
@@ -24,7 +31,6 @@ const projectCollection = defineCollection({
 		description: z.string(),
 		image: z.string(),
 		imageAlt: z.string(),
-		icon: z.string().optional(),
 		projectUrl: z.string().optional(),
 		tags: z.array(z.string()).default([]),
 		order: z.number().default(100),

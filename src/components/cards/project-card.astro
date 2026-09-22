@@ -1,7 +1,4 @@
 ---
-import { projectGlyph } from "../../lib/glyphs";
-import { variantForIndex } from "../../lib/variants";
-import Glyph from "../ui/glyph.astro";
 import ImageFrame from "../ui/image-frame.astro";
 import Tag from "../ui/tag.astro";
 
@@ -10,35 +7,18 @@ interface Props {
 	description: string;
 	image: string;
 	imageAlt: string;
-	icon?: string;
 	tags?: string[];
 	link: string;
-	index?: number;
-	variant?: "yellow" | "blue" | "pink";
 }
 
-const {
-	name,
-	description,
-	image,
-	imageAlt,
-	icon,
-	tags = [],
-	link,
-	index = 0,
-	variant,
-} = Astro.props;
+const { name, description, image, imageAlt, tags = [], link } = Astro.props;
 
-const cardVariant = variant ?? variantForIndex(index);
 const displayedTags = tags.slice(0, 3);
 const remainingTags = tags.length - displayedTags.length;
 ---
 
-<a class={`project-card ${cardVariant}`} href={link}>
+<a class="project-card" href={link}>
   <ImageFrame src={image} alt={imageAlt} ratio="16/9" />
-  <span class={`card-icon ${cardVariant}`} aria-hidden="true">
-    <Glyph value={projectGlyph(icon)} />
-  </span>
   <h3>{name}</h3>
   <p>{description}</p>
   {

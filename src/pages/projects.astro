@@ -23,16 +23,14 @@ const projects = (await getCollection("project")).sort(
         />
         <div class="projects">
           {
-            projects.map((project, index) => (
+            projects.map((project) => (
               <ProjectCard
                 name={project.data.name}
                 description={project.data.description}
                 image={project.data.image}
                 imageAlt={project.data.imageAlt}
-                icon={project.data.icon}
                 tags={project.data.tags}
                 link={`/project/${project.id}`}
-                index={index}
               />
             ))
           }
