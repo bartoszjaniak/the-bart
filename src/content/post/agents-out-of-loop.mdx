@@ -1,0 +1,153 @@
+---
+title: "Wyjdź z pętli. Niech agenci AI pracują, zanim otworzysz terminal"
+description: "Od promptowania do zatwierdzania i obserwowania. O proaktywnych agentach, trwałych środowiskach i nowej roli programisty w agentic engineering."
+image: /assets/images/posts/agents-out-of-loop/hero.jpg
+imageAlt: "Komiksowa ilustracja: programista odpoczywa, a autonomiczna fabryka agentów AI produkuje kod i dokumentację"
+createdAt: 2026-10-27
+category: AI
+tags: ['Agentic engineering', 'Programowanie', 'Automatyzacja', 'Agenci AI']
+stickyNote: "Prompt → Zatwierdź → Obserwuj"
+---
+
+<Callout title="Skąd ten pomysł?" variant="blue">
+Tekst jest moim opracowaniem filmu **[„ELITE Agentic Engineers Are LEAVING THE LOOP... Here’s why”](https://www.youtube.com/watch?v=52JX83rGPLc)** z kanału **IndyDevDan**. Zachowuję główne idee i przykłady autora, ale dodaję własne spojrzenie na ich praktyczne zastosowanie. To nie jest dosłowne tłumaczenie.
+</Callout>
+
+Współczesny programista potrafi mieć otwarte trzy terminale, w każdym agenta AI, a w czwartym oknie dokumentację. Wszystkie modele piszą kod, analizują i wykonują polecenia. A mimo to najbardziej zapracowanym elementem tego układu nadal jest człowiek.
+
+Bo to Ty piszesz kolejny prompt. Ty sprawdzasz, czy agent skończył. Ty przeklejasz wynik do następnego narzędzia. I Ty odpalasz cały proces jeszcze raz.
+
+IndyDevDan stawia w swoim materiale prowokacyjne pytanie: **skoro agent potrafi wykonać coraz większą część pracy programisty, dlaczego wciąż jesteś niezbędny do uruchomienia każdego kroku?**
+
+Nie chodzi o to, żeby wyrzucić człowieka z procesu. Chodzi o to, żeby **przestać być jego zegarem i przyciskiem Start**.
+
+## Trzy poziomy pracy z agentem: prompt, kliknięcie, harmonogram
+
+Autor proponuje prosty model dojrzewania systemów agentowych.
+
+| Poziom | Twoja rola | Co uruchamia pracę? |
+| --- | --- | --- |
+| **In the loop** | Piszesz polecenia i pilnujesz przebiegu | Twój prompt |
+| **Near the loop** | Oceniasz wyniki, udzielasz informacji zwrotnej i zatwierdzasz | Zdarzenie, po którym agent przychodzi z propozycją |
+| **Out of the loop** | Obserwujesz rezultaty i kontrolujesz system | Automatyczny wyzwalacz, np. cron |
+
+W pierwszym wariancie agent jest bardzo zdolnym narzędziem, ale nie ruszy bez Ciebie. W drugim potrafi wykonać pracę przed Twoim wejściem do procesu i kontynuować po Twojej decyzji. W trzecim wykonuje dobrze określony proces samodzielnie, bez obowiązkowego zatwierdzania każdego przebiegu.
+
+<QuoteBlock>Najważniejsze pytanie nie brzmi „co jeszcze może zrobić agent?”, tylko „co może wydarzyć się bez mojego kolejnego promptu?”.</QuoteBlock>
+
+To ważna różnica. **Near the loop** nie oznacza „mniej dokładnego nadzoru”. Oznacza, że człowiek pojawia się w sensownym momencie: wtedy, gdy rzeczywiście ma podjąć decyzję.
+
+## Proaktywny agent nie czeka, aż napiszesz „continue”
+
+Klasyczny agent kodujący reaguje na rozmowę. Proaktywny agent reaguje na **informację**.
+
+Może go uruchomić webhook, nowy ticket, zdarzenie w logach, akcja użytkownika albo harmonogram. Zamiast wpisywać „sprawdź, czy pojawił się błąd”, projektujesz system, który sam zauważa odpowiednie zdarzenie.
+
+Autor opisuje przepływ obsługi incydentu:
+
+1. **Wykryj zdarzenie** w logach lub strumieniu zdarzeń.
+2. **Oceń jego znaczenie**, odróżniając problem od szumu.
+3. **Zbadaj przyczynę** i przygotuj propozycję poprawki.
+4. **Poproś człowieka o decyzję** w punkcie wymagającym zatwierdzenia.
+5. **Zastosuj zmianę, zweryfikuj wynik i zapisz rezultat** zgodnie z ustalonym procesem.
+
+Człowiek nie musi siedzieć przy każdym wywołaniu narzędzia. Dostaje konkretną propozycję w momencie, w którym jego ocena ma największą wartość.
+
+To właśnie **human near the loop**: praca dzieje się *przed* Twoim wejściem i *po* nim.
+
+## Trwały agent potrzebuje własnego miejsca pracy
+
+Żeby to zadziałało, nie wystarczy dodać cron do zwykłego okna czatu.
+
+Agent powinien działać w **trwałym środowisku** (*durable agent*). Musi zachowywać stan, pamiętać o zadaniu, przetrwać restart i móc wrócić do pracy po awarii. W prezentowanym podejściu otrzymuje własny **sandbox** z zasobami obliczeniowymi i narzędziami.
+
+Dzięki temu jego życie nie kończy się wraz z zamknięciem laptopa. Do tego samego agenta można podłączyć się z przeglądarki, terminala czy telefonu.
+
+Ale jest jeszcze jeden niezbędny element: **warstwa API**, przez którą różne zdarzenia uruchamiają pracę. Sam agent bez wyzwalaczy jest jak świetnie wyposażony warsztat, do którego nikt nie przynosi zleceń.
+
+<Callout title="Autonomia wymaga granic" variant="blue">
+Sandbox nie jest magiczną tarczą. W praktycznym systemie trzeba osobno zaprojektować dostęp do sekretów, uprawnienia do zapisu, limity kosztów, możliwość cofnięcia zmian i miejsca wymagające zatwierdzenia. Szczególnie gdy agent ma dotykać produkcji.
+</Callout>
+
+## Trzy przykłady, które pokazują, po co to wszystko
+
+Autor nie poprzestaje na architekturze. Pokazuje trzy zastosowania agentów działających blisko pętli człowieka.
+
+### 1. Agent reagujący na incydenty
+
+Zdarzenie wpada do systemu, zostaje sklasyfikowane, a agent prowadzi analizę i przygotowuje poprawkę. Człowiek dostaje wynik do przejrzenia i decyzję o wdrożeniu.
+
+W demonstracji do oceny zdarzeń używany jest **Jev**. Autor zwraca uwagę na istotny szczegół: nie warto angażować modelu do rozpoznawania czegoś, co można sprawdzić prostą regułą, jak kod HTTP 500. Model przydaje się tam, gdzie trzeba zinterpretować znaczenie zdarzenia w kontekście konkretnego systemu.
+
+### 2. Agent filtrujący informacje
+
+Drugi przykład to stale działający agent zbierający wiadomości. Zamiast dostawać kolejną porcję nagłówków, autor otrzymuje informacje przefiltrowane według przydatności i przedstawione w wybranym formacie.
+
+Może ocenić wynik, a jego reakcja staje się informacją zwrotną dla systemu. Powstaje mały produkt do jednego zadania, nie uniwersalny asystent, który ma wiedzieć wszystko o wszystkim.
+
+### 3. Agent odtwarzający interfejs ze zrzutu ekranu
+
+Trzeci przykład spodoba się każdemu, kto choć raz próbował uzyskać od AI układ „dokładnie taki jak na obrazku”.
+
+Autor pokazuje **DeepJ UI Replicator**. Dostarczasz makietę, a system iteruje według schematu:
+
+`popraw → zbuduj → zrób screenshot → porównaj → popraw ponownie`
+
+Agent może używać kolejnego modelu do oceny podobieństwa. W jednym z pokazanych przebiegów autor uzyskał **86,1% dopasowania**. Inny przykład zatrzymał się po kilku iteracjach, więc nie jest to gwarancja perfekcyjnej kopii. Chodzi o coś ważniejszego: **system sam wykonuje wiele cykli prób i pomiarów**, zamiast prosić człowieka o każdą korektę.
+
+## Core Four: cztery rzeczy, które musisz rozumieć
+
+Według IndyDevDana przejście do bardziej autonomicznych systemów opiera się na czterech filarach, które nazywa **Core Four**.
+
+- **Kontekst.** Jakie informacje agent dostaje, co pamięta i co naprawdę jest mu potrzebne do zadania.
+- **Model.** Jaki poziom jakości, szybkości i kosztu ma sens w danym etapie procesu. Autor nazywa świadome zarządzanie tym kompromisem *tokconomics*.
+- **Prompt.** Nie tylko pojedyncze polecenie użytkownika, ale przede wszystkim instrukcje systemowe definiujące sposób pracy.
+- **Narzędzia.** Cały *harness*, czyli warstwa integracji, uprawnień i operacji, które agent może wykonywać.
+
+Najciekawszy jest ostatni punkt. Autor przekonuje, że przewaga programisty nie polega dziś wyłącznie na umiejętności wybrania najlepszego modelu. **Polega na zbudowaniu wokół modelu systemu dopasowanego do konkretnego problemu.**
+
+Możesz wymienić ogólny dostęp do shella na kilka bezpiecznych operacji. Możesz dodać warstwę oceny ryzyka. Możesz zdecydować, które kroki wykona tani model, a które wymagają dokładniejszego rozumowania. To już nie jest samo promptowanie. To projektowanie oprogramowania.
+
+## Vibe coding a agentic engineering
+
+W filmie pada mocne rozróżnienie: *vibe coding* to sytuacja, w której nie wiesz dokładnie, co robi Twój system, i niespecjalnie to sprawdzasz. *Agentic engineering* to budowanie systemu, którego działanie rozumiesz na tyle dobrze, że **nie musisz obserwować każdego kroku**.
+
+To nie jest pochwała ślepego zaufania. Wręcz przeciwnie.
+
+Jeżeli agent ma pracować bez ciągłego nadzoru, potrzebujesz powtarzalnego procesu, testów, ograniczeń i mierzalnego wyniku. W przeciwnym razie automatyzujesz nie pracę, tylko produkcję niespodzianek.
+
+<QuoteBlock>Nie chodzi o liczbę uruchomionych agentów. Chodzi o liczbę użytecznych rzeczy, które dzieją się bez Twojego pilnowania.</QuoteBlock>
+
+Autor proponuje właśnie taki sposób mierzenia postępu: ile **realnej, potrzebnej pracy** wykonują systemy agentowe, gdy Ty zajmujesz się czymś innym. Nie liczymy bezsensownych pętli zużywających tokeny.
+
+## Jak zacząłbym we własnym projekcie?
+
+Nie próbowałbym od razu budować w pełni autonomicznego zespołu programistycznego. Wybrałbym proces, który ma jasny początek, wynik i moment kontroli.
+
+Na przykład po każdym wdrożeniu aplikacji:
+
+1. Webhook informuje o zakończeniu deploymentu.
+2. Agent zbiera nowe błędy, zmiany w kodzie i wyniki testów.
+3. Przygotowuje krótką diagnozę oraz propozycję poprawki, jeśli jest potrzebna.
+4. Otrzymujesz raport i ewentualny pull request do zatwierdzenia.
+5. System zapisuje decyzję i wynik, żeby kolejne przebiegi były łatwiejsze do oceny.
+
+Na początku **near the loop**. Dopiero gdy proces jest sprawdzony, można pozwolić mu samodzielnie wykonywać bezpieczne, odwracalne czynności.
+
+To moja propozycja zastosowania idei z filmu, nie gotowy system przedstawiony przez autora.
+
+## Przestań być przyciskiem Start
+
+W materiale pojawia się też wizja kolejnego etapu: **augment → automate → deprecate**. Najpierw AI wspiera człowieka, później przejmuje część czynności, a w końcu niektóre ręczne kroki stają się zbędne. Autor określa ten kierunek jako *zero-touch engineering* i łączy go ze swoim kolejnym programem edukacyjnym.
+
+Nie trzeba kupować całej tej wizji, żeby zobaczyć sens w zmianie sposobu pracy.
+
+**In the loop:** wydajesz polecenia. **Near the loop:** zatwierdzasz. **Out of the loop:** obserwujesz system, który wykonuje ustaloną pracę.
+
+Największą wartością programisty staje się wtedy nie tempo wpisywania promptów, ale umiejętność zbudowania niezawodnego procesu, który nie potrzebuje go przy każdej drobnej decyzji.
+
+I może to jest najlepszy test dla następnego agenta, którego uruchomisz: **czy jutro zrobi coś pożytecznego, zanim zdążysz otworzyć terminal?**
+
+---
+
+*Materiał źródłowy: [IndyDevDan, „ELITE Agentic Engineers Are LEAVING THE LOOP... Here’s why”](https://www.youtube.com/watch?v=52JX83rGPLc). Artykuł stanowi autorskie opracowanie przedstawionych koncepcji.*
