@@ -31,6 +31,8 @@ const posts = sortByDateDesc(publishedPosts(await getCollection("post")));
                   link={`/post/${post.id}`}
                   index={index}
                   badge={post.data.badge}
+                  image={post.id === "tiny-software-factories" ? post.data.image : undefined}
+                  imageAlt={post.data.imageAlt}
                 />
               ))}
             </div>
