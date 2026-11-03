@@ -185,6 +185,42 @@
     gap: 12px;
   }
 
+  .theme-switch {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px;
+    gap: 2px;
+    background: var(--color-muted);
+    border: var(--border-w-thin) solid var(--color-ink);
+    border-radius: var(--radius-brutal-sm);
+    flex-shrink: 0;
+  }
+
+  .theme-switch button {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    background: transparent;
+    color: var(--color-ink);
+    border: 0;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 17px;
+    line-height: 1;
+  }
+
+  .theme-switch button[aria-pressed="true"] {
+    background: var(--color-yellow);
+    color: var(--color-on-accent);
+    box-shadow: 2px 2px 0 var(--color-ink);
+  }
+
+  .theme-switch button:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+
   .menu-toggle {
     display: none;
     place-items: center;
@@ -460,6 +496,19 @@
     /* Gutter kontenera na mobile nadpisuje token w base.css (`:root`). */
     .header-inner {
       min-height: 65px;
+    }
+
+    .header-inner {
+      gap: 10px;
+    }
+
+    .header-actions {
+      gap: 9px;
+    }
+
+    .theme-switch button {
+      width: 27px;
+      height: 29px;
     }
 
     .brand-logo {
