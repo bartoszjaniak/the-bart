@@ -13,8 +13,6 @@ interface Props {
 	index?: number;
 	variant?: CardVariant;
 	badge?: { label: string; comment?: string };
-	image?: string;
-	imageAlt?: string;
 }
 
 const {
@@ -26,8 +24,6 @@ const {
 	index = 0,
 	variant,
 	badge,
-	image,
-	imageAlt,
 } = Astro.props;
 
 // Jedno źródło wariantu: kolor tła glifu i kolor cienia krawędzi karty.
@@ -36,11 +32,6 @@ const formattedDate = formatDate(date);
 ---
 
 <a class={`article-card ${cardVariant}`} href={link}>
-  {image && (
-    <div class="article-card-cover" style="margin-bottom: 1rem; overflow: hidden; border-radius: 12px; border: 2px solid currentColor; aspect-ratio: 16 / 9;">
-      <img src={image} alt={imageAlt ?? ""} loading="lazy" decoding="async" style="display: block; width: 100%; height: 100%; object-fit: cover;" />
-    </div>
-  )}
   <div class="card-meta">
     <Chip label={formattedDate} variant="yellow" />
     <Chip label={category} />
