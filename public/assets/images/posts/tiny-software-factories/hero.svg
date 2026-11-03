@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+<title id="title">Tiny Software Factories w komiksowym stylu</title><desc id="desc">Programista odpoczywa z kawą, podczas gdy mały robot obsługuje taśmę produkcyjną z kodem.</desc>
+<defs><pattern id="dots" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="2.2" fill="#0e2834" opacity=".19"/></pattern><pattern id="stripes" width="26" height="26" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="13" height="26" fill="#f9c648"/></pattern></defs>
+<rect width="1200" height="675" fill="#ffd95b"/><path d="M0 0h1200v675H0z" fill="url(#dots)"/><path d="M0 490 1200 140v535H0z" fill="#65c7d5" stroke="#102c3b" stroke-width="9"/><path d="M0 490 1200 140v535H0z" fill="url(#dots)"/>
+<g stroke="#102c3b" stroke-width="9" stroke-linejoin="round">
+<path d="M590 184h520v328H590z" fill="#f5a43d"/><path d="M615 154h140v47H615zM830 134h128v67H830z" fill="#ee7656"/><path d="M663 68h48v90h-48zM866 37h52v104h-52z" fill="#f5e2b2"/><path d="M646 68h82M852 37h80" fill="none"/>
+<path d="M570 260h578v288H570z" fill="#2f7688"/><path d="M598 284h520v238H598z" fill="#f5d48b"/><path d="M610 309h495v183H610z" fill="#f8ab40"/><path d="M612 465h488v76H612z" fill="url(#stripes)"/>
+<path d="M561 517h598v110H561z" fill="#243d4b"/><path d="M574 529h567v79H574z" fill="#5aa5b5"/>
+</g>
+<g fill="#e4c5a3" stroke="#102c3b" stroke-width="7"><circle cx="629" cy="567" r="27"/><circle cx="714" cy="567" r="27"/><circle cx="799" cy="567" r="27"/><circle cx="884" cy="567" r="27"/><circle cx="969" cy="567" r="27"/><circle cx="1054" cy="567" r="27"/></g>
+<g stroke="#102c3b" stroke-width="8" stroke-linejoin="round">
+<path d="M706 382q-10-75 70-89 82 10 72 89v80H706z" fill="#fff3d0"/><rect x="710" y="282" width="134" height="102" rx="42" fill="#fff5df"/><rect x="724" y="302" width="105" height="61" rx="25" fill="#173b4b"/><path d="M750 332q12-20 25 0m18 0q12-20 25 0" fill="none" stroke="#7ae2d0" stroke-width="8" stroke-linecap="round"/><path d="M779 280v-27" stroke="#102c3b"/><circle cx="779" cy="249" r="10" fill="#ff7b60"/>
+<path d="M709 398q-52-32-67 20m207-20q50-25 64 18" fill="none" stroke="#fff3d0" stroke-width="22" stroke-linecap="round"/>
+<rect x="647" y="423" width="95" height="79" rx="8" fill="#3c5262"/><rect x="757" y="429" width="95" height="73" rx="8" fill="#3c5262"/><rect x="866" y="424" width="95" height="79" rx="8" fill="#3c5262"/>
+</g>
+<g fill="none" stroke="#a9e6d7" stroke-width="7" stroke-linecap="round"><path d="m670 461 12 12 22-27m76 13 12 12 22-27m76 13 12 12 22-27"/></g>
+<g stroke="#102c3b" stroke-width="9" stroke-linejoin="round">
+<path d="M0 585V345l120-55 190 80 170 205v100H0z" fill="#f9a17a"/>
+<path d="M33 493q13-142 121-151 106-8 148 128l95 116-54 67-132-126-19 148H33z" fill="#e9584e"/>
+<path d="M96 365q-17-64 44-101 73-31 114 44l-7 71-80 37z" fill="#f1bb86"/>
+<path d="M88 330q-14-100 66-115 77-6 94 65-54-25-82 6l-45-5z" fill="#382b32"/>
+<path d="M196 334q29 11 34 39-27 30-59 13" fill="#50342d"/><path d="M117 336q20-9 39 0" fill="none" stroke-width="6" stroke-linecap="round"/>
+<path d="M220 407q70-31 121-11l51 42-30 47-95-33" fill="#e9584e"/>
+<path d="M32 582h392v93H32z" fill="#ffe5aa"/>
+<path d="M58 572h121v83H58z" fill="#fff0cb"/><path d="M177 590q38-12 38 18t-38 24" fill="none"/>
+</g>
+<g fill="#102c3b" font-family="system-ui,sans-serif" font-weight="900"><text x="52" y="94" font-size="60" letter-spacing="-3">TINY SOFTWARE</text><text x="52" y="155" font-size="60" letter-spacing="-3">FACTORIES!</text></g>
+<path d="M992 69h162v86H992z" fill="#fff7db" stroke="#102c3b" stroke-width="7"/><text x="1007" y="103" font-family="system-ui,sans-serif" font-size="20" font-weight="900" fill="#102c3b">SHIP IT!</text><text x="1011" y="131" font-family="system-ui,sans-serif" font-size="15" font-weight="700" fill="#102c3b">24 / 7</text>
+</svg>
