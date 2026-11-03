@@ -8,8 +8,10 @@
 //   [data-copy-feedback] [aria-live] → feedback tekstowy
 
 const themeMedia = window.matchMedia("(prefers-color-scheme: dark)");
-const themeButtons = document.querySelectorAll("[data-theme-choice]");
+const themeToggle = document.querySelector("[data-theme-toggle]");
 const themeKey = "the-bart-theme";
+const themeNames = { system: "systemowy", light: "jasny", dark: "ciemny" };
+const nextTheme = { system: "light", light: "dark", dark: "system" };
 
 function applyTheme(preference) {
   const effective = preference === "system"
@@ -17,26 +19,31 @@ function applyTheme(preference) {
     : preference;
   document.documentElement.dataset.theme = effective;
   document.documentElement.dataset.themePreference = preference;
-  themeButtons.forEach((button) => {
-    button.setAttribute("aria-pressed", String(button.getAttribute("data-theme-choice") === preference));
-  });
+
+  if (themeToggle) {
+    const next = nextTheme[preference];
+    themeToggle.setAttribute(
+      "aria-label",
+      `Motyw ${themeNames[preference]}. Kliknij, aby przełączyć na ${themeNames[next]}.`,
+    );
+    themeToggle.setAttribute("title", `Motyw ${themeNames[preference]}`);
+  }
 }
 
 let themePreference = document.documentElement.dataset.themePreference || "system";
 applyTheme(themePreference);
 
-themeButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    themePreference = button.getAttribute("data-theme-choice");
-    applyTheme(themePreference);
-    try {
-      if (themePreference === "system") localStorage.removeItem(themeKey);
-      else localStorage.setItem(themeKey, themePreference);
-    } catch {
-      // Storage może być niedostępny; przełącznik nadal działa.
-    }
-  });
+themeToggle?.addEventListener("click", () => {
+  themePreference = nextTheme[themePreference];
+  applyTheme(themePreference);
+  try {
+    if (themePreference === "system") localStorage.removeItem(themeKey);
+    else localStorage.setItem(themeKey, themePreference);
+  } catch {
+    // Bez dostępu do storage przełącznik nadal działa.
+  }
 });
+
 themeMedia.addEventListener("change", () => {
   if (themePreference === "system") applyTheme("system");
 });
