@@ -79,8 +79,8 @@ Do trwałego agenta można podłączać się przez **terminal (TUI), interfejs p
 
 Dodatkowo demonstracyjne środowisko **Durable Pi** udostępnia wspólny dokument stanu JSON obsługiwany przez narzędzia:
 
-- \`read_state\` odczytuje zapisane informacje;
-- \`update_state\` pozwala je aktualizować.
+- `read_state` odczytuje zapisane informacje;
+- `update_state` pozwala je aktualizować.
 
 Taki stan może przechowywać na przykład bieżący incydent, identyfikator zgłoszenia, status analizy lub informację, na czyją decyzję agent czeka.
 
@@ -92,7 +92,7 @@ Trwałość ma swoją niewygodną stronę. Jeśli system potrafi ponawiać prac�
 
 Wyobraź sobie, że agent utworzył zgłoszenie, ale proces padł, zanim zapisał potwierdzenie. Po restarcie może spróbować zrobić to ponownie. I nagle jeden incydent ma dwa tickety. To jeszcze pół biedy. Gorzej, gdy zamiast tworzenia zgłoszenia chodzi o wdrożenie, przelew albo usunięcie danych.
 
-W opisywanej architekturze pojawia się **\`requestId\`**, czyli identyfikator żądania, który pozwala rozpoznać ponowne przesłanie tej samej operacji wejściowej. To ważna część idempotentności, ale **nie zastępuje zabezpieczeń we wszystkich zewnętrznych narzędziach**.
+W opisywanej architekturze pojawia się **`requestId`**, czyli identyfikator żądania, który pozwala rozpoznać ponowne przesłanie tej samej operacji wejściowej. To ważna część idempotentności, ale **nie zastępuje zabezpieczeń we wszystkich zewnętrznych narzędziach**.
 
 Dla systemu reagującego na incydenty rozdzieliłbym więc trzy rzeczy:
 
