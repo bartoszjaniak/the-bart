@@ -7,6 +7,40 @@
 //   [data-copy-prompt] → kopiuje `.prompt-body` najbliższego `.prompt`
 //   [data-copy-feedback] [aria-live] → feedback tekstowy
 
+const themeMedia = window.matchMedia("(prefers-color-scheme: dark)");
+const themeButtons = document.querySelectorAll("[data-theme-choice]");
+const themeKey = "the-bart-theme";
+
+function applyTheme(preference) {
+  const effective = preference === "system"
+    ? (themeMedia.matches ? "dark" : "light")
+    : preference;
+  document.documentElement.dataset.theme = effective;
+  document.documentElement.dataset.themePreference = preference;
+  themeButtons.forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.getAttribute("data-theme-choice") === preference));
+  });
+}
+
+let themePreference = document.documentElement.dataset.themePreference || "system";
+applyTheme(themePreference);
+
+themeButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    themePreference = button.getAttribute("data-theme-choice");
+    applyTheme(themePreference);
+    try {
+      if (themePreference === "system") localStorage.removeItem(themeKey);
+      else localStorage.setItem(themeKey, themePreference);
+    } catch {
+      // Storage może być niedostępny; przełącznik nadal działa.
+    }
+  });
+});
+themeMedia.addEventListener("change", () => {
+  if (themePreference === "system") applyTheme("system");
+});
+
 const header = document.querySelector("[data-header]");
 const toggle = document.querySelector("[data-menu-toggle]");
 
