@@ -54,11 +54,25 @@ const pathname = normalize(Astro.url.pathname);
     </nav>
 
     <div class="header-actions">
-      <div class="theme-switch" role="group" aria-label="Motyw kolorystyczny" data-theme-switch>
-        <button type="button" data-theme-choice="light" aria-label="Jasny motyw" title="Jasny motyw" aria-pressed="false">☀</button>
-        <button type="button" data-theme-choice="system" aria-label="Motyw systemowy" title="Motyw systemowy" aria-pressed="true">◧</button>
-        <button type="button" data-theme-choice="dark" aria-label="Ciemny motyw" title="Ciemny motyw" aria-pressed="false">☾</button>
-      </div>
+      <button
+        type="button"
+        class="theme-toggle"
+        data-theme-toggle
+        aria-label="Motyw systemowy. Kliknij, aby przełączyć na jasny."
+        title="Motyw systemowy"
+      >
+        <svg data-theme-icon="system" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="13" rx="1"></rect>
+          <path d="M8 21h8M12 17v4"></path>
+        </svg>
+        <svg data-theme-icon="light" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"></path>
+        </svg>
+        <svg data-theme-icon="dark" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20.5 14.1A8.5 8.5 0 0 1 9.9 3.5 8.5 8.5 0 1 0 20.5 14.1Z"></path>
+        </svg>
+      </button>
       <a
         class="btn blue compact"
         href="https://www.linkedin.com/in/bartosz-janiak-super-dev"
