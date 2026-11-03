@@ -1,6 +1,6 @@
 /*
  * Design tokens (neo-brutalizm) — źródło: docs/ui/design-system.md
- * Tylko jasny motyw ("papierowy"). Zero trybu ciemnego.
+ * Bazowe tokeny jasnego motywu ("papierowego"). Ciemny wariant w base.css.
  */
 @theme {
   /* ── Kolory ─────────────────────────────────────────── */

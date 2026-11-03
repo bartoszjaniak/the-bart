@@ -135,6 +135,11 @@
     width: auto;
   }
 
+  /* Biała odmiana oryginalnego logo: zachowuje jego postrzępioną fakturę i alfę. */
+  :root[data-theme="dark"] .brand-mark {
+    filter: brightness(0) invert(1);
+  }
+
   .brand-logo {
     position: relative;
     z-index: 1;
@@ -174,6 +179,7 @@
   /* Stan aktywny dostarczany serwerowo przez `aria-current` (bez klasy .active). */
   .nav a[aria-current] {
     background: var(--color-yellow);
+    color: var(--color-on-accent);
     border: var(--border-w-thin) solid var(--color-ink);
     padding: 8px 12px;
     box-shadow: 3px 3px 0 var(--color-ink);
@@ -185,40 +191,40 @@
     gap: 12px;
   }
 
-  .theme-switch {
-    display: inline-flex;
-    align-items: center;
-    padding: 3px;
-    gap: 2px;
-    background: var(--color-muted);
-    border: var(--border-w-thin) solid var(--color-ink);
-    border-radius: var(--radius-brutal-sm);
-    flex-shrink: 0;
-  }
-
-  .theme-switch button {
+  /* Jeden przycisk, trzy wyraźne stany: jasny, systemowy, ciemny. */
+  .theme-toggle {
     display: grid;
     place-items: center;
-    width: 30px;
-    height: 30px;
-    background: transparent;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    background: var(--color-surface);
     color: var(--color-ink);
-    border: 0;
-    border-radius: 2px;
+    border: var(--border-w-thin) solid var(--color-ink);
+    border-radius: var(--radius-brutal-sm);
+    box-shadow: var(--shadow-brutal-sm);
     cursor: pointer;
-    font-size: 17px;
-    line-height: 1;
   }
 
-  .theme-switch button[aria-pressed="true"] {
-    background: var(--color-yellow);
-    color: var(--color-on-accent);
-    box-shadow: 2px 2px 0 var(--color-ink);
+  .theme-toggle:hover {
+    background: var(--color-muted);
   }
 
-  .theme-switch button:focus-visible {
-    outline: 2px solid var(--color-ink);
-    outline-offset: 2px;
+  .theme-toggle svg {
+    display: none;
+    width: 21px;
+    height: 21px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  :root[data-theme-preference="system"] .theme-toggle [data-theme-icon="system"],
+  :root[data-theme-preference="light"] .theme-toggle [data-theme-icon="light"],
+  :root[data-theme-preference="dark"] .theme-toggle [data-theme-icon="dark"] {
+    display: block;
   }
 
   .menu-toggle {
@@ -314,7 +320,7 @@
     bottom: 3px;
     width: 44%;
     background: var(--color-pink);
-    color: var(--color-on-dark);
+    color: var(--color-on-accent);
     border: var(--border-w) solid var(--color-ink);
     box-shadow: var(--shadow-brutal-sm);
     padding: 20px;
@@ -496,19 +502,11 @@
     /* Gutter kontenera na mobile nadpisuje token w base.css (`:root`). */
     .header-inner {
       min-height: 65px;
-    }
-
-    .header-inner {
       gap: 10px;
     }
 
     .header-actions {
       gap: 9px;
-    }
-
-    .theme-switch button {
-      width: 27px;
-      height: 29px;
     }
 
     .brand-logo {
