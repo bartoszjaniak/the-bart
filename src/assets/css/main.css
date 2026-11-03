@@ -6,3 +6,31 @@
 @import "./article.css";
 
 @plugin "@tailwindcss/typography";
+
+/* Nadrzędna paleta tekstów artykułów, w tej samej warstwie co .prose pluginu. */
+@layer utilities {
+  /* Typography generuje .prose w @layer utilities; nadpisanie jej z @layer
+     components w article.css przegrywa niezależnie od specyficzności selektora.
+     Trzymamy tokeny w tej samej warstwie, PO załadowaniu pluginu. */
+  :root[data-theme="dark"] .prose {
+    color: var(--color-ink-soft);
+    --tw-prose-body: var(--color-ink-soft);
+    --tw-prose-headings: var(--color-ink);
+    --tw-prose-lead: var(--color-ink-soft);
+    --tw-prose-links: var(--color-ink);
+    --tw-prose-bold: var(--color-ink);
+    --tw-prose-counters: var(--color-ink-muted);
+    --tw-prose-bullets: var(--color-ink-muted);
+    --tw-prose-hr: var(--color-ink-muted);
+    --tw-prose-quotes: var(--color-ink);
+    --tw-prose-quote-borders: var(--color-ink-muted);
+    --tw-prose-captions: var(--color-ink-muted);
+    --tw-prose-kbd: var(--color-ink);
+    --tw-prose-kbd-shadows: var(--color-ink);
+    --tw-prose-code: var(--color-ink);
+    --tw-prose-pre-code: #fffefa;
+    --tw-prose-pre-bg: var(--color-dark);
+    --tw-prose-th-borders: var(--color-ink-muted);
+    --tw-prose-td-borders: var(--color-muted);
+  }
+}
