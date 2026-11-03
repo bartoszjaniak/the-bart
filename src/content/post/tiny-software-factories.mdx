@@ -1,0 +1,152 @@
+---
+title: "Tiny Software Factories: mała fabryka, która pracuje, kiedy Ty nie musisz"
+description: "Zamiast bez końca promptować agenta, daj mu konkretne zadanie, narzędzia i harmonogram. O idei Tiny Software Factories, jej zaletach i świadomych kompromisach."
+image: /assets/images/posts/tiny-software-factories/hero.svg
+imageAlt: "Schemat Tiny Software Factory: człowiek nadzoruje agenta pracującego w trwałym środowisku według harmonogramu"
+createdAt: 2026-11-03
+category: AI
+tags: ['Agentic engineering', 'Programowanie', 'Automatyzacja', 'Zabawy z AI']
+stickyNote: "Fabryka do jednego zadania"
+---
+
+<Callout title="Skąd ten pomysł?" variant="blue">
+Ten tekst powstał na podstawie pierwszej lekcji **[Tiny Software Factories: Agentic Engineering DONE WRONG](https://youtu.be/1v7ldJiyH-Y)** autorstwa **IndyDevDana**. To moje swobodne opracowanie udostępnionej transkrypcji, nie dosłowne tłumaczenie ani próba przypisania sobie pomysłu. Warto obejrzeć [oryginalny film](https://youtu.be/1v7ldJiyH-Y).
+</Callout>
+
+Jest taki moment w pracy z agentami AI, kiedy orientujesz się, że chociaż model pisze kod, to Ty wciąż jesteś operatorem całego przedsięwzięcia. Zlecasz. Czekasz. Sprawdzasz. Poprawiasz. Ponawiasz. Agent niby jest szybki, ale cały proces nadal porusza się w tempie człowieka, który musi jeszcze zrobić kawę i przeczytać wynik.
+
+W pierwszej lekcji serii **Tiny Software Factories** IndyDevDan proponuje zmianę podejścia: zamiast od razu budować wielką, uniwersalną platformę autonomicznych agentów, stwórz **małą fabrykę oprogramowania do jednego konkretnego problemu**.
+
+Nie kolejny potężny framework do wszystkiego. Mały warsztat, który ma dowieźć jeden wynik.
+
+## Nie buduj od razu NASA. Zbuduj mały warsztat.
+
+Według autora *tiny software factory* to system rozwiązujący jeden problem za pomocą proaktywnego agenta, działającego w **trwałym środowisku**, również wtedy, kiedy nie siedzisz przed ekranem. Ty pozostajesz blisko procesu, ale nie musisz ręcznie wykonywać każdego kroku.
+
+Są tu cztery istotne rzeczy:
+
+- **Jeden problem.** Nie „agent do całego życia”, tylko konkretne zadanie z konkretnym wynikiem.
+- **Proaktywny agent.** Potrafi ruszyć bez kolejnego pytania od Ciebie.
+- **Trwałe środowisko.** Ma gdzie pracować i zachowuje stan niezależnie od otwartej karty przeglądarki.
+- **Człowiek blisko pętli.** Sprawdzasz wyniki, nadajesz kierunek i zatwierdzasz to, co ważne.
+
+<QuoteBlock>Jedna fabryka. Jeden problem. Jak najmniej ceremonii.</QuoteBlock>
+
+Jest jednak haczyk, o którym autor mówi bardzo wyraźnie. **To nie jest wzorcowa architektura na dziesięć lat.** Tiny Software Factories celowo korzystają z rozwiązań, które przy większej skali okazałyby się antywzorcami. Liczy się szybkie przejście od zera do działającego systemu, nawet kosztem elegancji i skalowalności.
+
+To taki techniczny prowizorek z pełną świadomością, że jest prowizorkiem. Przy czym prowizorek, który załatwia robotę, bywa bardziej użyteczny niż doskonały diagram architektoniczny, nad którym spędziłeś trzy weekendy.
+
+## In-loop i near-loop. Największym ograniczeniem bywamy my.
+
+W klasycznym modelu pracy z AI jesteś *in the loop*, czyli bezpośrednio w pętli. Prompt, odpowiedź, poprawka, kolejny prompt. Kiedy odchodzisz od komputera, wszystko staje.
+
+W modelu *near the loop* **agent pracuje, a Ty reagujesz na gotową pracę**. Wracasz po jakimś czasie, przeglądasz wyniki, korygujesz kierunek i podejmujesz decyzje. Nie musisz inicjować każdego drobnego działania.
+
+Z czasem poprawki mogą napędzać pętlę informacji zwrotnej. Fabryka lepiej dopasowuje się do oczekiwań, o ile feedback zostaje zapisany i rzeczywiście wykorzystany. Samo powiedzenie „następnym razem lepiej” nie jest jeszcze mechanizmem uczenia.
+
+<Callout title="Near-loop to jeszcze nie autopilot">
+To wciąż praca z nadzorem człowieka. Autor odróżnia ją od trudniejszego podejścia *out-of-loop*, w którym system operuje dużo bardziej samodzielnie. Tiny Software Factories to szybki krok w tę stronę, nie docelowy model pełnej autonomii.
+</Callout>
+
+Właśnie tutaj kryje się największa korzyść: zamiast poprawiać tempo promptowania, usuwasz konieczność ciągłego promptowania.
+
+## Empty Factory, czyli warsztat, który jeszcze nie wie, co będzie produkował
+
+Autor zaczyna od **pustej fabryki** (*empty factory*). To gotowy szablon aplikacji z agentem, narzędziami i mechanizmami automatyzacji. Nie ma jeszcze specjalizacji. Dopiero Ty decydujesz, co będzie jej zadaniem.
+
+W demonstracji interfejs jest niemal absurdalnie prosty:
+
+- **Po lewej:** lista obiektów, na których pracujesz. W przykładzie są to foldery i strony.
+- **Pośrodku:** główny obszar roboczy z wybranym dokumentem lub artefaktem.
+- **Po prawej:** agent, który potrafi działać na tych samych obiektach co Ty.
+
+Autor zleca agentowi przygotowanie podstaw języków Python, TypeScript i Rust. Agent tworzy foldery oraz strony, a następnie wypełnia je treścią. Dokumenty pojawiają się w centralnym widoku, gotowe do przejrzenia i poprawienia.
+
+Nie wygląda to jak rewolucja? I dobrze. **Strony są jedynie demonstracyjnym materiałem.** W Twojej fabryce mogłyby nimi być zgłoszenia błędów, raporty testów, pull requesty albo propozycje funkcji. Zmieniasz materiał i instrukcje, nie budujesz całego środowiska na nowo.
+
+Do tego fabryka ma się dać szybko postawić obok istniejącego repozytorium, najlepiej w odizolowanym sandboxie. Uruchamiasz, konfigurujesz, specjalizujesz. Dopiero potem dokładasz kolejne możliwości.
+
+## Agent access parity: co możesz kliknąć Ty, może też agent
+
+Jedna z najciekawszych zasad tej architektury ma nazwę **agent access parity**. Jeśli użytkownik może wykonać operację z poziomu interfejsu, agent powinien mieć odpowiadające jej narzędzie.
+
+Nie chodzi więc tylko o zapis plików. Agent może również wybierać strony, zmieniać ustawienia, przestawiać elementy interfejsu czy dostosowywać własne środowisko pracy.
+
+W filmie autor pokazuje to na dość konkretnym przykładzie: wydaje polecenie wyłączenia narzędzi programistycznych i zwiększenia poziomu rozumowania modelu. Agent sam zmienia konfigurację. Bez ręcznego przeklikiwania panelu ustawień.
+
+To prowadzi do kolejnego pomysłu: **Core 4**, czyli czterech obszarów kontroli nad agentem.
+
+### 1. Kontekst
+
+Co agent ma w bieżącej historii, ile informacji może utrzymać i kiedy długą rozmowę trzeba skompresować. W demonstracji pokazywane są nawet progi automatycznej kompaktacji. Trwały agent musi umieć radzić sobie z narastającym kontekstem.
+
+### 2. Model
+
+Dobierasz model i poziom „myślenia” do zadania. Nie wszystko wymaga najdroższej opcji. Czasem bardziej liczy się szybkość, czasem koszt, a czasem jakość rozumowania.
+
+### 3. Prompt systemowy
+
+Instrukcje określające rolę agenta, jego ograniczenia i sposób działania. To nie ozdobny opis stanowiska, tylko część jego rzeczywistej konfiguracji.
+
+### 4. Narzędzia
+
+Uprawnienia do odczytu, edycji i wykonywania operacji. W przykładzie narzędzia pochodzą z kilku warstw, które autor nazywa *harnessami*: kodowanie, obsługa stron, generowanie obrazów i sterowanie fabryką.
+
+Takie warstwowe podejście pozwala dołączać nowe możliwości bez przebudowy wszystkiego od zera. Autor pokazuje też możliwość zmiany motywów, skrótów klawiaturowych, pasków nawigacji czy animacji.
+
+Nazywa to **liquid software**: oprogramowaniem, które można szybko dostosowywać, zamiast traktować gotowy interfejs jak nietykalny pomnik.
+
+<Callout title="Nie dawaj agentowi kluczy do całego budynku" variant="blue">
+Możliwość samodzielnej zmiany narzędzi jest potężna, ale bywa niebezpieczna. W realnym projekcie warto oddzielić dostęp do analizy i edycji od uprawnień do sekretów, produkcyjnych wdrożeń czy modyfikowania własnych ograniczeń.
+</Callout>
+
+## Cron prompts. Agent zaczyna pracę, zanim Ty wstaniesz
+
+Do tej pory mamy sprytnego pomocnika, ale wciąż trzeba mu powiedzieć, kiedy ma ruszyć. Tutaj pojawiają się **cron prompts**, czyli polecenia uruchamiane zgodnie z harmonogramem.
+
+Definicja jest prosta: **nazwa, harmonogram, treść polecenia**.
+
+Na potrzeby demonstracji autor ustawia zadanie, które co minutę dodaje nową koncepcję programistyczną do folderów Python, TypeScript i Rust. Fabryka generuje materiały dotyczące między innymi context managerów, utility types oraz lifetime'ów.
+
+Co ważne, agent kontynuuje pracę nawet po zamknięciu przeglądarki. To nie magia czatu. To skutek połączenia trwałego środowiska z mechanizmem wyzwalania zadań.
+
+Przykładowa instrukcja mogłaby wyglądać tak:
+
+```text
+Nazwa: Uzupełnij materiały
+Harmonogram: co rano
+
+Polecenie:
+Dodaj po jednym nowym zagadnieniu
+do sekcji Python, TypeScript i Rust.
+Dla każdego wyjaśnij zastosowanie
+oraz typowe błędy.
+```
+
+Oczywiście wykonywanie zadania co minutę w prawdziwym projekcie szybko mogłoby zmienić repozytorium w wysypisko automatycznie wygenerowanych plików. Harmonogram musi mieć sens, a wynik powinien podlegać kontroli. Każde uruchomienie zużywa przecież zasoby.
+
+## Jak wykorzystać ten pomysł we własnym projekcie?
+
+Nie zaczynałbym od armii subagentów, panelu administracyjnego i systemu kolejkowego, który potrzebuje własnego systemu kolejkowego.
+
+Wybrałbym jedno nudne, powtarzalne zadanie. Na przykład **poranny przegląd błędów po wdrożeniach**.
+
+1. **Zdefiniuj problem.** Codziennie trzeba przejrzeć nowe błędy i odsiać te, które mają znaczenie.
+2. **Określ wejście i wynik.** Agent dostaje logi i historię zmian. Oddaje krótki raport z priorytetami i odnośnikami do źródeł.
+3. **Ogranicz narzędzia.** Na początek wystarczą odczyt, analiza i zapis raportu. Żadnego samodzielnego poprawiania produkcji.
+4. **Dodaj wyzwalacz.** Raz dziennie albo po zakończeniu wdrożenia.
+5. **Wracaj z feedbackiem.** Oznaczaj błędne diagnozy, poprawiaj instrukcje i dopiero wtedy zwiększaj zakres autonomii.
+
+To praktyczny przykład zastosowania idei, nie gotowy projekt pokazany w filmie.
+
+W tym podejściu nie chodzi o zastąpienie programisty. Chodzi o pozbycie się czynności, przy których człowiek jest głównie biologicznym przyciskiem „Dalej”.
+
+## Najpierw niech to działa. Potem niech będzie piękne.
+
+Najważniejsze w tej lekcji jest chyba przyzwolenie na niedoskonałość. Nie musisz od razu budować idealnej platformy dla autonomicznych agentów. Zrób coś małego, co rozwiązuje realny problem bez ciągłego prowadzenia za rękę. Zobacz, czy wynik ma wartość. Dopiero potem rozbudowuj.
+
+**Fabryka ma wykonywać pracę. Ty masz podejmować decyzje.** I to jest dużo ciekawsze niż kolejny terminal, w którym przez dwie godziny wpisujesz „continue”.
+
+---
+
+*Materiał źródłowy: [IndyDevDan, „Tiny Software Factories”, lekcja 1](https://youtu.be/1v7ldJiyH-Y). Udostępniona transkrypcja kończy się w trakcie przejścia do następnej funkcji, więc artykuł obejmuje tylko jej dostarczony fragment.*
