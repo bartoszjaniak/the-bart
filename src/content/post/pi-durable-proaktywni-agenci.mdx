@@ -1,0 +1,135 @@
+---
+title: "Pi Durable: agent, który przeżywa restart i sam bada błędy"
+description: "Czym Pi Durable różni się od /resume? Jak trwały agent zachowuje stan, reaguje na incydenty i przygotowuje poprawki, zanim otworzysz terminal."
+image: /assets/images/posts/pi-durable-proaktywni-agenci/hero.jpg
+imageAlt: "Komiksowa scena nocnego warsztatu: robot analizuje alert i poprawkę na ekranach, programista trzyma kubek, obok znajduje się magazyn trwałego stanu"
+createdAt: 2026-11-01
+category: AI
+tags: ['Agentic engineering', 'Programowanie', 'Automatyzacja', 'Agenci AI']
+stickyNote: "Awaria nie kończy pracy"
+---
+
+<Callout title="Skąd ten pomysł?" variant="blue">
+Artykuł jest moim autorskim opracowaniem filmu **[„Pi Durable PROACTIVE Agents: Jev Triggers My ON-CALL Pi Agent”](https://youtu.be/DNDYYHsypZg)** z kanału **IndyDevDan**. Korzystam z przedstawionej demonstracji i opisanych mechanizmów, a część wniosków oraz propozycji wdrożenia dodaję od siebie. To nie jest dosłowne tłumaczenie.
+</Callout>
+
+Wyobraź sobie, że masz agenta, który właśnie analizuje awarię produkcji. Przejrzał logi, sprawdził historię zgłoszeń, znalazł podejrzaną zmianę. I wtedy proces się wywraca. Terminal znika, serwer się restartuje albo przeglądarka postanawia przypomnieć, kto tu naprawdę rządzi.
+
+Zwykły agent może mieć zapisaną rozmowę. Ale **historia rozmowy to nie to samo co bezpieczne wznowienie rozpoczętej pracy**. Ktoś musi ustalić, co już zostało zrobione, które narzędzie zdążyło wykonać operację i od czego kontynuować.
+
+W filmie IndyDevDan pokazuje **Pi Durable**, czyli warstwę do budowania *trwałych agentów* (*durable agents*). Takich, którym nie trzeba od nowa tłumaczyć zadania po każdym restarcie. Co ważniejsze, łączy ją z wykrywaniem incydentów, dzięki czemu agent nie czeka na kolejny prompt. Sam dostaje pracę.
+
+To kolejny krok po pomyśle [wyjścia z pętli ciągłego promptowania](/post/agents-out-of-loop). Tyle że tym razem zamiast filozofii pracy z AI zaglądamy pod maskę.
+
+## Dlaczego /resume nie wystarcza?
+
+Komenda wznawiająca sesję potrafi przywrócić konwersację. To przydatne, ale w przypadku długotrwałych procesów chcemy czegoś więcej: **trwałości samego wykonania**.
+
+Pi Durable zapisuje nie tylko wiadomości, lecz także stan przebiegu pracy: wywołania modelu, wywołania narzędzi i zadania. Poszczególne etapy są utrwalane w magazynie danych. Po ponownym uruchomieniu system może wrócić do niedokończonego zadania zamiast udawać, że rozpoczyna nową rozmowę.
+
+Przykład jest prosty. Agent ma:
+
+1. Pobrać logi.
+2. Odszukać ostatnie zmiany w repozytorium.
+3. Zestawić hipotezy o przyczynie błędu.
+4. Przygotować propozycję poprawki.
+5. Oddać wynik do przeglądu.
+
+Jeśli proces padnie między trzecim a czwartym krokiem, potrzebujemy informacji **na jakim etapie był agent i co zdążył wykonać**. Nie tylko ostatniego zdania z czatu.
+
+Dokumentacja Pi Durable opisuje też ważne zachowanie: żądanie modelu przerwane awarią może zostać ponowione przy wznowieniu. To zwiększa odporność, ale nie oznacza jeszcze, że wszystkie efekty uboczne będą wykonane dokładnie jeden raz.
+
+<QuoteBlock>Trwały agent to nie czat z dobrą pamięcią. To proces, który potrafi wrócić do przerwanej pracy.</QuoteBlock>
+
+W demonstracji stan agentów jest przechowywany lokalnie w **SQLite**. To dobry wybór dla pojedynczego środowiska, choć trwałość po restarcie procesu nie jest tym samym co odporność na utratę dysku lub całej maszyny.
+
+Warto też wiedzieć, że **Pi Durable jest projektem eksperymentalnym**. API może się zmieniać. To interesujący fundament do testowania architektury, a nie obietnica, że od jutra każda aplikacja dostaje niezniszczalnego pracownika.
+
+## Agent on-call: awaria wykryta, zanim ktokolwiek otworzy laptop
+
+Najlepszy fragment filmu nie polega na uruchomieniu kolejnej sesji w terminalu. Autor pokazuje działający przepływ obsługi incydentu.
+
+W aplikacji pojawiają się zdarzenia z produkcji. **Jev**, używany w demonstracji do klasyfikacji zdarzeń, rozpoznaje incydent. System przekazuje agentowi Pi Durable dane o problemie: treść wyjątku, jego lokalizację i potrzebny kontekst.
+
+Dalej agent wykonuje pracę przypominającą standardową procedurę inżyniera dyżurnego:
+
+| Etap | Co dzieje się w demonstracji |
+| --- | --- |
+| **Detect** | Zdarzenie zostaje wykryte i sklasyfikowane. |
+| **Investigate** | Agent odczytuje logi i sprawdza wcześniejsze incydenty. |
+| **Root cause** | Szuka przyczyny, nie tylko objawów błędu. |
+| **Fix & review** | Przygotowuje propozycję poprawki do oceny. |
+| **Deploy** | Wdrożenie pozostaje osobnym krokiem procesu. |
+
+Podczas nagrania autor dostaje informację, że agent już wykrył problem i przygotował poprawkę. Może wejść do interfejsu, prześledzić wykonane operacje i podjąć decyzję. Po odświeżeniu strony stan nie znika.
+
+To istotny szczegół: **agent wykonuje dochodzenie bez bieżącego udziału człowieka, ale nie oznacza to automatycznej zgody na wdrożenie**.
+
+<Callout title="Dwie różne supermoce" variant="blue">
+**Pi Durable zapewnia trwałość wykonywania.** **Wyzwalacz zapewnia proaktywność.** Jev, webhook, zdarzenie z logów czy harmonogram mogą przekazać agentowi zadanie, ale nie są samą biblioteką Pi Durable. Sam zapis stanu nie sprawi, że agent zacznie szukać błędów.
+</Callout>
+
+To właśnie zmiana modelu pracy. Zamiast „sprawdź produkcję i daj znać, czy coś się stało”, system dostaje zdarzenie, wykonuje pierwszą analizę i wraca z konkretnym wynikiem.
+
+## Jeden agent, kilka interfejsów
+
+Typowy agent kojarzy się z jednym terminalem i jednym oknem rozmowy. W pokazanym przez autora środowisku ten podział przestaje mieć sens.
+
+Do trwałego agenta można podłączać się przez **terminal (TUI), interfejs przeglądarkowy (Hub) i skrypty lub API**. Różne klienty widzą ten sam przebieg pracy, zamiast tworzyć osobne kopie historii. Autor pokazuje agentów uruchomionych zarówno na własnych komputerach, jak i w środowiskach chmurowych.
+
+Dodatkowo demonstracyjne środowisko **Durable Pi** udostępnia wspólny dokument stanu JSON obsługiwany przez narzędzia:
+
+- \`read_state\` odczytuje zapisane informacje;
+- \`update_state\` pozwala je aktualizować.
+
+Taki stan może przechowywać na przykład bieżący incydent, identyfikator zgłoszenia, status analizy lub informację, na czyją decyzję agent czeka.
+
+Ważne rozróżnienie: **wielo-klientowy Hub i wspólny stan są elementami pokazanego rozwiązania zbudowanego wokół Pi Durable**, a nie deklaracją, że samo zainstalowanie biblioteki automatycznie stawia gotowy panel webowy. Biblioteka dostarcza mechanizmy, na których taki system można oprzeć.
+
+## Idempotentność: uważaj na podwójne „naprawione”
+
+Trwałość ma swoją niewygodną stronę. Jeśli system potrafi ponawiać pracę, musisz zdecydować, co zrobić z operacją, która mogła już dojść do skutku.
+
+Wyobraź sobie, że agent utworzył zgłoszenie, ale proces padł, zanim zapisał potwierdzenie. Po restarcie może spróbować zrobić to ponownie. I nagle jeden incydent ma dwa tickety. To jeszcze pół biedy. Gorzej, gdy zamiast tworzenia zgłoszenia chodzi o wdrożenie, przelew albo usunięcie danych.
+
+W opisywanej architekturze pojawia się **\`requestId\`**, czyli identyfikator żądania, który pozwala rozpoznać ponowne przesłanie tej samej operacji wejściowej. To ważna część idempotentności, ale **nie zastępuje zabezpieczeń we wszystkich zewnętrznych narzędziach**.
+
+Dla systemu reagującego na incydenty rozdzieliłbym więc trzy rzeczy:
+
+1. **Dedublikację zdarzeń wejściowych.** Ten sam alert nie powinien uruchamiać pięciu identycznych dochodzeń.
+2. **Bezpieczne ponawianie operacji.** Zapis zgłoszenia, komentarza czy wyniku analizy musi obsłużyć powtórzenie.
+3. **Zatwierdzanie skutków produkcyjnych.** Agent może przygotować poprawkę, ale wdrożenie wymaga osobnej polityki i kontroli.
+
+<Callout title="Odporność nie oznacza nieomylności">
+SQLite, checkpointy i identyfikatory żądań pomagają przetrwać przerwania oraz powtórzenia. Nie gwarantują trafnej diagnozy, poprawnego kodu, zachowania tajnych danych ani bezpieczeństwa operacji na produkcji. Tę część wciąż trzeba zaprojektować i przetestować.
+</Callout>
+
+## Jak zastosowałbym to w prawdziwym projekcie?
+
+Nie zaczynałbym od nieustannie działającego agenta z dostępem do całej infrastruktury. To świetny sposób na stworzenie bardzo pracowitego problemu.
+
+Zacząłbym od małego systemu obsługi błędów po wdrożeniu, zgodnie z ideą [Tiny Software Factories](/post/tiny-software-factories):
+
+1. **Wejście.** Webhook lub strumień zdarzeń dostarcza nowy błąd z aplikacji.
+2. **Filtr.** Proste reguły odrzucają duplikaty i oczywisty szum. Model klasyfikujący uruchamia się dopiero tam, gdzie naprawdę trzeba ocenić kontekst.
+3. **Trwałe dochodzenie.** Agent otrzymuje identyfikator incydentu i tylko potrzebne uprawnienia do odczytu logów oraz kodu.
+4. **Wynik.** Powstaje diagnoza z odnośnikami do dowodów i, gdy ma to sens, propozycja zmiany kodu.
+5. **Bramka człowieka.** Przeglądam wynik, testy i ewentualny pull request. Dopiero potem zapada decyzja o wdrożeniu.
+
+W pierwszym wariancie agent nie powinien samodzielnie dotykać produkcyjnych sekretów ani wykonywać deployów. Dodałbym również limity czasu i kosztu, rejestrowanie użytych narzędzi oraz prosty sposób przerwania błędnie działającej pętli.
+
+To **moja propozycja zastosowania** zasad z filmu, nie gotowa konfiguracja skopiowana z demonstracji. W praktyce trzeba jeszcze zapewnić monitoring samego agenta. Proces, który ma pilnować awarii, też może się zepsuć. Informatyka naprawdę kocha piętrowe żarty.
+
+## Co naprawdę zmienia Pi Durable?
+
+Łatwo zachwycić się wizją agenta, który „pracuje 24/7”. Tyle że nie o stałą liczbę działających procesów chodzi. Sens polega na tym, że **zadanie ma własny stan, cykl życia i punkt wznowienia**. Może być uruchamiane przez zdarzenia, obsługiwane z różnych interfejsów i oceniane przez człowieka w odpowiednim momencie.
+
+To nie eliminuje potrzeby projektowania uprawnień, checkpointów, monitoringu i budżetów. Przenosi tylko ciężar pracy w ciekawsze miejsce: z ręcznego prowadzenia konwersacji na budowanie niezawodnego procesu.
+
+Zwykły agent czeka, aż powiesz mu, co ma zrobić. Proaktywny agent dostaje pracę z systemu. **Trwały agent potrafi jeszcze wrócić do tej pracy po awarii.**
+
+I właśnie to połączenie wydaje mi się znacznie bardziej użyteczne niż kolejny przycisk „Continue”.
+
+---
+
+*Źródła: [film IndyDevDana o Pi Durable i agencie on-call](https://youtu.be/DNDYYHsypZg), [dokumentacja biblioteki Pi Durable](https://github.com/earendil-works/pi/blob/main/packages/durable/README.md) oraz [repozytorium demonstracyjnego środowiska Durable Pi](https://github.com/disler/durable-pi). Tekst stanowi autorskie opracowanie i uzupełnienie pokazanych koncepcji.*
