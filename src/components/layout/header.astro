@@ -54,6 +54,11 @@ const pathname = normalize(Astro.url.pathname);
     </nav>
 
     <div class="header-actions">
+      <div class="theme-switch" role="group" aria-label="Motyw kolorystyczny" data-theme-switch>
+        <button type="button" data-theme-choice="light" aria-label="Jasny motyw" title="Jasny motyw" aria-pressed="false">☀</button>
+        <button type="button" data-theme-choice="system" aria-label="Motyw systemowy" title="Motyw systemowy" aria-pressed="true">◧</button>
+        <button type="button" data-theme-choice="dark" aria-label="Ciemny motyw" title="Ciemny motyw" aria-pressed="false">☾</button>
+      </div>
       <a
         class="btn blue compact"
         href="https://www.linkedin.com/in/bartosz-janiak-super-dev"
