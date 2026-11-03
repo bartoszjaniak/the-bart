@@ -1,39 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
-<title id="title">Tiny Software Factories</title><desc id="desc">Mały warsztat AI, który wykonuje zadania według harmonogramu, a człowiek sprawdza wyniki.</desc>
-<defs>
-<linearGradient id="bg" x2="1" y2="1"><stop stop-color="#111b29"/><stop offset="1" stop-color="#202d42"/></linearGradient>
-<linearGradient id="a" x2="1" y2="1"><stop stop-color="#c7f46a"/><stop offset="1" stop-color="#79d0b3"/></linearGradient>
-<pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse"><path d="M36 0H0V36" fill="none" stroke="#ffffff" stroke-opacity=".045"/></pattern>
-<filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#000" flood-opacity=".35"/></filter>
-</defs>
-<rect width="1200" height="675" fill="url(#bg)"/><rect width="1200" height="675" fill="url(#grid)"/>
-<circle cx="1040" cy="60" r="260" fill="#b9e97c" opacity=".05"/><circle cx="85" cy="650" r="250" fill="#94b4ff" opacity=".06"/>
-<text x="70" y="76" font-family="sans-serif" font-weight="800" font-size="22" letter-spacing="4" fill="#ccedb0">TINY SOFTWARE FACTORIES</text>
-<text x="70" y="128" font-family="sans-serif" font-size="18" fill="#b9c6d7">Jeden problem. Jeden agent. Mniej ręcznego pilnowania.</text>
-<g filter="url(#shadow)">
-<rect x="70" y="206" width="278" height="298" rx="22" fill="#263449" stroke="#526078"/>
-<rect x="96" y="236" width="225" height="35" rx="10" fill="#39495e"/><circle cx="116" cy="254" r="6" fill="#e4a881"/><circle cx="137" cy="254" r="6" fill="#d7d97d"/><circle cx="158" cy="254" r="6" fill="#82d6b3"/>
-<text x="99" y="317" font-family="sans-serif" font-weight="800" font-size="24" fill="#f0f6f9">TY</text>
-<text x="99" y="354" font-family="sans-serif" font-size="17" fill="#b9c8d8">decyzje i feedback</text>
-<path d="M105 413h192" stroke="#66778d" stroke-width="3" stroke-dasharray="8 8"/>
-<text x="99" y="455" font-family="sans-serif" font-size="16" fill="#d8e2ee">NEAR THE LOOP</text>
-<rect x="476" y="192" width="412" height="331" rx="28" fill="#2a3a4d" stroke="#baf17f" stroke-width="3"/>
-<rect x="504" y="220" width="356" height="46" rx="12" fill="url(#a)"/>
-<text x="524" y="250" font-family="sans-serif" font-weight="800" font-size="21" fill="#193126">AGENT / WORKSPACE</text>
-<rect x="507" y="294" width="160" height="76" rx="13" fill="#405367"/><rect x="685" y="294" width="172" height="76" rx="13" fill="#405367"/>
-<text x="526" y="321" font-family="sans-serif" font-size="14" fill="#d5e1ed">TOOLS</text><text x="526" y="346" font-family="sans-serif" font-weight="700" font-size="18" fill="#fff">Read · Write</text>
-<text x="702" y="321" font-family="sans-serif" font-size="14" fill="#d5e1ed">TRIGGERS</text><text x="702" y="346" font-family="sans-serif" font-weight="700" font-size="18" fill="#fff">Cron · Events</text>
-<path d="M680 383v32" stroke="#baf17f" stroke-width="4" stroke-linecap="round"/>
-<rect x="510" y="416" width="347" height="79" rx="14" fill="#1b293b"/>
-<circle cx="537" cy="454" r="9" fill="#bdf37e"/><text x="559" y="449" font-family="sans-serif" font-weight="800" font-size="18" fill="#f2f7f1">DURABLE ENVIRONMENT</text>
-<text x="559" y="475" font-family="sans-serif" font-size="14" fill="#a8b9ca">stan i praca bez otwartej przeglądarki</text>
-<rect x="969" y="248" width="170" height="218" rx="20" fill="#33475d" stroke="#73879d"/>
-<text x="990" y="291" font-family="sans-serif" font-weight="800" font-size="22" fill="#fff">WYNIK</text>
-<path d="M990 324h124m-124 30h92m-92 30h110" stroke="#d1e3e2" stroke-opacity=".7" stroke-width="9" stroke-linecap="round"/>
-<circle cx="1085" cy="429" r="14" fill="#bdf37e"/><path d="m1078 429 5 5 10-12" fill="none" stroke="#1c352c" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<title id="title">Tiny Software Factories w komiksowym stylu</title><desc id="desc">Programista odpoczywa z kawą, podczas gdy mały robot obsługuje taśmę produkcyjną z kodem.</desc>
+<defs><pattern id="dots" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="2.2" fill="#0e2834" opacity=".19"/></pattern><pattern id="stripes" width="26" height="26" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="13" height="26" fill="#f9c648"/></pattern></defs>
+<rect width="1200" height="675" fill="#ffd95b"/><path d="M0 0h1200v675H0z" fill="url(#dots)"/><path d="M0 490 1200 140v535H0z" fill="#65c7d5" stroke="#102c3b" stroke-width="9"/><path d="M0 490 1200 140v535H0z" fill="url(#dots)"/>
+<g stroke="#102c3b" stroke-width="9" stroke-linejoin="round">
+<path d="M590 184h520v328H590z" fill="#f5a43d"/><path d="M615 154h140v47H615zM830 134h128v67H830z" fill="#ee7656"/><path d="M663 68h48v90h-48zM866 37h52v104h-52z" fill="#f5e2b2"/><path d="M646 68h82M852 37h80" fill="none"/>
+<path d="M570 260h578v288H570z" fill="#2f7688"/><path d="M598 284h520v238H598z" fill="#f5d48b"/><path d="M610 309h495v183H610z" fill="#f8ab40"/><path d="M612 465h488v76H612z" fill="url(#stripes)"/>
+<path d="M561 517h598v110H561z" fill="#243d4b"/><path d="M574 529h567v79H574z" fill="#5aa5b5"/>
 </g>
-<path d="M361 355h99" stroke="#baf17f" stroke-width="5" stroke-linecap="round" stroke-dasharray="12 12"/>
-<path d="m450 342 16 13-16 13" fill="none" stroke="#baf17f" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M902 355h54" stroke="#baf17f" stroke-width="5" stroke-linecap="round"/><path d="m945 342 16 13-16 13" fill="none" stroke="#baf17f" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-<text x="70" y="610" font-family="sans-serif" font-weight="700" font-size="18" fill="#9aacc0">IN-LOOP → NEAR-LOOP</text><text x="1130" y="610" text-anchor="end" font-family="monospace" font-size="16" fill="#a4b5c9">LESS PROMPTING / MORE SHIPPING</text>
+<g fill="#e4c5a3" stroke="#102c3b" stroke-width="7"><circle cx="629" cy="567" r="27"/><circle cx="714" cy="567" r="27"/><circle cx="799" cy="567" r="27"/><circle cx="884" cy="567" r="27"/><circle cx="969" cy="567" r="27"/><circle cx="1054" cy="567" r="27"/></g>
+<g stroke="#102c3b" stroke-width="8" stroke-linejoin="round">
+<path d="M706 382q-10-75 70-89 82 10 72 89v80H706z" fill="#fff3d0"/><rect x="710" y="282" width="134" height="102" rx="42" fill="#fff5df"/><rect x="724" y="302" width="105" height="61" rx="25" fill="#173b4b"/><path d="M750 332q12-20 25 0m18 0q12-20 25 0" fill="none" stroke="#7ae2d0" stroke-width="8" stroke-linecap="round"/><path d="M779 280v-27" stroke="#102c3b"/><circle cx="779" cy="249" r="10" fill="#ff7b60"/>
+<path d="M709 398q-52-32-67 20m207-20q50-25 64 18" fill="none" stroke="#fff3d0" stroke-width="22" stroke-linecap="round"/>
+<rect x="647" y="423" width="95" height="79" rx="8" fill="#3c5262"/><rect x="757" y="429" width="95" height="73" rx="8" fill="#3c5262"/><rect x="866" y="424" width="95" height="79" rx="8" fill="#3c5262"/>
+</g>
+<g fill="none" stroke="#a9e6d7" stroke-width="7" stroke-linecap="round"><path d="m670 461 12 12 22-27m76 13 12 12 22-27m76 13 12 12 22-27"/></g>
+<g stroke="#102c3b" stroke-width="9" stroke-linejoin="round">
+<path d="M0 585V345l120-55 190 80 170 205v100H0z" fill="#f9a17a"/>
+<path d="M33 493q13-142 121-151 106-8 148 128l95 116-54 67-132-126-19 148H33z" fill="#e9584e"/>
+<path d="M96 365q-17-64 44-101 73-31 114 44l-7 71-80 37z" fill="#f1bb86"/>
+<path d="M88 330q-14-100 66-115 77-6 94 65-54-25-82 6l-45-5z" fill="#382b32"/>
+<path d="M196 334q29 11 34 39-27 30-59 13" fill="#50342d"/><path d="M117 336q20-9 39 0" fill="none" stroke-width="6" stroke-linecap="round"/>
+<path d="M220 407q70-31 121-11l51 42-30 47-95-33" fill="#e9584e"/>
+<path d="M32 582h392v93H32z" fill="#ffe5aa"/>
+<path d="M58 572h121v83H58z" fill="#fff0cb"/><path d="M177 590q38-12 38 18t-38 24" fill="none"/>
+</g>
+<g fill="#102c3b" font-family="system-ui,sans-serif" font-weight="900"><text x="52" y="94" font-size="60" letter-spacing="-3">TINY SOFTWARE</text><text x="52" y="155" font-size="60" letter-spacing="-3">FACTORIES!</text></g>
+<path d="M992 69h162v86H992z" fill="#fff7db" stroke="#102c3b" stroke-width="7"/><text x="1007" y="103" font-family="system-ui,sans-serif" font-size="20" font-weight="900" fill="#102c3b">SHIP IT!</text><text x="1011" y="131" font-family="system-ui,sans-serif" font-size="15" font-weight="700" fill="#102c3b">24 / 7</text>
 </svg>
