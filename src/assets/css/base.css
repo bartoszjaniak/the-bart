@@ -6,6 +6,20 @@
     color-scheme: light;
   }
 
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --color-paper: #14171d;
+    --color-surface: #20252d;
+    --color-ink: #f6f1e8;
+    --color-ink-soft: #e4e4e7;
+    --color-ink-muted: #b9c0cc;
+    --color-muted: #353c47;
+    --color-blue-tint: #25495d;
+    --color-pink-tint: #603249;
+    --color-dark: #0d1015;
+    --color-on-dark: #fffefa;
+  }
+
   html {
     scroll-behavior: smooth;
   }
