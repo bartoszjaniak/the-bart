@@ -43,7 +43,7 @@
 
   ::selection {
     background-color: var(--color-yellow);
-    color: var(--color-ink);
+    color: var(--color-on-accent);
   }
 
   /* Sticky header nie zasłania celu anchoru (nagłówki treści i sekcje z #id). */
