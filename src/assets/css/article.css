@@ -10,7 +10,7 @@
     box-shadow: var(--shadow-brutal-sm);
     padding: 17px;
     background: var(--color-yellow);
-    color: var(--color-ink);
+    color: var(--color-on-accent);
   }
 
   .callout.blue {
@@ -61,7 +61,7 @@
   /* ── Quote-block ────────────────────────────────────── */
   .quote-block {
     background: var(--color-pink);
-    color: var(--color-on-dark);
+    color: var(--color-on-accent);
     border: var(--border-w) solid var(--color-ink);
     border-radius: var(--radius-brutal);
     box-shadow: var(--shadow-brutal-sm);
@@ -101,6 +101,7 @@
     height: 38px;
     border: var(--border-w-thin) solid var(--color-ink);
     background: var(--color-yellow);
+    color: var(--color-on-accent);
     font-family: var(--font-display);
     font-weight: 900;
     font-size: 22px;
@@ -161,6 +162,7 @@
 
   .toc li:first-child a {
     background: var(--color-yellow);
+    color: var(--color-on-accent);
     padding: 5px;
     font-weight: 900;
   }
@@ -198,6 +200,7 @@
     width: 58px;
     height: 58px;
     background: var(--color-blue);
+    color: var(--color-on-accent);
     border: var(--border-w-thin) solid var(--color-ink);
     font-family: var(--font-display);
     font-weight: 900;
@@ -224,6 +227,7 @@
 
   .square-btn:hover {
     background: var(--color-yellow);
+    color: var(--color-on-accent);
   }
 
   /* ── Artykuł / projekt: układ ───────────────────────── */
@@ -298,7 +302,7 @@
     bottom: 19px;
     padding: 16px 18px;
     background: var(--color-pink);
-    color: var(--color-on-dark);
+    color: var(--color-on-accent);
     border: var(--border-w) solid var(--color-ink);
     box-shadow: var(--shadow-brutal-sm);
     font-family: var(--font-display);
@@ -328,6 +332,43 @@
   .article-shell .prose {
     color: var(--color-ink-soft);
     font-family: var(--font-body);
+  }
+
+  /* Tailwind Typography nadaje oddzielne kolory linkom, strong, listom i nagłówkom.
+     Sama zmiana color na .prose nie wystarcza w dark mode. */
+  :root[data-theme="dark"] .prose {
+    --tw-prose-body: var(--color-ink-soft);
+    --tw-prose-headings: var(--color-ink);
+    --tw-prose-lead: var(--color-ink-soft);
+    --tw-prose-links: var(--color-ink);
+    --tw-prose-bold: var(--color-ink);
+    --tw-prose-counters: var(--color-ink-muted);
+    --tw-prose-bullets: var(--color-ink-muted);
+    --tw-prose-hr: var(--color-ink-muted);
+    --tw-prose-quotes: var(--color-ink);
+    --tw-prose-quote-borders: var(--color-ink-muted);
+    --tw-prose-captions: var(--color-ink-muted);
+    --tw-prose-kbd: var(--color-ink);
+    --tw-prose-kbd-shadows: var(--color-ink);
+    --tw-prose-code: var(--color-ink);
+    --tw-prose-pre-code: #fffefa;
+    --tw-prose-pre-bg: var(--color-dark);
+    --tw-prose-th-borders: var(--color-ink-muted);
+    --tw-prose-td-borders: var(--color-muted);
+  }
+
+  /* Bloki z intensywnym tłem muszą zachować ciemne litery także wewnątrz prose. */
+  .prose :is(.callout, .quote-block) {
+    --tw-prose-headings: var(--color-on-accent);
+    --tw-prose-bold: var(--color-on-accent);
+    --tw-prose-links: var(--color-on-accent);
+    --tw-prose-code: var(--color-on-accent);
+  }
+
+  .prose .prompt {
+    --tw-prose-bold: #fffefa;
+    --tw-prose-links: #fffefa;
+    --tw-prose-code: #fffefa;
   }
 
   .article-layout .prose {
