@@ -30,7 +30,7 @@
   /* ── Prompt ─────────────────────────────────────────── */
   .prompt {
     background: var(--color-dark);
-    color: var(--color-on-dark);
+    color: #fffefa;
     border: var(--border-w) solid var(--color-ink);
     border-radius: var(--radius-brutal);
     box-shadow: var(--shadow-brutal-sm);
