@@ -266,6 +266,10 @@
     align-items: center;
   }
 
+  .hero-grid--text-only {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .hero h1 {
     font-family: var(--font-display);
     font-weight: 400;
@@ -571,7 +575,8 @@
     }
 
     .section-head {
-      grid-template-columns: 1fr auto;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
     }
 
     .section-head .rule {
@@ -579,7 +584,14 @@
     }
 
     .section-head :is(h1, h2) {
+      font-size: clamp(28px, 8vw, 34px);
       white-space: normal;
+      overflow-wrap: normal;
+      text-wrap: balance;
+    }
+
+    .section-head .btn {
+      justify-self: start;
     }
   }
 
