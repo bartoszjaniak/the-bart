@@ -1,0 +1,173 @@
+---
+title: "Własna fabryka kodu w Claude Code. Siedmiu agentów i jeden proces"
+description: "Jak połączyć skill, siedmiu subagentów, pliki stanu i Git worktrees w fabrykę kodu. Analiza projektu ZazenCodes: od specyfikacji po lokalny merge."
+image: /assets/images/posts/fabryka-oprogramowania-claude-code/hero.jpg
+imageAlt: "Komiksowy warsztat: roboty projektują, budują i sprawdzają świecącą kostkę, uszkodzona wraca do poprawy, a programista ocenia gotowy wynik"
+createdAt: 2026-11-04
+category: AI
+tags: ['Agentic engineering', 'Programowanie', 'Automatyzacja', 'Agenci AI']
+stickyNote: "Siedem ról. Jedna pętla."
+---
+
+Agent skończył pisać kod. Świetnie. Teraz trzeba poprosić go o testy, przypomnieć o sprawdzeniu interfejsu, wkleić uwagi z review i zapytać, czy na pewno niczego nie popsuł. Miał być cyfrowy pracownik, a wyszedł bardzo szybki kolega, któremu trzeba organizować cały dzień.
+
+**ZazenCodes proponuje zamknąć tę pracę w powtarzalnym procesie.** Jedna rola pisze specyfikację, druga buduje zmianę, cztery kolejne ją recenzują, a ostatnia ocenia, czy wynik można scalić. Sesja Claude Code pilnuje kolejności i przekazuje wyniki między etapami.
+
+Brzmi jak początek zakupu platformy z cennikiem „porozmawiajmy”. Tymczasem podstawą są skill, pliki Markdown, trochę JSON-a i Git.
+
+<Callout title="Skąd ten pomysł?" variant="blue">
+Tekst jest moim autorskim opracowaniem materiału **[Build Your Own AI Software Factory with Claude Code](https://www.youtube.com/watch?v=ctoaIC4LHmI)** z kanału **ZazenCodes**, przygotowanym na podstawie dostarczonej transkrypcji i [kodu źródłowego fabryki](https://github.com/zazencodes/zazencodes-season-3/tree/main/src/software-factory-claude-code). Nie jest dosłownym tłumaczeniem. Szczegóły komend i działania opisuję według tej wersji repozytorium; README wskazuje już również osobną wersję v2.
+</Callout>
+
+## Fabryka zaczyna się od procesu
+
+W [poprzednim tekście o Tiny Software Factories](/post/tiny-software-factories) chodziło o mały warsztat do jednego zadania. Tutaj dostajemy konkretny wariant takiego warsztatu: **linię prowadzącą funkcję od pomysłu do scalenia kodu**.
+
+Nowym elementem jest delegowanie modelom pracy wymagającej interpretacji: doprecyzowania wymagania, implementacji i oceny zmiany. Wokół tego nadal potrzebujemy zwykłej inżynierii. Ktoś musi ustalić kolejność, sprawdzić komplet wyników, uruchomić walidację i obsłużyć sytuację, w której coś się nie udało.
+
+W projekcie ZazenCodes taką rolę pełni **orkiestrator**, czyli sesja Claude Code wykonująca skill `/factory`. Nie pisze sam specyfikacji ani kodu. Uruchamia odpowiednich subagentów i aktualizuje stan zadania.
+
+To rozdzielenie ma sens: kierownik ruchu powinien wiedzieć, który etap się skończył. Jeśli jednocześnie spawa wagon, łatwo przegapić czerwone światło.
+
+## Siedmiu subagentów, jasno podzielona odpowiedzialność
+
+Fabryka składa się z jednego skilla sterującego i siedmiu wyspecjalizowanych subagentów.
+
+| Rola | Odpowiedzialność | Wynik |
+| --- | --- | --- |
+| **Spec writer** | Rozpisuje zadanie i kryteria akceptacji | `spec.md` |
+| **Builder** | Implementuje, sprawdza kryteria i zapisuje dowody | Kod na gałęzi oraz `build.md` |
+| **Security reviewer** | Szuka problemów bezpieczeństwa | `review-security.md` |
+| **UX reviewer** | Sprawdza działanie z perspektywy użytkownika | `review-ux.md` |
+| **UI reviewer** | Ocenia interfejs i wykonanie wizualne | `review-ui.md` |
+| **Code reviewer** | Ocenia jakość i poprawność kodu | `review-code.md` |
+| **Approver** | Ocenia spełnienie kryteriów i ryzyko scalenia | `decision.md` |
+
+W szablonie specyfikacja, implementacja, bezpieczeństwo i końcowa decyzja korzystają z aliasu modelu **Opus**. Pozostałe trzy recenzje z **Sonnet**. To konfiguracja ról w tym projekcie, a nie uniwersalna recepta na dobór modeli.
+
+Builder ma wykonać najprostszą zmianę spełniającą specyfikację i dopasować się do istniejącego kodu. Recenzent ma ją zakwestionować tam, gdzie znajdzie problem. Żaden nie dostaje zadania „ulepsz wszystko przy okazji”. Repozytorium odetchnęło.
+
+**Podział ról pomaga skupić uwagę, ale nie gwarantuje niezależności ocen.** Agenci mogą popełniać podobne błędy. Cztery odpowiedzi „wygląda dobrze” nie są jeszcze czterema dowodami, że funkcja działa.
+
+## Pamięć procesu mieszka w plikach
+
+Najbardziej użyteczny element tej konstrukcji jest mało widowiskowy: agenci dostają kontekst z plików, zamiast polegać na całej historii rozmowy.
+
+Każde zadanie ma katalog w `factory/jobs/<job-id>/`. Trafiają tam specyfikacja, raport implementacji, recenzje z kolejnych rund oraz końcowa decyzja. Stan bieżący zapisuje `job.json`.
+
+**Tylko orkiestrator aktualizuje `job.json`.** Pozostali zapisują przypisane im raporty, a builder zmienia kod w katalogu roboczym zadania. Dzięki temu czterej recenzenci nie próbują równocześnie poprawiać jednego wspólnego statusu.
+
+Format wyników ma prosty kontrakt. Raport budowania zaczyna się od `STATUS: READY` albo `STATUS: BLOCKED`. Recenzja od `VERDICT: PASS` lub `VERDICT: CHANGES`. Decyzja końcowa od `APPROVE` albo `ESCALATE`.
+
+To małe szczegóły, które odróżniają działający proces od rozmowy o działającym procesie. Orkiestrator może odczytać stan bez zgadywania, czy „generalnie jest nieźle, ale…” oznacza zgodę.
+
+Pliki pozwalają też człowiekowi prześledzić przebieg pracy. Nie oznaczają jednak automatycznie, że system sam wznowi się po każdej awarii. **Zapisany stan to podstawa do odtworzenia pracy; obsługa restartów wymaga jeszcze odpowiedniego mechanizmu.**
+
+## Review musi się skończyć, zanim zacznie się poprawianie
+
+Po przygotowaniu specyfikacji builder implementuje zmianę i uruchamia walidację wymaganą przez repozytorium. W `build.md` zapisuje komendy, wyniki oraz dowody spełnienia kryteriów. Dla widocznych elementów aplikacji ma również obejrzeć działającą stronę.
+
+Dopiero po zgłoszeniu gotowości startują **cztery równoległe recenzje**.
+
+Fabryka czeka na wszystkie wyniki. Jeśli recenzent kończy bez raportu albo zapisuje niepoprawny werdykt, proces ma się zatrzymać. Brak odpowiedzi nie jest ukrytą zgodą.
+
+Jeśli choć jeden raport zawiera `CHANGES`, orkiestrator wznawia tego samego buildera z kompletem uwag. Nie wysyła go do poprawiania pierwszego zgłoszenia, gdy pozostali wciąż oglądają poprzednią wersję kodu.
+
+W szablonie ustawiono **maksymalnie dwa wznowienia buildera po pierwszej implementacji**, czyli do trzech rund review. Po wyczerpaniu limitu nierozwiązane uwagi trafiają do człowieka.
+
+<QuoteBlock>Automatyczna pętla potrzebuje warunku zakończenia. Inaczej produkuje głównie kolejne rundy.</QuoteBlock>
+
+Ten limit nie dowodzi, że dwie poprawki zawsze wystarczą. Chroni przed bezterminowym mieleniem zadania. Jeśli specyfikacja jest sprzeczna albo problem wymaga decyzji produktowej, kolejny prompt może tylko zwiększyć rachunek.
+
+## Zielone recenzje nie zawsze kończą się automatycznym mergem
+
+Po komplecie `PASS` pracę dostaje approver. Czyta specyfikację, raport buildera, historię recenzji i diff. Ma samodzielnie sprawdzić co najmniej jedno kryterium oraz skontrolować możliwość scalenia bez konfliktów.
+
+**Zmiana o niskim ryzyku może zostać zatwierdzona automatycznie.** Wtedy orkiestrator wykonuje lokalny merge do `main`. W trudniejszych przypadkach zadanie przechodzi do `needs-human`.
+
+Reguły eskalacji obejmują między innymi płatności, logowanie, uprawnienia, migracje bazy, konfigurację wdrożeń i CI, dodanie zależności oraz decyzje biznesowe. Samo przejście testów nie daje agentowi prawa do ustalania, co ma być darmowe, a co płatne.
+
+Przykłady zapisane w repozytorium dobrze pokazują różnicę. **Dodanie czasu czytania** przeszło cztery recenzje, ale trafiło do człowieka, bo zmiana dotknęła skryptu prerenderowania, uznanego za element wdrożenia. **Strona 404** została scalona automatycznie.
+
+Gdy człowiek przejrzy oczekującą zmianę, może użyć:
+
+```text
+/factory approve <job-id>
+```
+
+Albo odesłać ją z uwagą:
+
+```text
+/factory rework <job-id> Doprecyzuj zachowanie na małym ekranie.
+```
+
+<Callout title="Lokalny merge to jeszcze nie publikacja" variant="blue">
+Opisywany skill wprost zabrania wykonywania `push`. Scala zatwierdzoną gałąź lokalnie, usuwa jej worktree i sprząta gałąź. Pull request, wysłanie kodu do zdalnego repozytorium oraz wdrożenie nie są tym samym etapem. README odsyła do osobnej wersji v2, która opisuje już pracę przez GitHub Issues i PR-y.
+</Callout>
+
+## Git worktrees: każdy ma własny stół roboczy
+
+Kilku agentów pracujących w jednym katalogu to szybka droga do sytuacji, w której jeden poprawia plik właśnie usunięty przez drugiego.
+
+**Git worktree** daje dodatkowy katalog roboczy tego samego repozytorium, z osobno wybraną gałęzią. Fabryka tworzy dla zadania gałąź `factory/<job-id>` oraz katalog obok głównego checkoutu.
+
+W tej wersji równoległość kilku funkcji polega na otwarciu kilku sesji Claude Code. Każda uruchamia własne `/factory` i prowadzi własne zadanie. To osobna rzecz od czterech recenzentów uruchamianych równolegle w ramach jednego zadania.
+
+Projekt rozdziela również porty serwerów deweloperskich oraz sesje narzędzia przeglądarkowego. Bez tego recenzent mógłby sumiennie sprawdzić stronę uruchomioną przez sąsiednie zadanie. Wynik byłby pozytywny, tylko adresat trochę przypadkowy.
+
+Worktrees rozwiązują problem współdzielonych plików, ale mają dwie istotne granice:
+
+- **Nie izolują procesów ani uprawnień.** Sam worktree nie ogranicza dostępu do sieci, sekretów czy zewnętrznej bazy. Do tego potrzebujesz osobnej konfiguracji środowiska, a w razie potrzeby kontenera lub sandboxa.
+- **Nie usuwają konfliktów między zmianami.** Dwie funkcje mogą działać osobno, a przestać działać po połączeniu. W swoim wdrożeniu dołożyłbym walidację po integracji oraz kolejkę scaleń.
+
+To drugie jest moją rekomendacją rozbudowy. Sprawdzenie, czy Git potrafi połączyć pliki, nie dowodzi jeszcze, że połączona aplikacja zachowuje się poprawnie.
+
+## Dashboard pokazuje pracę, ale jej nie wykonuje
+
+Do obserwowania procesu służy zwykły `factory/dashboard.html`, uruchamiany przez lokalny serwer HTTP. Odpytuje pliki co dwie sekundy, pokazuje zadania na kolejnych etapach i pozwala zajrzeć do raportów.
+
+To interfejs w przeglądarce, nie rozbudowany panel terminalowy. Jego zadaniem jest pokazać, **co się dzieje i dlaczego potrzebny jest człowiek**.
+
+Najważniejsze dowody pozostają w raportach: wykonane komendy, wyniki walidacji, obserwacje z aplikacji i konkretne uwagi do kodu. Przesunięcie karty do kolumny „gotowe” nie naprawia testów. Choć na niejednym statusie projektowym mogłoby przejść.
+
+## Jak uruchomić małą wersję we własnym projekcie?
+
+Autor udostępnia katalogi `.claude/` i `factory/` do przeniesienia do repozytorium. Jeżeli masz już własne konfiguracje Claude Code, trzeba połączyć je świadomie, zamiast nadpisać cały katalog.
+
+Potem najważniejszy staje się **`AGENTS.md` albo `CLAUDE.md`**. Szablon agentów celowo nie zawiera instrukcji dla konkretnego frameworka. Z repozytorium musi się dowiedzieć:
+
+- jak przygotować świeży checkout i zainstalować zależności;
+- jak uruchomić aplikację na wskazanym porcie;
+- jakie komendy sprawdzają typy, lint, testy i build;
+- jakie konwencje obowiązują oraz które zmiany wymagają decyzji człowieka.
+
+Dla aplikacji z interfejsem szablon korzysta z narzędzia **agent-browser**, aby builder i recenzenci UI/UX mogli obejrzeć działającą stronę. Katalog `factory/jobs/` jest lokalnym stanem wykonania i według README powinien znaleźć się w `.gitignore`.
+
+Na początek wybrałbym małą, odwracalną funkcję. Na przykład:
+
+```text
+/factory Dodaj przycisk kopiowania do bloków kodu.
+Zachowaj oryginalne wcięcia i znaki nowej linii.
+Zapewnij obsługę klawiatury, informację o sukcesie
+oraz czytelny komunikat, gdy zapis do schowka się nie uda.
+```
+
+To przykładowe polecenie do własnego eksperymentu. Im bardziej sprawdzalne wymagania, tym łatwiej ocenić wynik. „Zrób ładnie i bez błędów” pozostaje życzeniem, nawet jeśli zapiszesz je wielkimi literami.
+
+Kolejne zadanie można również pobrać z lokalnego `factory/backlog.md` przez `/factory next`. Integracje ze zgłoszeniami, alertami Sentry czy harmonogramem traktowałbym jako następny etap. Ta podstawowa wersja startuje od polecenia w sesji Claude Code.
+
+## Więcej agentów oznacza też więcej pracy do opłacenia
+
+Specyfikacja, implementacja, cztery recenzje, decyzja i ewentualne poprawki wymagają kolejnych wywołań modeli. Część agentów czyta te same pliki. Równoległość może skrócić oczekiwanie, ale nie sprawia, że znika koszt wykonanej pracy.
+
+**Nie zakładałbym oszczędności bez pomiaru.** Dla serii podobnych zadań mierzyłbym czas do zaakceptowanej zmiany, zużycie tokenów, liczbę rund, odsetek eskalacji oraz błędy znalezione już po scaleniu.
+
+Może się okazać, że mała poprawka tekstu nie potrzebuje całego zespołu recenzentów. Albo że dobrze napisany test daje więcej niż kolejna ogólna ocena modelu. Fabryka ma skracać drogę do poprawnego wyniku, a nie podnosić frekwencję robotów na spotkaniu.
+
+Najciekawsze w projekcie ZazenCodes jest to, że można go przeczytać i zmienić. Zobaczyć instrukcje każdej roli. Zaostrzyć reguły eskalacji. Dodać wymagane dowody. Zmniejszyć liczbę etapów tam, gdzie nie mają sensu.
+
+**Autonomia jest tu wynikiem dobrze zdefiniowanych przejść między etapami.** Wiadomo, kto pracuje, co ma oddać i kiedy proces ma się zatrzymać. Dopiero wtedy można odejść od terminala bez zostawiania repozytorium pod opieką optymizmu.
+
+---
+
+*Źródła: [film ZazenCodes](https://www.youtube.com/watch?v=ctoaIC4LHmI), [README i pliki fabryki](https://github.com/zazencodes/zazencodes-season-3/tree/main/src/software-factory-claude-code), [instrukcje orkiestratora](https://github.com/zazencodes/zazencodes-season-3/blob/main/src/software-factory-claude-code/.claude/skills/factory/SKILL.md) oraz [reguły approvera](https://github.com/zazencodes/zazencodes-season-3/blob/main/src/software-factory-claude-code/.claude/agents/approver.md). Opis dotyczy podstawowej wersji projektu odczytanej 4 listopada 2026 r. Rekomendacje rozbudowy są moim komentarzem.*
