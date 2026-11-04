@@ -3,6 +3,7 @@ import Prompt from "./prompt.astro";
 import ProseHeading3 from "./prose-heading-3.astro";
 import ProseHeading from "./prose-heading.astro";
 import QuoteBlock from "./quote-block.astro";
+import ScrollTable from "./scroll-table.astro";
 import Step from "./step.astro";
 import Steps from "./steps.astro";
 import StyledImage from "./styled-image.astro";
@@ -14,6 +15,7 @@ import StyledImage from "./styled-image.astro";
 export const contentComponents = {
 	h2: ProseHeading,
 	h3: ProseHeading3,
+	table: ScrollTable,
 	Callout,
 	Prompt,
 	QuoteBlock,

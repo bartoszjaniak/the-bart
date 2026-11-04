@@ -1,0 +1,9 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type Props = HTMLAttributes<"table">;
+---
+
+<div class="table-scroll" role="region" aria-label="Tabela — przewijanie poziome" tabindex="0">
+  <table {...Astro.props}><slot /></table>
+</div>
