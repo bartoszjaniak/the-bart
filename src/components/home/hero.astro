@@ -1,9 +1,11 @@
 ---
 import Button from "../ui/button.astro";
+
+const showPortrait = false;
 ---
 
 <section class="hero">
-  <div class="wrap hero-grid">
+  <div class:list={["wrap", "hero-grid", { "hero-grid--text-only": !showPortrait }]}>
     <div>
       <p class="eyebrow">Cześć,</p>
       <h1>jestem <span class="marker">Bartosz.</span></h1>
@@ -26,6 +28,7 @@ import Button from "../ui/button.astro";
       </div>
     </div>
 
+    {showPortrait && (
     <div class="identity">
       <div class="scribble" aria-hidden="true">
         IDEA<br />BUILD<br />TEST<br />REPEAT
@@ -42,5 +45,6 @@ import Button from "../ui/button.astro";
       </div>
       <div class="note-card">Najpierw sens, potem kod.</div>
     </div>
+    )}
   </div>
 </section>
