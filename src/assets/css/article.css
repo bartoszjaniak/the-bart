@@ -349,7 +349,20 @@
   }
 
   .article-layout .prose {
+    min-width: 0;
     max-width: none;
+  }
+
+  .prose .table-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    margin-block: 2em;
+  }
+
+  .prose .table-scroll table {
+    min-width: 36rem;
+    margin: 0;
   }
 
   .prose h2 {
