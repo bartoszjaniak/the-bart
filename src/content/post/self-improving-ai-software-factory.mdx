@@ -1,0 +1,252 @@
+---
+title: "Fabryka AI, która uczy się na własnych błędach"
+description: "Jak mierzyć pracę agentów kodujących i ulepszać proces na podstawie danych. Architektura Machinist, ewaluacje, koszty i pułapki automatyzacji."
+image: /assets/images/posts/self-improving-ai-software-factory/hero.svg
+imageAlt: "Komiksowa ilustracja fabryki AI: maszyna produkuje kod, koła zębate napędzają proces, a wykresy i pętla zwrotna pokazują jego ciągłe doskonalenie"
+createdAt: 2026-11-06
+category: AI
+tags: ['Agentic engineering', 'Programowanie', 'Automatyzacja', 'Agenci AI']
+stickyNote: "Mierz, zanim poprawisz"
+---
+
+<Callout title="Materiał na podstawie filmu" variant="blue">
+Artykuł powstał na podstawie filmu **[I Built A Self-Improving AI Software Factory](https://youtu.be/ZDOTYfJBuLw)** z kanału **Owain Lewis**. To autorskie opracowanie przedstawionych koncepcji i demonstracji, uzupełnione praktycznym komentarzem. Nie jest dosłownym tłumaczeniem.
+</Callout>
+
+Uruchamiasz agenta AI. Pisze kod, odpala testy, poprawia błędy i przygotowuje pull request. Następnego dnia zmieniasz model, poprawiasz prompt i dorzucasz dwa nowe skille. Masz wrażenie, że całość pracuje lepiej.
+
+Tylko skąd wiesz, że rzeczywiście tak jest?
+
+Nowy model może być szybszy, ale popełniać więcej błędów. Może zużywać mniej tokenów, ale wymagać częstszych poprawek. A może akurat dostał łatwiejsze zadanie i całe porównanie jest niewiele warte.
+
+**W agentic codingu bardzo łatwo zmieniać narzędzia. Znacznie trudniej ocenić, czy te zmiany przyniosły jakąkolwiek korzyść.**
+
+Owain Lewis proponuje rozwiązanie: zamiast budować kolejną kolekcję luźno uruchamianych agentów, zorganizować ich pracę w powtarzalną **fabrykę oprogramowania**, która zapisuje przebieg każdego zadania. Dzięki temu można mierzyć proces, porównywać warianty i systematycznie go ulepszać.
+
+W filmie autor demonstruje własną konfigurację opartą na [Machinist](https://machinist.sh/). Najciekawsze nie jest jednak samo narzędzie. Jest nim pomysł na to, co zrobić z danymi, które fabryka produkuje przy okazji pisania kodu.
+
+## Pięć agentów w terminalach to jeszcze nie fabryka
+
+Możesz uruchomić pięciu agentów i przydzielić każdemu inne zadanie. Będą pracować równolegle. Być może nawet zrobią dużo pożytecznego.
+
+Ale nadal nie będziesz wiedział, czy dziś pracowali lepiej niż wczoraj.
+
+**Fabryka potrzebuje procesu, który da się powtarzać, obserwować i oceniać.** Zadanie trafia do systemu, przechodzi przez ustalone etapy, a na końcu otrzymujesz wynik wraz z historią jego powstania.
+
+To oznacza również, że programista nie musi osobiście zakładać worktree, przygotowywać środowiska czy pilnować każdego uruchomienia. Robi to infrastruktura.
+
+Lewis dzieli ją na dwa obszary.
+
+### Control plane: centrum dowodzenia
+
+*Control plane* przyjmuje zadania, ustawia je w kolejce, kontroluje ich status i zbiera rezultaty. Tutaj konfigurujesz workflow, prompty, wyzwalacze oraz parametry wykonania.
+
+Może też udostępniać interfejs z historią przebiegów i metrykami.
+
+### Data plane: właściwa produkcja
+
+*Data plane* to warstwa wykonawcza. Składa się z workerów, które pobierają zadania, przygotowują środowiska i uruchamiają agentów.
+
+Ważne jest rozróżnienie **workera** i **agent harness**.
+
+Worker odpowiada za organizację wykonania zadania. *Harness* to środowisko uruchomieniowe samego agenta, na przykład Codex czy Claude Code, wraz z dostępnymi narzędziami i konfiguracją modelu.
+
+Można więc zmienić narzędzie kodujące bez przebudowy całej kolejki i systemu zarządzania pracą.
+
+```text
+Zadanie
+   ↓
+Kolejka w control plane
+   ↓
+Worker
+   ↓
+Agent kodujący
+   ↓
+Testy i weryfikacja
+   ↓
+Wynik + historia + metryki
+```
+
+Nie jest to skomplikowana idea. Jej siła polega na tym, że **kolejne zadania korzystają z tego samego procesu, nawet kiedy wymieniasz modele, prompty lub narzędzia**.
+
+## Machinist: nie trzeba od razu stawiać klastra
+
+W filmie Lewis pokazuje Machinist, otwartoźródłową infrastrukturę do uruchamiania agentów kodujących. Autor uruchamia control plane i pojedynczego workera na jednej maszynie wirtualnej z Ubuntu.
+
+Panel otwiera lokalnie przez tunel SSH. Dzięki temu nie musi wystawiać interfejsu zarządzania bezpośrednio do internetu.
+
+Takie rozwiązanie ma sens dla jednej osoby. Nie potrzeba od razu Kubernetes, skomplikowanego autoskalowania ani osobnego zespołu do utrzymywania infrastruktury, która dopiero ma nam oszczędzać czas.
+
+Machinist pozwala konfigurować między innymi liczbę jednoczesnych zadań, dostępne executory, modele i instrukcje agentów. W demonstracji pojawia się również SQLite oraz historia wykonania zadań.
+
+Przeniesienie fabryki na VPS daje jej niezależność od laptopa, ale nie jest konieczne. Podobną architekturę można uruchomić lokalnie.
+
+<Callout title="VPS nie jest automatycznie sandboxem" variant="blue">
+Tunel SSH ogranicza ekspozycję panelu, ale nie rozwiązuje problemu uprawnień agentów. Sekrety, dostęp do repozytoriów, wykonywanie nieznanego kodu i operacje na produkcji nadal wymagają osobnych zabezpieczeń. Infrastrukturę należy projektować zakładając, że zadanie lub kod w repozytorium może być niebezpieczny.
+</Callout>
+
+## Koordynator pilnuje procesu, nie tylko zadania
+
+Każde zgłoszenie w prezentowanej konfiguracji trafia do agenta *foreman*, czyli koordynatora. To on nadzoruje proces i deleguje poszczególne czynności do kolejnych agentów.
+
+Jego prompt nie jest jednorazową wiadomością. Stanowi **definicję sposobu pracy fabryki**.
+
+Wyobraźmy sobie workflow dla poprawki błędu:
+
+1. Pobierz zgłoszenie z GitHuba i przeanalizuj wymagania.
+2. Przygotuj plan oraz oddzielne środowisko robocze.
+3. Zleć implementację agentowi kodującemu.
+4. Uruchom testy i kontrolę jakości.
+5. Przygotuj pull request do oceny.
+6. Zapisz rezultat i parametry całego przebiegu.
+
+To przykładowa adaptacja idei, nie szczegółowy zapis każdego kroku pokazanego w filmie.
+
+W demonstracji Lewis konfiguruje też dwa rodzaje wyzwalaczy. Jeden okresowo sprawdza kondycję repozytorium tańszym modelem i może zgłaszać potencjalne problemy. Drugi obserwuje zgłoszenia GitHuba i uruchamia pracę, gdy pojawi się odpowiednia etykieta.
+
+W ten sposób można oddzielić **wykrywanie zadania** od **jego realizacji**.
+
+Co ważne, taki proces staje się wspólnym punktem odniesienia. Jeśli zmienisz prompt koordynatora, wszystkie następne zadania mogą korzystać z tej samej poprawki.
+
+## Fabryka zaczyna mierzyć samą siebie
+
+W pewnym momencie Lewis otwiera panel analityczny Machinist. Pokazuje średni czas wykonania zadania wynoszący około 18 minut i łączne zużycie około 15 milionów tokenów.
+
+To liczby z jego demonstracyjnego środowiska, a nie benchmark ani obietnica wydajności.
+
+Same wartości niewiele znaczą bez kontekstu. Dopiero zapisane razem z rodzajem zadania, wynikiem oraz sposobem weryfikacji stają się przydatne.
+
+Możemy zacząć pytać:
+
+- **Czy zmiana promptu skróciła czas realizacji?**
+- **Czy droższy model rzadziej wymaga ponowień?**
+- **Który etap procesu zużywa najwięcej tokenów?**
+- **Ile pull requestów przechodzi testy i późniejszą weryfikację?**
+- **Czy oszczędność kosztów nie odbywa się kosztem jakości?**
+
+To właśnie pole do *evals*, czyli systematycznej ewaluacji wyników i sposobu pracy agenta.
+
+Przyda się jednak ostrożność. Dwa losowe zgłoszenia nie są porównywalnym eksperymentem. Różnią się złożonością, jakością opisu czy zależnościami w repozytorium.
+
+Nie porównywałbym więc tylko średniej liczby tokenów z dwóch dni. Przygotowałbym zestaw reprezentatywnych zadań i oceniał oba warianty według tych samych kryteriów. Warto też rozróżniać **jakość kodu**, **czas wykonania** i **koszt**. Każda z tych rzeczy może zmieniać się niezależnie.
+
+## Najciekawsze odkrycie? Czasem agent powinien być skryptem
+
+Lewis zleca agentowi przejrzenie zapisanych przebiegów fabryki i wskazanie sposobów ograniczenia zużycia tokenów.
+
+Agent analizuje dane o czasie wykonania, komendach, oczekiwaniu i wykorzystaniu modeli. Jednym z pomysłów jest optymalizacja monitorowania CI.
+
+Dotychczas część takiej pracy wykonywał agent. Tymczasem sprawdzanie statusu pipeline'u bywa serią mechanicznych operacji: pobierz status, poczekaj, sprawdź ponownie, zwróć wynik.
+
+Do tego nie potrzeba za każdym razem modelu językowego.
+
+Lewis rozważa zastąpienie tej części deterministycznym skryptem Pythona. Skrypt obsługiwałby przewidywalne operacje, a agent wracałby do pracy dopiero wtedy, gdy potrzebna byłaby interpretacja wyniku lub decyzja.
+
+To **propozycja usprawnienia**, nie udowodniona w filmie oszczędność. Autor dopiero planuje wdrożenie zmiany i sprawdzenie jej skutków.
+
+Pomysł jest jednak znakomity.
+
+<QuoteBlock>Nie każda czynność w fabryce AI powinna być wykonywana przez AI.</QuoteBlock>
+
+Model jest przydatny przy analizie niejasnego zgłoszenia, diagnozowaniu błędu i projektowaniu rozwiązania. Zwykły skrypt będzie często lepszy do odczytywania statusów, odpytywania API według sztywnego schematu czy wykonywania powtarzalnych kontroli.
+
+Im więcej przewidywalnych operacji przeniesiemy do prostego kodu, tym więcej zasobów zostanie na zadania naprawdę wymagające rozumowania.
+
+## Co tak naprawdę znaczy „samodoskonaląca się” fabryka?
+
+Nazwa brzmi efektownie, ale łatwo wyobrazić sobie zbyt wiele.
+
+W pokazanym przykładzie system **nie przepisuje całkowicie własnej architektury bez kontroli człowieka**. Zapisuje przebiegi pracy i pozwala wykorzystać dane do znalezienia potencjalnych usprawnień. Następnie można przygotować zmianę i porównać jej efekty.
+
+Powstaje pętla:
+
+```text
+Wykonaj
+   ↓
+Zmierz
+   ↓
+Przeanalizuj
+   ↓
+Zaproponuj zmianę
+   ↓
+Przetestuj i porównaj
+   ↺
+```
+
+Jeżeli wynik jest lepszy, zmieniamy wspólny proces. Jeśli gorszy, wracamy do poprzedniej wersji.
+
+To przypomina rozwijanie pipeline'u CI/CD. Nie optymalizujesz każdego wdrożenia osobno. Poprawiasz wspólną infrastrukturę, dzięki czemu korzystają z niej wszystkie kolejne wdrożenia.
+
+**Wartość usprawnienia rośnie wraz z liczbą zadań, które przechodzą przez ten sam proces.**
+
+Pod warunkiem że proces rzeczywiście jest używany i poprawka nie pogarsza innych aspektów pracy.
+
+## Jak wdrożyłbym to we własnej fabryce?
+
+Nie zaczynałbym od kolejnego frameworka ani rozbudowanego dashboardu.
+
+Wybrałbym jeden dobrze zdefiniowany rodzaj pracy. Na przykład poprawianie zgłoszonych błędów frontendowych, które mają czytelny opis i testowalny rezultat.
+
+Ustaliłbym stały workflow: analiza, implementacja, testy jednostkowe, build, weryfikacja działania i pull request.
+
+Następnie zbierałbym pięć metryk:
+
+1. **Czas realizacji** od przyjęcia do zakończenia zadania, najlepiej z rozbiciem na etapy.
+2. **Koszt wykonania**, z uwzględnieniem modelu, liczby tokenów i ponowień.
+3. **Wynik testów**, wraz z informacją, które problemy zostały wykryte automatycznie.
+4. **Liczba poprawek**, których wymagał agent przed przygotowaniem akceptowalnej zmiany.
+5. **Akceptacja rezultatu**, czyli czy pull request nadawał się do wykorzystania i czy nie wymagał istotnej ręcznej przebudowy.
+
+Potem przygotowałbym prosty eksperyment.
+
+Dwa warianty promptu koordynatora. Ten sam zestaw testowych zadań. Te same kryteria oceny. W miarę możliwości podobne środowisko i te same modele.
+
+Jeśli nowszy wariant konsekwentnie osiąga lepszy wynik, trafia do fabryki. Jeśli nie, zostaje odrzucony.
+
+Nie zmieniałbym jednocześnie promptu, modelu, narzędzi i całej architektury. Potem nie wiadomo, co rzeczywiście pomogło.
+
+W kolejnym kroku zautomatyzowałbym zbieranie danych i przygotowywanie raportu. Samo zatwierdzanie zmian w procesie zostawiłbym jednak człowiekowi, przynajmniej do czasu, gdy metryki i reguły cofania zmian będą naprawdę wiarygodne.
+
+## W zespole takie podejście ma jeszcze większy sens
+
+Lewis zauważa różnicę między pracą samodzielnego programisty a dużym zespołem.
+
+Kiedy każdy deweloper używa innego modelu, innych promptów i własnych skilli, trudno mówić o jednym sposobie realizacji zadań. Każdy ma swój warsztat, czasem skuteczny, czasem zupełnie nieprzewidywalny.
+
+Wspólna fabryka pozwala wprowadzać usprawnienia dla całego zespołu.
+
+Jeden lepszy mechanizm walidacji. Jeden poprawiony prompt. Jedna optymalizacja zużycia tokenów. Jeśli wdrożymy je we wspólnym workflow, mogą przynieść korzyści wszystkim korzystającym z systemu.
+
+Ale standaryzacja ma swoją cenę. Zbyt sztywny proces może utrudniać niestandardowe zadania, eksperymenty i szybkie iteracje. Dlatego powinien obejmować przede wszystkim pracę o jasnych kryteriach zakończenia.
+
+## Czy teraz wszystko powinno przechodzić przez fabrykę?
+
+Nie. I właśnie to podoba mi się w podejściu Lewisa.
+
+Autor nadal zamierza używać lokalnych agentów do projektowania, eksperymentowania i pracy wymagającej szybkiego przechodzenia między kodem a przeglądarką.
+
+Fabryka przydaje się tam, gdzie mamy **powtarzalne zadania, kolejkę pracy i możliwość automatycznej oceny wyników**. Możemy na przykład wrzucić do niej serię zgłoszeń wieczorem, a rano przejrzeć rezultaty.
+
+Lokalny agent nadal będzie lepszy, kiedy wspólnie eksplorujemy rozwiązanie, modyfikujemy interfejs na żywo albo dopiero próbujemy zrozumieć problem.
+
+To dwa uzupełniające się tryby pracy, nie konkurencyjne ideologie.
+
+## Następny etap agentic engineering nie musi oznaczać kolejnego modelu
+
+Przez ostatni czas rozwój narzędzi agentowych często wyglądał podobnie: nowy model, nowe prompty, nowy zestaw skilli, kilka testowych zadań i szybka ocena, czy jest lepiej.
+
+Przy pojedynczych eksperymentach takie podejście bywa wystarczające.
+
+Ale jeśli agenci mają wykonywać znaczną część rzeczywistej pracy programistycznej, potrzebujemy więcej niż dobrego przeczucia. Potrzebujemy powtarzalności, historii wykonania, testów oraz możliwości porównywania zmian.
+
+Największa wartość koncepcji pokazanej przez Lewisa nie tkwi w konkretnej aplikacji ani konfiguracji VPS-a.
+
+**Tkwi w tym, że zaczynamy traktować proces pracy agentów jak oprogramowanie, które również należy testować, monitorować i rozwijać.**
+
+Czasem usprawnieniem będzie lepszy model. Czasem poprawiony prompt. A czasem kilka linijek Pythona, które zabiorą agentowi zadanie, którego nigdy nie powinien wykonywać.
+
+Fabryka nie musi myśleć o wszystkim. Powinna za to coraz lepiej wykonywać swoją pracę.
+
+---
+
+*Materiał źródłowy: [Owain Lewis, „I Built A Self-Improving AI Software Factory”](https://youtu.be/ZDOTYfJBuLw). Dodatkowe informacje techniczne: [Machinist](https://machinist.sh/) i [repozytorium projektu](https://github.com/owainlewis/machinist). Artykuł stanowi autorskie opracowanie.*
