@@ -42,6 +42,23 @@ Do not assume either reference is unchanged. Read current repository content and
 - Source credit must name the presenter/channel and link to the actual source video if known. Explicitly say the article is an original adaptation, not a verbatim translation. Do not invent a source URL when none is provided.
 - Do not include irrelevant production notes, transcript timestamps, or claims that the transcript was cut off. If the source is incomplete, write a coherent conclusion using only supported content, without inventing missing events.
 
+### TL;DR for every new article
+
+Every new article must start with a **distinct, article-specific TL;DR** immediately after YAML frontmatter and before any source-credit callout, opening story, or other body content. Use the existing MDX component:
+
+```mdx
+<Callout title="TL;DR" variant="blue">
+Two to four concise Polish sentences stating the main conclusion, the mechanism that supports it, and the most actionable implication or important caveat.
+</Callout>
+```
+
+- Aim for roughly **45–80 Polish words**, enough to give a reader the actual essence without having to read the whole post.
+- Summarize the **entire article**, including its conclusion and limitations, not merely the opening or SEO description.
+- Make the summary useful on its own: specific mechanism, result, recommendation, or trade-off. Avoid teasers, generic motivation, marketing claims, and empty phrases like "w artykule dowiesz się".
+- Reflect source attribution and uncertainty: distinguish a video's demonstration or vendor claim from an established fact; do not invent numbers or conclusions.
+- Preserve existing source-credit callouts immediately after the TL;DR and never delete author/source links.
+- For an update to an existing article, read the complete current article and refresh its TL;DR if the substance changed, without creating duplicates.
+
 ## Source intake
 
 1. Read the **entire** provided transcript, including PDFs and Google Docs. For Google Docs URLs use the connected Google Drive action first; for uploaded PDFs use the attached file tools. If access fails, report it and ask for accessible content; do not substitute another episode.
@@ -114,6 +131,7 @@ This step is non-negotiable. Generating an image in the chat **does not** upload
 
 - [ ] Entire supplied transcript was read; source and personal interpretation are distinguishable.
 - [ ] Polish article is coherent, useful, technically accurate, and original.
+- [ ] A concise, original TL;DR Callout starts the article body and reflects the entire article.
 - [ ] Headline, summary, tags, date and `stickyNote` fit the content.
 - [ ] Existing MDX schema and supported components are respected.
 - [ ] Author/source are credited with a verified link where available.

@@ -9,6 +9,10 @@ tags: ['Agentic engineering', 'Programowanie', 'Automatyzacja', 'Agenci AI']
 stickyNote: "Siedem ról. Jedna pętla."
 ---
 
+<Callout title="TL;DR" variant="blue">
+Przykład ZazenCodes pokazuje **fabrykę opartą na Claude Code, jednym skillu i siedmiu subagentach**. Proces prowadzi od specyfikacji i implementacji przez cztery niezależne recenzje do decyzji o scaleniu. Pliki przechowują stan i dowody, Git worktrees rozdzielają pracę, a pętla poprawek ma ustalony limit. Zmiany wysokiego ryzyka trafiają do człowieka. Najważniejsza jest kontrola przejść między etapami, nie sama liczba agentów.
+</Callout>
+
 Agent skończył pisać kod. Świetnie. Teraz trzeba poprosić go o testy, przypomnieć o sprawdzeniu interfejsu, wkleić uwagi z review i zapytać, czy na pewno niczego nie popsuł. Miał być cyfrowy pracownik, a wyszedł bardzo szybki kolega, któremu trzeba organizować cały dzień.
 
 **ZazenCodes proponuje zamknąć tę pracę w powtarzalnym procesie.** Jedna rola pisze specyfikację, druga buduje zmianę, cztery kolejne ją recenzują, a ostatnia ocenia, czy wynik można scalić. Sesja Claude Code pilnuje kolejności i przekazuje wyniki między etapami.
