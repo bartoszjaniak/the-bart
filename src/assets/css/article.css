@@ -17,6 +17,11 @@
     background: var(--color-blue);
   }
 
+  /* TL;DR stoi na początku artykułu: oddziel go od kolejnego bloku lub akapitu. */
+  .prose .callout.tldr {
+    margin-block-end: 1.75rem;
+  }
+
   .callout h3 {
     font-family: var(--font-display);
     font-size: 21px;
