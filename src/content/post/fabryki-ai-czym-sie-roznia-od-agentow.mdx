@@ -1,6 +1,6 @@
 ---
 title: "Fabryki AI: czym różnią się od agentów, które tylko piszą kod?"
-description: "Agent kodujący potrafi wykonać zadanie. Fabryka AI zarządza całym procesem: od wymagań, przez implementację, po testy i wdrożenie. Jak ją zbudować i kiedy ma sens?"
+description: "Kompendium fabryk AI: agenci i orkiestracja, trwały stan, wieloagentowe review, bezpieczeństwo, ewaluacje i koszty. Jak przejść od promptu do sprawdzonego rezultatu?"
 image: /assets/images/posts/fabryki-ai-czym-sie-roznia-od-agentow/hero.jpg
 imageAlt: "Komiksowa ilustracja fabryki oprogramowania: wyspecjalizowane roboty analizują zadania, projektują, programują i testują, a inżynier nadzoruje linię produkcyjną"
 createdAt: 2026-11-07
@@ -10,11 +10,11 @@ stickyNote: "Agent pisze kod. Fabryka dowozi proces."
 ---
 
 <Callout title="TL;DR" variant="blue">
-Agent kodujący realizuje pojedyncze zadanie. **Fabryka AI prowadzi cały proces**: od wymagań i planu, przez implementację, po testy, review i gotową zmianę. O jej skuteczności decydują trwały stan, orkiestracja, izolacja pracy i bramki jakości, a nie liczba agentów. Najlepiej zaczynać od prostego procesu i mierzyć koszt zaakceptowanego zadania oraz regresje, zamiast liczyć linie kodu.
+**Agent pisze kod, a fabryka AI odpowiada za drogę od zadania do sprawdzonego wyniku.** Łączy wyzwalacze, orkiestrację, izolowanych wykonawców, trwały stan, testy i decyzje człowieka. Z artykułów o Claude Code, Pi Durable, Machinist i Symphony wyłania się wspólna zasada: nie licz agentów ani PR-ów, lecz poprawnie zakończone zadania, koszty i regresje. Najpierw zbuduj jeden niezawodny proces, potem dodawaj autonomię.
 </Callout>
 
 <Callout title="Na jakich źródłach opiera się tekst?" variant="blue">
-To autorska synteza dokumentacji i doświadczeń opisanych przez [Anthropic](https://www.anthropic.com/research/building-effective-agents), [OpenAI](https://openai.com/index/harness-engineering/), [GitHub](https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/kick-off-a-task) oraz badań [METR](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/) i [IBM Research](https://research.ibm.com/publications/measuring-agents-in-production). Przykład aplikacji Angular i proponowana architektura są ilustracjami mojego podejścia, a nie opisem cudzej demonstracji.
+To autorska synteza [pięciu powiązanych artykułów The-Bart](/posts), źródeł projektów Claude Code, Pi Durable i Machinist oraz dokumentacji [Anthropic](https://www.anthropic.com/research/building-effective-agents), [OpenAI](https://openai.com/index/harness-engineering/) i [GitHub](https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/kick-off-a-task). Dane o produktywności pochodzą z badań [METR](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/) i [IBM Research](https://research.ibm.com/publications/measuring-agents-in-production). Przykład aplikacji Angular, proponowana architektura i checklista są moją analizą, nie opisem gotowej implementacji.
 </Callout>
 
 Dajesz Claude Code zadanie: „Dodaj filtrowanie zamówień po statusie i zapamiętuj wybór w URL”. Agent analizuje repozytorium, poprawia komponent, uruchamia testy i po kilkunastu minutach oddaje kod.
@@ -61,6 +61,22 @@ To rozróżnienie jest ważne, bo fabryka może korzystać z obu podejść naraz
 Możesz mieć dziesięciu agentów, którzy na koniec zrzucają na Ciebie ręczne łączenie branchy i naprawianie CI. To rozbudowany system wieloagentowy, ale słaba fabryka.
 
 Możesz też mieć jednego agenta, trwałą kolejkę zadań, automatyczne testy, politykę ponowień i sensowne bramki jakości. Taki układ bywa bliższy idei fabryki niż symulowana firma z AI-owym CEO.
+
+## Kto uruchamia pracę i kiedy wchodzi człowiek?
+
+W artykule [o wychodzeniu z pętli ciągłego promptowania](/post/agents-out-of-loop) opisałem trzy sposoby pracy z agentem. Dla fabryki są ważne, bo **autonomia to nie przełącznik „włącz/wyłącz”**. Można ją ustalać osobno dla uruchamiania zadań, wykonywania działań i zatwierdzania wyniku.
+
+| Tryb | Co rozpoczyna pracę? | Gdzie jest człowiek? |
+| --- | --- | --- |
+| **In the loop** | Polecenie programisty | Prowadzi sesję i zatwierdza kolejne kroki |
+| **Near the loop** | Zdarzenie lub zadanie w kolejce | Dostaje gotowy wynik albo decyzję do zatwierdzenia |
+| **Out of the loop** | Automatyczny wyzwalacz | Nadzoruje polityki i reaguje na wyjątki, zamiast uczestniczyć w każdej realizacji |
+
+Wyzwalaczem może być nowy ticket z etykietą, webhook po nieudanym CI, alarm aplikacji lub harmonogram. W każdym przypadku potrzebujesz **warstwy przyjmowania zdarzeń**, która sprawdzi uprawnienia, odfiltruje duplikaty i zdecyduje, czy warto uruchamiać kosztowną analizę AI.
+
+W [Tiny Software Factories](/post/tiny-software-factories) pojawia się rozróżnienie na *Empty Factory* i *Running Factory*. Pierwsza daje środowisko, narzędzia i konfigurowalnego agenta. Druga łączy je z konkretnym problemem, jego danymi wejściowymi i sposobem uruchamiania. To użyteczny test: jeśli nie potrafisz powiedzieć, co trafia na wejście i jaki rezultat uznajesz za gotowy, masz raczej laboratorium agentów niż działającą fabrykę.
+
+Autonomiczne uruchomienie zadania nie oznacza automatycznego wdrożenia. Możesz pozwolić fabryce samodzielnie analizować, implementować i testować, jednocześnie wymagając zgody na merge lub zmianę produkcyjną. To zwykle rozsądniejszy pierwszy krok niż pełny autopilot.
 
 ## Od zgłoszenia do gotowej zmiany
 
@@ -130,6 +146,28 @@ Dochodzi jeszcze izolacja wykonawców. Oddzielny Git worktree, kontener lub sand
 
 To typowy moment, gdy hasło „dodajmy więcej agentów” przestaje być rozwiązaniem, a zaczyna generować nowe problemy.
 
+## Control plane i data plane: kto zarządza, a kto wykonuje?
+
+W opisie [samodoskonalącej się fabryki opartej na Machinist](/post/self-improving-ai-software-factory) pojawia się klasyczny podział znany z systemów rozproszonych.
+
+**Control plane** to warstwa sterowania. Odbiera zgłoszenia, utrzymuje kolejkę, ustala priorytety, przydziela wykonawców, zapisuje stan i zbiera wyniki. Tu znajdują się orkiestrator, polityki uprawnień, budżety oraz panel obserwacyjny.
+
+**Data plane** to warstwa wykonania. Workery przygotowują katalogi robocze lub kontenery, uruchamiają modele i narzędzia, wykonują testy oraz zapisują artefakty. Nie powinny samodzielnie decydować o zmianie zasad bezpieczeństwa całej fabryki.
+
+Dla niewielkiego projektu oba obszary mogą działać na jednym komputerze lub VPS-ie. Rozdział logiczny jest ważniejszy niż liczba serwerów.
+
+| Warstwa | Przykładowe elementy | Co musi przetrwać restart? |
+| --- | --- | --- |
+| **Wejście** | GitHub Issue, Jira, webhook, cron | Identyfikator zdarzenia i zadania |
+| **Control plane** | Kolejka, orkiestrator, statusy, polityki | Stan procesu, zależności, limity |
+| **Data plane** | Worker, agent, shell, przeglądarka, worktree | Artefakty i wyniki działań |
+| **Kontrola jakości** | CI, testy E2E, recenzje, bramki akceptacji | Raporty, werdykty, dowody |
+| **Obserwowalność** | Logi, historia przebiegów, metryki | Możliwość odtworzenia decyzji |
+
+[Machinist](https://github.com/owainlewis/machinist) jest przykładem infrastruktury, która rozdziela sterowanie od workerów. W [demonstracji Owaina Lewisa](https://youtu.be/ZDOTYfJBuLw) control plane i pojedynczy worker pracują na jednej maszynie Ubuntu, a panel jest udostępniony przez tunel SSH. To nie jest konieczny stos technologiczny ani dowód, że VPS sam w sobie izoluje procesy. Pokazuje natomiast, że **fabryka nie wymaga klastra, żeby mieć sensowną architekturę**.
+
+Sam dashboard również nie wykonuje pracy. Ma odpowiedzieć na pytania: *co aktualnie działa, co blokuje proces, ile kosztuje i kto może interweniować?* Jeżeli potrafi wyłącznie przesuwać kartę do kolumny „Gotowe”, problem pozostał nierozwiązany.
+
 ## Harness engineering: model jest tylko częścią maszyny
 
 W dyskusjach o autonomicznym programowaniu dominuje pytanie, który model lepiej koduje. Tymczasem wyniki zależą również od tego, w jakim środowisku pracuje.
@@ -150,6 +188,19 @@ Ciekawsze od liczby linii kodu są decyzje techniczne: repozytorium jako źród�
 Reguła „nie importujemy modułu danych bezpośrednio do UI” zapisana w Markdownzie może zostać pominięta. Ta sama reguła egzekwowana przez linter lub test architektury staje się twardym ograniczeniem. Dla fabryki AI to ogromna różnica.
 </Callout>
 
+## Core Four: cztery ustawienia ważniejsze od nazwy modelu
+
+W tekstach [Tiny Software Factories](/post/tiny-software-factories) oraz [Wyjdź z pętli](/post/agents-out-of-loop) pojawia się koncepcja **Core Four** opisywana przez IndyDevDana. Można ją potraktować jako praktyczną listę elementów, nad którymi trzeba panować przy każdym agencie:
+
+1. **Kontekst:** jakie pliki, wymagania, decyzje i wyniki poprzednich etapów model faktycznie otrzymuje. Więcej tekstu nie zawsze znaczy więcej wiedzy.
+2. **Model:** który model i poziom rozumowania są potrzebne w danym etapie, z uwzględnieniem ceny, opóźnienia i jakości.
+3. **Instrukcje:** zasady działania, kontrakty wyników i ograniczenia wynikające z roli agenta.
+4. **Narzędzia:** odczyt kodu, edycja, testy, Git, przeglądarka oraz dostęp do usług zewnętrznych.
+
+Autor proponuje również *agent access parity*: jeśli użytkownik potrafi wykonać ważną operację w interfejsie, agent powinien mieć odpowiadające jej narzędzie. To dobry kierunek projektowania API, ale **parytet możliwości nie może oznaczać parytetu uprawnień**. Agent czytający logi nie powinien automatycznie dostać prawa do kasowania baz czy zmieniania własnych reguł bezpieczeństwa.
+
+W fabryce każdy wykonawca otrzymuje więc odpowiedni wycinek Core Four. Tani model może sprawdzać statusy CI, jeśli w ogóle potrzebny jest tam model. Silniejszy dostaje niejednoznaczną analizę. Recenzent ma dostęp tylko do odczytu, a publikacja na produkcję wymaga osobnej polityki. **To projekt systemu, nie konkurs promptów.**
+
 ## Pamięć projektu to nie historia czatu
 
 Fabryka musi odróżniać **wiedzę o projekcie** od **stanu konkretnego zadania**.
@@ -161,6 +212,24 @@ Druga odpowiada na pytanie, czy zadanie zostało przyjęte, czy specyfikacja prz
 Nie trzeba od razu budować skomplikowanego systemu pamięci wektorowej. Często wystarcza dobrze utrzymywana dokumentacja, baza zadań i historia zdarzeń.
 
 Trzeba jednak zadbać o aktualność wiedzy. Jeśli fabryka automatycznie zapisze błędne wnioski jako trwałą zasadę, będzie je powielać z godną podziwu konsekwencją.
+
+## Trwały agent. Dlaczego przywrócenie rozmowy nie wystarczy?
+
+Załóżmy, że agent wykrył błąd 500, utworzył zgłoszenie, zapisał poprawkę i właśnie miał uruchomić testy. W tym momencie proces zostaje przerwany.
+
+Zwykłe polecenie wznowienia sesji może przywrócić historię rozmowy. Nie odpowiada jednak niezawodnie na pytania: czy zgłoszenie zostało naprawdę utworzone, czy commit zakończył się sukcesem i od jakiej operacji trzeba kontynuować.
+
+W [artykule o Pi Durable](/post/pi-durable-proaktywni-agenci) pokazuję różnicę między **trwałością konwersacji** a **trwałością wykonania**. [Dokumentacja Pi Durable](https://github.com/earendil-works/pi/blob/main/packages/durable/README.md) opisuje utrwalanie wpisów, wywołań narzędzi i stanu zadań, a także punkty kontrolne, z których można wznowić pracę po restarcie.
+
+Potrzebujesz tu trzech niezależnych mechanizmów:
+
+- **Checkpoint:** zapisuje zatwierdzony etap pracy i artefakty, do których można wrócić po awarii.
+- **Dedublikacja zdarzeń:** identyfikator żądania, np. requestId, pozwala rozpoznać ponowne dostarczenie tego samego zlecenia.
+- **Idempotentne skutki uboczne:** system sprawdza, czy zapis PR-a, komentarza lub operacja wdrożeniowa już nastąpiła, zanim spróbuje ją powtórzyć.
+
+Ważny szczegół z Pi Durable: przerwane wywołania modeli można ponawiać, natomiast ponowne wykonanie narzędzia z efektem ubocznym wymaga świadomie określonej polityki. **Trwałość nie gwarantuje wykonania zewnętrznej operacji dokładnie jeden raz.**
+
+Przykład? Zdarzenie o identyfikatorze incident-421 przychodzi dwa razy. Fabryka może wznowić to samo dochodzenie i wykorzystać istniejący PR. Nie powinna tworzyć dwóch zgłoszeń, dwóch branchy i dwóch wdrożeń. To drobiazg, dopóki rezultatem powtórzenia nie jest usunięcie danych.
 
 ## Czy każdy etap wymaga osobnego agenta?
 
@@ -178,6 +247,34 @@ Anthropic w swoim [opisie wzorców agentowych](https://www.anthropic.com/researc
 
 To dobra zasada również tutaj.
 
+## Konkretna fabryka w Claude Code: siedem ról i twarde kontrakty
+
+Najbardziej namacalny przykład przepływu pracy opisałem w tekście [Własna fabryka kodu w Claude Code](/post/fabryka-oprogramowania-claude-code), na podstawie [projektu ZazenCodes](https://github.com/zazencodes/zazencodes-season-3/tree/main/src/software-factory-claude-code).
+
+W tej implementacji jeden skill /factory pełni funkcję orkiestratora. Ma siedmiu wyspecjalizowanych subagentów:
+
+| Rola | Co oddaje? |
+| --- | --- |
+| **Spec writer** | Specyfikację i kryteria akceptacji |
+| **Builder** | Zmiany w kodzie oraz raport wykonania |
+| **Security reviewer** | Ocenę bezpieczeństwa |
+| **UX reviewer** | Ocenę scenariuszy użytkownika |
+| **UI reviewer** | Ocenę interfejsu |
+| **Code reviewer** | Ocenę jakości implementacji |
+| **Approver** | Decyzję o scaleniu lub eskalacji |
+
+Orkiestrator przechowuje stan w plikach, m.in. w job.json w katalogu zadania. Wykonawcy zapisują osobne raporty, zamiast jednocześnie modyfikować centralny status. Wyniki mają kontrakty w rodzaju STATUS: READY, VERDICT: PASS, VERDICT: CHANGES czy ESCALATE.
+
+Przeglądy UI, UX, kodu i bezpieczeństwa ruszają równolegle **dopiero po zakończeniu implementacji**. System czeka na komplet werdyktów. Jeśli któryś zawiera uwagi, builder otrzymuje wspólny raport, a nie serię pojedynczych, sprzecznych żądań.
+
+W opisanym szablonie dopuszczono do dwóch wznowień buildera po pierwszej implementacji. Po wyczerpaniu limitu proces eskaluje problem do człowieka. Wrażliwe zmiany, np. w logowaniu, płatnościach, migracjach lub CI, też wymagają jego decyzji.
+
+Do izolacji zadań projekt używa **Git worktrees**: osobnych katalogów i branchy jednego repozytorium. Dzięki temu agenci nie nadpisują sobie plików podczas pracy, choć nadal mogą przygotować wzajemnie niezgodne zmiany. Worktree nie jest też sandboxem bezpieczeństwa i nie ogranicza sam z siebie dostępu do sekretów.
+
+<Callout title="Najważniejsze w tym przykładzie">
+Nie chodzi o magiczną liczbę siedmiu agentów. Chodzi o **jednoznaczne artefakty, kompletne recenzje, limity ponowień i czytelne warunki zatrzymania**. To te mechanizmy można przenieść do własnej fabryki, nawet jeśli ostatecznie użyje ona dwóch modeli zamiast siedmiu.
+</Callout>
+
 ## Symphony: zadanie zamiast sesji w terminalu
 
 Wyraźny przykład fabrycznego podejścia pojawił się w kwietniu 2026 roku, gdy OpenAI opisało [Symphony](https://openai.com/index/open-source-codex-orchestration-symphony/).
@@ -193,6 +290,23 @@ Dotychczas człowiek zarządzał sesjami: otwierał terminal, uruchamiał agenta
 Jedno zgłoszenie może obejmować kilka podejść, testy, poprawki, konflikt w Git i ostatecznie PR. System pamięta, że to nadal ta sama praca.
 
 Podobne przesunięcie widać w [GitHub Copilot coding agent](https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/kick-off-a-task), któremu można przypisać issue, a następnie przejrzeć przygotowany PR. To ważny klocek większej automatyzacji, choć samo delegowanie issue nie oznacza jeszcze pełnej fabryki.
+
+## Przegląd rozwiązań: nie wszystkie zastępują się nawzajem
+
+Powyższe przykłady często lądują w jednym worku z napisem „AI Software Factory”, chociaż rozwiązują różne problemy. Wybór narzędzia ma sens dopiero po określeniu brakującej warstwy.
+
+| Rozwiązanie lub wzorzec | Najważniejsza rola | Czego samo nie gwarantuje? |
+| --- | --- | --- |
+| **Codex / Claude Code** | Wykonanie zadania programistycznego | Trwałego procesu obejmującego wiele zadań |
+| **Tiny Software Factory** | Mały, proaktywny workflow do jednego celu | Skalowalnej infrastruktury dla wielu zespołów |
+| **Claude Code + siedmiu subagentów** | Specyfikacja, implementacja i wielostronne review | Trwałości sesji po dowolnej awarii |
+| **Pi Durable** | Checkpointy i odtwarzanie niedokończonej pracy | Jakości specyfikacji i bezpieczeństwa wdrożenia |
+| **Machinist** | Sterowanie workerami, kolejką i historią wykonania | Samoistnego wzrostu jakości bez ewaluacji |
+| **Symphony** | Przydzielanie ticketów agentom i pilnowanie ich realizacji | Poprawności każdego rozwiązania oraz uniwersalnego procesu QA |
+
+To porównanie **zakresów odpowiedzialności**, nie ranking produktów. Narzędzia można łączyć, ale nie zawsze trzeba. Jeśli problemem jest pojedynczy etap review, uruchomienie całej nowej infrastruktury może być przerostem formy nad treścią.
+
+W praktyce warto wybrać jeden punkt wejścia dla zadań, jeden mechanizm utrzymania ich stanu i jedną ścieżkę kontroli jakości. Dopiero potem decydować, ile agentów i jakich frameworków rzeczywiście potrzeba.
 
 ## Jak nie zbudować fabryki wadliwego kodu?
 
@@ -260,6 +374,31 @@ Szczególnie ważny jest ostatni punkt. Fabryka, która uruchamia siedmiu agent�
 
 Warto mierzyć też odrzucone zmiany i czas poświęcony na ich naprawę. Zielony CI to warunek techniczny, nie miara tego, czy produkt stał się lepszy.
 
+## Evals i samodoskonalenie: fabryka powinna mierzyć własne błędy
+
+[Owain Lewis w demonstracji Machinist](/post/self-improving-ai-software-factory) pokazuje historię przebiegów, czasy wykonania i zużycie tokenów. W jego środowisku pojawiają się m.in. około 18 minut średniego czasu zadania i około 15 milionów łącznie wykorzystanych tokenów. To **dane z demonstracji**, nie benchmark skuteczności fabryk.
+
+Prawdziwe usprawnianie zaczyna się dopiero wtedy, gdy zapisujesz także **jakość końcowego rezultatu**. Jedna fabryka może wykonywać zadanie tanio, ale produkować PR-y wymagające kilku godzin ręcznej naprawy. Inna zużyje więcej tokenów, ale częściej przejdzie testy za pierwszym podejściem.
+
+Do każdego przebiegu przypisałbym co najmniej identyfikator i klasę zadania, wersję workflow, modele, czas, koszt, liczbę prób, wyniki testów, werdykt recenzenta i informację o późniejszej regresji.
+
+Następnie zbudowałbym **zestaw ewaluacyjny (evals)**: kilkanaście lub kilkadziesiąt reprezentatywnych zadań, których oczekiwane wyniki i kryteria oceny znamy. Zmiana promptu, modelu albo polityki review musi przejść tę samą próbę co poprzednia wersja.
+
+| Co zmieniamy? | Co porównujemy? | Pułapka |
+| --- | --- | --- |
+| Model analityczny | Poprawność specyfikacji, koszt, czas | Nowy wariant dostał łatwiejsze zgłoszenia |
+| Prompt buildera | Przejście testów i liczba rund review | Testy potwierdzają błędne wymagania |
+| Liczbę recenzentów | Wykryte defekty, regresje, koszt | Więcej recenzji powiela te same uwagi |
+| Mechanizm oczekiwania na CI | Liczbę wywołań modeli i czas | Optymalizacja pomija nieudane pipeline'y |
+
+W filmie Lewis wskazuje ciekawy przypadek: agent zużywa zasoby na wielokrotne sprawdzanie statusu CI. Taką mechaniczną pracę można przenieść do skryptu Pythona, który zwróci wynik dopiero po zmianie stanu. **To propozycja optymalizacji, a nie udokumentowana w tej demonstracji oszczędność.**
+
+Mechanizm samodoskonalenia wygląda więc bardziej jak rozwój oprogramowania niż jak niekontrolowana samomodyfikacja AI:
+
+**Wykonaj → zmierz → znajdź problem → zaproponuj zmianę → przetestuj na tych samych zadaniach → wdroż lub wycofaj.**
+
+Nie pozwalałbym fabryce automatycznie modyfikować własnych polityk bezpieczeństwa na podstawie jednego udanego przebiegu. Zmiana procesu wpływa na wszystkie następne zadania; źle zoptymalizowany workflow może seryjnie pogarszać wyniki.
+
 ## Jak zbudowałbym pierwszą fabrykę?
 
 Nie zaczynałbym od zespołu piętnastu wirtualnych specjalistów. Zacząłbym od możliwie małego układu, w którym da się dokładnie określić wejście, wyjście i przyczynę porażki.
@@ -298,6 +437,31 @@ Nie musi być efektowny. Musi pozwalać szybko odpowiedzieć na pytanie: **co fa
 Wybierz powtarzalny proces, np. przygotowywanie PR-ów z poprawkami błędów opartych na dobrze opisanych zgłoszeniach. Zacznij od automatycznej analizy, implementacji i testów, ale zachowaj ręczny merge. Mierz koszt, liczbę poprawek i jakość przez kilka iteracji. Dopiero na podstawie wyników rozbudowuj system.
 </Callout>
 
+## Przykład architektury: fabryka do naprawiania błędów frontendu
+
+Złóżmy te elementy w projekt, który można rzeczywiście uruchomić. Załóżmy aplikację Angular, repozytorium na GitHubie oraz pipeline CI z testami jednostkowymi i Playwright.
+
+Fabryka dostaje zgłoszenie o błędzie po odświeżeniu formularza. Zamiast uruchamiać od razu siedmiu agentów, wykonuje kontrolowany przepływ:
+
+1. **Triage.** Webhook przyjmuje zdarzenie, sprawdza jego źródło i identyfikator. Prosty filtr odrzuca duplikaty. Jeśli zgłoszenie nie zawiera scenariusza odtworzenia, system oznacza je jako wymagające doprecyzowania.
+2. **Analiza.** Agent odczytuje pliki związane z formularzem i routingiem, tworzy specyfikację, zapisuje założenia i kryteria akceptacji. Nie zmienia jeszcze kodu.
+3. **Przygotowanie środowiska.** Orkiestrator tworzy branch i worktree dla tego zadania, ustala limit kosztu, liczbę prób oraz dostępne narzędzia. Sekrety produkcyjne pozostają poza zasięgiem wykonawcy.
+4. **Implementacja.** Agent wprowadza poprawkę. Uruchamia TypeScript, lint, testy jednostkowe i test E2E obejmujący odświeżenie strony oraz nawigację Wstecz.
+5. **Niezależne QA.** Recenzent porównuje implementację z kryteriami akceptacji. Jeśli znajdzie problem, wysyła *jeden spójny raport* z warunkami poprawy.
+6. **Integracja.** Po przejściu testów system otwiera PR i obserwuje CI. W razie konfliktu próbuje bezpiecznej aktualizacji brancha, a jeśli nie potrafi jej wykonać, oznacza zadanie jako zablokowane.
+7. **Decyzja.** Człowiek widzi diff, wyniki testów, ewentualny zrzut ekranu i listę nieweryfikowanych przypadków. Zatwierdza merge albo odrzuca zmianę.
+8. **Zamknięcie.** Fabryka zapisuje koszt, czas, liczbę prób, werdykty i wnioski. Po wdrożeniu można dodatkowo obserwować, czy błąd nie wrócił.
+
+Taki przepływ powinien mieć jawne statusy. Minimalny zestaw to **queued → analyzing → ready_to_build → implementing → reviewing → awaiting_approval → completed**. Obok potrzebne są stany **blocked**, **failed** i **cancelled**. Każdy musi mieć definicję: kto może go ustawić, jakie artefakty powinny istnieć i co uruchamia następny etap.
+
+Dla każdego zadania przechowuj identyfikator, wersję specyfikacji, branch, przypisane środowisko, ostatni checkpoint, wykorzystany budżet i linki do raportów. Nie opieraj statusu na tym, co agent napisał w ostatniej wiadomości.
+
+<Callout title="Najpierw stabilny automat, potem inteligentne wyjątki" variant="blue">
+Sprawdzanie, czy test CI zakończył się sukcesem, nie wymaga interpretacji języka naturalnego. Niech zrobi to API albo skrypt. Agenta uruchamiaj, gdy trzeba zrozumieć wymaganie, zdiagnozować nieoczywisty błąd albo ocenić kompromis. Dzięki temu fabryka staje się prostsza, tańsza i łatwiejsza do debugowania.
+</Callout>
+
+Gdy taka jedna ścieżka działa powtarzalnie, możesz dodać kolejne rodzaje zadań. Ale nie kopiuj wszystkich etapów bez refleksji. Aktualizacja dokumentacji i migracja bazy danych mają zupełnie inny profil ryzyka.
+
 ## Czy w małym projekcie to w ogóle ma sens?
 
 Czasami nie.
@@ -309,6 +473,22 @@ Fabryka zaczyna mieć sens, gdy regularnie pojawiają się zadania, równolegle 
 Najłatwiej automatyzować pracę, której poprawność można zdefiniować i sprawdzić. Znacznie trudniej autonomicznie rozwiązywać niejednoznaczne problemy produktowe, wymyślać nową architekturę lub oceniać kompromisy biznesowe.
 
 Nie każda trudność jest gwoździem, a nowy agent nie zawsze jest młotkiem.
+
+## Checklista: kiedy można pozwolić fabryce pracować bez nadzoru?
+
+Zanim pozwoliłbym systemowi samodzielnie przyjmować zgłoszenia z produkcji, sprawdziłbym kilka rzeczy. Brak odpowiedzi na którekolwiek z tych pytań jest dobrym powodem, żeby pozostać przy trybie *near the loop*.
+
+- **Wejście:** czy wiadomo, skąd pochodzą zdarzenia, jak je uwierzytelnić i odrzucić duplikaty?
+- **Zakres pracy:** czy zadanie ma testowalny rezultat, kryteria akceptacji i określone uprawnienia?
+- **Izolacja:** czy wykonawca ma oddzielny katalog i środowisko oraz ograniczony dostęp do sieci i sekretów?
+- **Trwałość:** czy można bezpiecznie wznowić proces po restarcie bez podwójnych skutków ubocznych?
+- **Jakość:** czy wynik przechodzi kontrole niezależne od implementującego agenta?
+- **Budżet:** czy istnieją limity liczby prób, czasu, tokenów i równoległych zadań?
+- **Eskalacja:** czy wiadomo, kiedy wymagana jest decyzja człowieka, a jak zatrzymać całą fabrykę?
+- **Audyt:** czy można odtworzyć, kto lub co wykonało operację, dlaczego i z jakim rezultatem?
+- **Cofnięcie:** czy nieudane wdrożenie lub zmiana konfiguracji ma realną drogę powrotu?
+
+To nie jest lista funkcji, które musi dostarczyć jeden framework. **To lista odpowiedzialności całego systemu**. Część zapewni Git i CI, część baza zadań, część infrastruktura, a tylko część model językowy.
 
 ## Co zostaje programiście?
 
@@ -326,6 +506,19 @@ I dopiero tę drugą umiejętność warto nazywać automatyzacją wytwarzania op
 
 ---
 
+## Powiązane artykuły na The-Bart
+
+To kompendium zbiera mechanizmy, które wcześniej analizowałem osobno. Jeżeli potrzebujesz szczegółów implementacji lub chcesz obejrzeć konkretne demonstracje, warto zajrzeć do:
+
+- [**Tiny Software Factories**](/post/tiny-software-factories): jak zbudować małą, proaktywną fabrykę do jednego problemu i czym różni się pusty szablon od działającego procesu.
+- [**Wyjdź z pętli**](/post/agents-out-of-loop): tryby in-loop, near-loop i out-of-loop, trwałe środowisko oraz wyzwalacze.
+- [**Pi Durable**](/post/pi-durable-proaktywni-agenci): checkpointy, reakcja na incydenty, wznowienia i idempotentność.
+- [**Fabryka Claude Code**](/post/fabryka-oprogramowania-claude-code): siedem ról, format raportów, równoległe review i worktrees.
+- [**Fabryka, która uczy się na własnych błędach**](/post/self-improving-ai-software-factory): Machinist, control/data plane, metryki i ewaluacje.
+
+Każdy z tych tekstów przedstawia konkretne podejście lub demonstrację. Tutaj łączę je w model architektury, który można dostosować do własnego repozytorium.
+
+
 ## Źródła
 
 - [Anthropic, *Building effective agents* (19 grudnia 2024)](https://www.anthropic.com/research/building-effective-agents) — różnica między workflow a agentem oraz praktyczne wzorce orkiestracji.
@@ -335,3 +528,8 @@ I dopiero tę drugą umiejętność warto nazywać automatyzacją wytwarzania op
 - [METR, *Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity* (10 lipca 2025)](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/) — kontrolowane badanie czasu realizacji zadań.
 - [METR, *We are Changing our Developer Productivity Experiment Design* (24 lutego 2026)](https://metr.org/blog/2026-02-24-uplift-update/) — ograniczenia późniejszego eksperymentu.
 - [IBM Research, *Measuring Agents in Production* (23 kwietnia 2026)](https://research.ibm.com/publications/measuring-agents-in-production) — badanie praktyk i ograniczeń produkcyjnych systemów agentowych.
+
+- [ZazenCodes, *Build Your Own AI Software Factory with Claude Code*, kod demonstracyjny](https://github.com/zazencodes/zazencodes-season-3/tree/main/src/software-factory-claude-code) — siedem ról, kontrakty artefaktów i ograniczenia procesu.
+- [Pi Durable, dokumentacja eksperymentalnej biblioteki](https://github.com/earendil-works/pi/blob/main/packages/durable/README.md) — trwałość stanów zadań, checkpointy oraz reguły ponowień.
+- [Owain Lewis, Machinist, repozytorium projektu](https://github.com/owainlewis/machinist) — architektura i infrastruktura orkiestracji.
+- [Owain Lewis, *I Built A Self-Improving AI Software Factory*, demonstracja](https://youtu.be/ZDOTYfJBuLw) — monitorowanie pracy agentów i pomysł na ewaluację procesu.
