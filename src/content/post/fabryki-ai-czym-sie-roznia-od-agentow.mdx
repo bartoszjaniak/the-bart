@@ -1,6 +1,6 @@
 ---
 title: "Fabryki AI: czym różnią się od agentów, które tylko piszą kod?"
-description: "Agent kodujący potrafi wykonać zadanie. Fabryka AI zarządza całym procesem: od wymagań, przez implementację, po testy i wdrożenie. Jak ją zbudować i kiedy ma sens?"
+description: "Kompendium fabryk AI: agenci i orkiestracja, trwały stan, wieloagentowe review, bezpieczeństwo, ewaluacje i koszty. Jak przejść od promptu do sprawdzonego rezultatu?"
 image: /assets/images/posts/fabryki-ai-czym-sie-roznia-od-agentow/hero.jpg
 imageAlt: "Komiksowa ilustracja fabryki oprogramowania: wyspecjalizowane roboty analizują zadania, projektują, programują i testują, a inżynier nadzoruje linię produkcyjną"
 createdAt: 2026-11-07
@@ -10,11 +10,11 @@ stickyNote: "Agent pisze kod. Fabryka dowozi proces."
 ---
 
 <Callout title="TL;DR" variant="blue">
-Agent kodujący realizuje pojedyncze zadanie. **Fabryka AI prowadzi cały proces**: od wymagań i planu, przez implementację, po testy, review i gotową zmianę. O jej skuteczności decydują trwały stan, orkiestracja, izolacja pracy i bramki jakości, a nie liczba agentów. Najlepiej zaczynać od prostego procesu i mierzyć koszt zaakceptowanego zadania oraz regresje, zamiast liczyć linie kodu.
+**Agent pisze kod, a fabryka AI odpowiada za drogę od zadania do sprawdzonego wyniku.** Łączy wyzwalacze, orkiestrację, izolowanych wykonawców, trwały stan, testy i decyzje człowieka. Z artykułów o Claude Code, Pi Durable, Machinist i Symphony wyłania się wspólna zasada: nie licz agentów ani PR-ów, lecz poprawnie zakończone zadania, koszty i regresje. Najpierw zbuduj jeden niezawodny proces, potem dodawaj autonomię.
 </Callout>
 
 <Callout title="Na jakich źródłach opiera się tekst?" variant="blue">
-To autorska synteza dokumentacji i doświadczeń opisanych przez [Anthropic](https://www.anthropic.com/research/building-effective-agents), [OpenAI](https://openai.com/index/harness-engineering/), [GitHub](https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/kick-off-a-task) oraz badań [METR](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/) i [IBM Research](https://research.ibm.com/publications/measuring-agents-in-production). Przykład aplikacji Angular i proponowana architektura są ilustracjami mojego podejścia, a nie opisem cudzej demonstracji.
+To autorska synteza [pięciu powiązanych artykułów The-Bart](/posts), źródeł projektów Claude Code, Pi Durable i Machinist oraz dokumentacji [Anthropic](https://www.anthropic.com/research/building-effective-agents), [OpenAI](https://openai.com/index/harness-engineering/) i [GitHub](https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/kick-off-a-task). Dane o produktywności pochodzą z badań [METR](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/) i [IBM Research](https://research.ibm.com/publications/measuring-agents-in-production). Przykład aplikacji Angular, proponowana architektura i checklista są moją analizą, nie opisem gotowej implementacji.
 </Callout>
 
 Dajesz Claude Code zadanie: „Dodaj filtrowanie zamówień po statusie i zapamiętuj wybór w URL”. Agent analizuje repozytorium, poprawia komponent, uruchamia testy i po kilkunastu minutach oddaje kod.
@@ -506,6 +506,19 @@ I dopiero tę drugą umiejętność warto nazywać automatyzacją wytwarzania op
 
 ---
 
+## Powiązane artykuły na The-Bart
+
+To kompendium zbiera mechanizmy, które wcześniej analizowałem osobno. Jeżeli potrzebujesz szczegółów implementacji lub chcesz obejrzeć konkretne demonstracje, warto zajrzeć do:
+
+- [**Tiny Software Factories**](/post/tiny-software-factories): jak zbudować małą, proaktywną fabrykę do jednego problemu i czym różni się pusty szablon od działającego procesu.
+- [**Wyjdź z pętli**](/post/agents-out-of-loop): tryby in-loop, near-loop i out-of-loop, trwałe środowisko oraz wyzwalacze.
+- [**Pi Durable**](/post/pi-durable-proaktywni-agenci): checkpointy, reakcja na incydenty, wznowienia i idempotentność.
+- [**Fabryka Claude Code**](/post/fabryka-oprogramowania-claude-code): siedem ról, format raportów, równoległe review i worktrees.
+- [**Fabryka, która uczy się na własnych błędach**](/post/self-improving-ai-software-factory): Machinist, control/data plane, metryki i ewaluacje.
+
+Każdy z tych tekstów przedstawia konkretne podejście lub demonstrację. Tutaj łączę je w model architektury, który można dostosować do własnego repozytorium.
+
+
 ## Źródła
 
 - [Anthropic, *Building effective agents* (19 grudnia 2024)](https://www.anthropic.com/research/building-effective-agents) — różnica między workflow a agentem oraz praktyczne wzorce orkiestracji.
@@ -515,3 +528,8 @@ I dopiero tę drugą umiejętność warto nazywać automatyzacją wytwarzania op
 - [METR, *Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity* (10 lipca 2025)](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/) — kontrolowane badanie czasu realizacji zadań.
 - [METR, *We are Changing our Developer Productivity Experiment Design* (24 lutego 2026)](https://metr.org/blog/2026-02-24-uplift-update/) — ograniczenia późniejszego eksperymentu.
 - [IBM Research, *Measuring Agents in Production* (23 kwietnia 2026)](https://research.ibm.com/publications/measuring-agents-in-production) — badanie praktyk i ograniczeń produkcyjnych systemów agentowych.
+
+- [ZazenCodes, *Build Your Own AI Software Factory with Claude Code*, kod demonstracyjny](https://github.com/zazencodes/zazencodes-season-3/tree/main/src/software-factory-claude-code) — siedem ról, kontrakty artefaktów i ograniczenia procesu.
+- [Pi Durable, dokumentacja eksperymentalnej biblioteki](https://github.com/earendil-works/pi/blob/main/packages/durable/README.md) — trwałość stanów zadań, checkpointy oraz reguły ponowień.
+- [Owain Lewis, Machinist, repozytorium projektu](https://github.com/owainlewis/machinist) — architektura i infrastruktura orkiestracji.
+- [Owain Lewis, *I Built A Self-Improving AI Software Factory*, demonstracja](https://youtu.be/ZDOTYfJBuLw) — monitorowanie pracy agentów i pomysł na ewaluację procesu.
