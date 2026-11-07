@@ -62,6 +62,22 @@ Możesz mieć dziesięciu agentów, którzy na koniec zrzucają na Ciebie ręczn
 
 Możesz też mieć jednego agenta, trwałą kolejkę zadań, automatyczne testy, politykę ponowień i sensowne bramki jakości. Taki układ bywa bliższy idei fabryki niż symulowana firma z AI-owym CEO.
 
+## Kto uruchamia pracę i kiedy wchodzi człowiek?
+
+W artykule [o wychodzeniu z pętli ciągłego promptowania](/post/agents-out-of-loop) opisałem trzy sposoby pracy z agentem. Dla fabryki są ważne, bo **autonomia to nie przełącznik „włącz/wyłącz”**. Można ją ustalać osobno dla uruchamiania zadań, wykonywania działań i zatwierdzania wyniku.
+
+| Tryb | Co rozpoczyna pracę? | Gdzie jest człowiek? |
+| --- | --- | --- |
+| **In the loop** | Polecenie programisty | Prowadzi sesję i zatwierdza kolejne kroki |
+| **Near the loop** | Zdarzenie lub zadanie w kolejce | Dostaje gotowy wynik albo decyzję do zatwierdzenia |
+| **Out of the loop** | Automatyczny wyzwalacz | Nadzoruje polityki i reaguje na wyjątki, zamiast uczestniczyć w każdej realizacji |
+
+Wyzwalaczem może być nowy ticket z etykietą, webhook po nieudanym CI, alarm aplikacji lub harmonogram. W każdym przypadku potrzebujesz **warstwy przyjmowania zdarzeń**, która sprawdzi uprawnienia, odfiltruje duplikaty i zdecyduje, czy warto uruchamiać kosztowną analizę AI.
+
+W [Tiny Software Factories](/post/tiny-software-factories) pojawia się rozróżnienie na *Empty Factory* i *Running Factory*. Pierwsza daje środowisko, narzędzia i konfigurowalnego agenta. Druga łączy je z konkretnym problemem, jego danymi wejściowymi i sposobem uruchamiania. To użyteczny test: jeśli nie potrafisz powiedzieć, co trafia na wejście i jaki rezultat uznajesz za gotowy, masz raczej laboratorium agentów niż działającą fabrykę.
+
+Autonomiczne uruchomienie zadania nie oznacza automatycznego wdrożenia. Możesz pozwolić fabryce samodzielnie analizować, implementować i testować, jednocześnie wymagając zgody na merge lub zmianę produkcyjną. To zwykle rozsądniejszy pierwszy krok niż pełny autopilot.
+
 ## Od zgłoszenia do gotowej zmiany
 
 Prześledźmy hipotetyczne zadanie w aplikacji Angular:
@@ -130,6 +146,28 @@ Dochodzi jeszcze izolacja wykonawców. Oddzielny Git worktree, kontener lub sand
 
 To typowy moment, gdy hasło „dodajmy więcej agentów” przestaje być rozwiązaniem, a zaczyna generować nowe problemy.
 
+## Control plane i data plane: kto zarządza, a kto wykonuje?
+
+W opisie [samodoskonalącej się fabryki opartej na Machinist](/post/self-improving-ai-software-factory) pojawia się klasyczny podział znany z systemów rozproszonych.
+
+**Control plane** to warstwa sterowania. Odbiera zgłoszenia, utrzymuje kolejkę, ustala priorytety, przydziela wykonawców, zapisuje stan i zbiera wyniki. Tu znajdują się orkiestrator, polityki uprawnień, budżety oraz panel obserwacyjny.
+
+**Data plane** to warstwa wykonania. Workery przygotowują katalogi robocze lub kontenery, uruchamiają modele i narzędzia, wykonują testy oraz zapisują artefakty. Nie powinny samodzielnie decydować o zmianie zasad bezpieczeństwa całej fabryki.
+
+Dla niewielkiego projektu oba obszary mogą działać na jednym komputerze lub VPS-ie. Rozdział logiczny jest ważniejszy niż liczba serwerów.
+
+| Warstwa | Przykładowe elementy | Co musi przetrwać restart? |
+| --- | --- | --- |
+| **Wejście** | GitHub Issue, Jira, webhook, cron | Identyfikator zdarzenia i zadania |
+| **Control plane** | Kolejka, orkiestrator, statusy, polityki | Stan procesu, zależności, limity |
+| **Data plane** | Worker, agent, shell, przeglądarka, worktree | Artefakty i wyniki działań |
+| **Kontrola jakości** | CI, testy E2E, recenzje, bramki akceptacji | Raporty, werdykty, dowody |
+| **Obserwowalność** | Logi, historia przebiegów, metryki | Możliwość odtworzenia decyzji |
+
+[Machinist](https://github.com/owainlewis/machinist) jest przykładem infrastruktury, która rozdziela sterowanie od workerów. W [demonstracji Owaina Lewisa](https://youtu.be/ZDOTYfJBuLw) control plane i pojedynczy worker pracują na jednej maszynie Ubuntu, a panel jest udostępniony przez tunel SSH. To nie jest konieczny stos technologiczny ani dowód, że VPS sam w sobie izoluje procesy. Pokazuje natomiast, że **fabryka nie wymaga klastra, żeby mieć sensowną architekturę**.
+
+Sam dashboard również nie wykonuje pracy. Ma odpowiedzieć na pytania: *co aktualnie działa, co blokuje proces, ile kosztuje i kto może interweniować?* Jeżeli potrafi wyłącznie przesuwać kartę do kolumny „Gotowe”, problem pozostał nierozwiązany.
+
 ## Harness engineering: model jest tylko częścią maszyny
 
 W dyskusjach o autonomicznym programowaniu dominuje pytanie, który model lepiej koduje. Tymczasem wyniki zależą również od tego, w jakim środowisku pracuje.
@@ -149,6 +187,19 @@ Ciekawsze od liczby linii kodu są decyzje techniczne: repozytorium jako źród�
 <Callout title="Dokumentacja nie wystarczy" variant="blue">
 Reguła „nie importujemy modułu danych bezpośrednio do UI” zapisana w Markdownzie może zostać pominięta. Ta sama reguła egzekwowana przez linter lub test architektury staje się twardym ograniczeniem. Dla fabryki AI to ogromna różnica.
 </Callout>
+
+## Core Four: cztery ustawienia ważniejsze od nazwy modelu
+
+W tekstach [Tiny Software Factories](/post/tiny-software-factories) oraz [Wyjdź z pętli](/post/agents-out-of-loop) pojawia się koncepcja **Core Four** opisywana przez IndyDevDana. Można ją potraktować jako praktyczną listę elementów, nad którymi trzeba panować przy każdym agencie:
+
+1. **Kontekst:** jakie pliki, wymagania, decyzje i wyniki poprzednich etapów model faktycznie otrzymuje. Więcej tekstu nie zawsze znaczy więcej wiedzy.
+2. **Model:** który model i poziom rozumowania są potrzebne w danym etapie, z uwzględnieniem ceny, opóźnienia i jakości.
+3. **Instrukcje:** zasady działania, kontrakty wyników i ograniczenia wynikające z roli agenta.
+4. **Narzędzia:** odczyt kodu, edycja, testy, Git, przeglądarka oraz dostęp do usług zewnętrznych.
+
+Autor proponuje również *agent access parity*: jeśli użytkownik potrafi wykonać ważną operację w interfejsie, agent powinien mieć odpowiadające jej narzędzie. To dobry kierunek projektowania API, ale **parytet możliwości nie może oznaczać parytetu uprawnień**. Agent czytający logi nie powinien automatycznie dostać prawa do kasowania baz czy zmieniania własnych reguł bezpieczeństwa.
+
+W fabryce każdy wykonawca otrzymuje więc odpowiedni wycinek Core Four. Tani model może sprawdzać statusy CI, jeśli w ogóle potrzebny jest tam model. Silniejszy dostaje niejednoznaczną analizę. Recenzent ma dostęp tylko do odczytu, a publikacja na produkcję wymaga osobnej polityki. **To projekt systemu, nie konkurs promptów.**
 
 ## Pamięć projektu to nie historia czatu
 
