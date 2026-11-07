@@ -137,43 +137,19 @@ W [Symphony](https://openai.com/index/open-source-codex-orchestration-symphony/)
 
 Narzędzia można łączyć, ale warto najpierw ustalić, której warstwy rzeczywiście brakuje. Jeśli problemem jest tylko review, budowanie całego control plane będzie kosztowną drogą na skróty.
 
-## Jak nie zbudować fabryki wadliwego kodu?
+## Kontrola jakości i granice autonomii
 
-Największe zagrożenie nie polega na tym, że model raz napisze złą funkcję. Polega na tym, że **automatyczny proces bardzo skutecznie powieli błąd z wcześniejszego etapu**.
+Najdroższy błąd fabryki może powstać przed napisaniem pierwszej linijki kodu. Nieprecyzyjna specyfikacja sprawi, że kilka agentów bardzo sprawnie dostarczy niewłaściwą funkcję. Testy napisane na podstawie tych samych założeń mogą jeszcze potwierdzić pomyłkę.
 
-Jeśli analiza źle określi wymagania, implementacja może być poprawna technicznie, a mimo to bezużyteczna. Jeśli ten sam agent stworzy założenia, kod i testy, może skonstruować spójny system potwierdzający własną pomyłkę.
+Dlatego **kryteria akceptacji muszą powstać przed implementacją**, a QA powinno weryfikować je niezależnie. TypeScript, testy jednostkowe, E2E i kontrola dostępności sprawdzają różne aspekty zmiany. Zielony CI nie jest dowodem, że użytkownik dostał to, czego potrzebował.
 
-Dlatego potrzebne są bramki jakości, które sprawdzają coś więcej niż zielony wynik kompilacji:
+Zakres uprawnień warto uzależnić od ryzyka:
 
-- Specyfikacja musi zawierać testowalne kryteria akceptacji.
-- Narzędzia uruchamiają testy jednostkowe, integracyjne i E2E tam, gdzie mają zastosowanie.
-- Weryfikacja uwzględnia dostępność, bezpieczeństwo i przypadki brzegowe.
-- Zmiany w krytycznych obszarach wymagają dodatkowej kontroli.
-- Raport jasno wskazuje, czego **nie udało się sprawdzić**.
+- **Niskie:** odwracalna poprawka dokumentacji może przejść przez automatyczne kontrole.
+- **Średnie:** typowa funkcjonalność może otrzymać automatycznie przygotowany PR, ale merge zatwierdza człowiek.
+- **Wysokie:** płatności, autoryzacja, migracje danych i produkcyjne sekrety wymagają osobnych zgód i ograniczeń.
 
-W przypadku frontendu screenshot i test Playwright mogą ujawnić problemy, których nie wyłapie TypeScript. Ale nawet test E2E nie zastąpi rozmowy o tym, czy funkcja jest potrzebna i poprawnie zaprojektowana.
-
-Fabryka nie powinna też mieć nieograniczonych uprawnień. Agent analizujący PR nie potrzebuje sekretów produkcyjnych. Ten, który tworzy kod, nie musi samodzielnie zmieniać reguł bezpieczeństwa. Treść zgłoszenia lub pobrana dokumentacja są danymi, a nie zaufanymi instrukcjami.
-
-**Autonomia bez ograniczeń to nie dojrzałość systemu. To brak hamulców.**
-
-## Human-in-the-loop, ale we właściwym miejscu
-
-Nie wszystkie zadania powinny przechodzić identyczną ścieżkę zatwierdzania.
-
-Poprawka literówki w dokumentacji może być scalana po automatycznej kontroli. Zmiana mechanizmu logowania, migracja bazy czy modyfikacja płatności wymaga znacznie ostrożniejszego podejścia.
-
-W systemie można więc zdefiniować polityki zależne od ryzyka:
-
-**Niskie ryzyko:** automatyczne wykonanie i wymagane testy.
-
-**Średnie ryzyko:** implementacja oraz review, ale merge zatwierdza człowiek.
-
-**Wysokie ryzyko:** analiza i propozycja zmiany, z obowiązkową decyzją człowieka przed wykonaniem wrażliwych operacji.
-
-Nie chodzi o to, żeby zatwierdzać każdą komendę w terminalu. Chodzi o kontrolę na granicach, gdzie potencjalny błąd jest kosztowny albo trudny do cofnięcia.
-
-To szczególnie ważne w systemach, które potrafią uruchamiać się proaktywnie po webhooku, harmonogramie lub nowym issue.
+Treść ticketu, pobrany dokument czy zewnętrzny komentarz są nieufnymi danymi, nie instrukcjami sterującymi fabryką. Weryfikacja źródła zdarzeń, sandboxy, ograniczenia sieci i zasada najmniejszych uprawnień chronią system przed błędami oraz *prompt injection*. Człowiek powinien uczestniczyć tam, gdzie konsekwencje decyzji są trudne do cofnięcia, a nie przy każdym odczycie pliku.
 
 ## Czy AI naprawdę przyspiesza programowanie?
 
@@ -189,44 +165,17 @@ Z kolei [badanie produkcyjnych agentów opisane przez IBM Research](https://rese
 
 To nie są pomiary tej samej rzeczy, ale prowadzą do rozsądnego wniosku: **większa autonomia i wyższa przepustowość nie są jeszcze dowodem na lepszy proces inżynierski**.
 
-## Co mierzyć zamiast liczby PR-ów?
+## Jak mierzyć skuteczność i doskonalić proces?
 
-Dla fabryki lepsze są wskaźniki odnoszące się do ukończonej i zaakceptowanej pracy:
+Warto patrzeć na **zaakceptowane zadania**, nie na liczbę PR-ów ani wygenerowanych linii kodu. Do każdego przebiegu zapisywałbym czas od zgłoszenia do akceptacji, koszt wszystkich wywołań, liczbę poprawek, wynik QA i regresje po wdrożeniu.
 
-- **Lead time:** ile trwa droga od przyjęcia zadania do gotowej zmiany?
-- **First-pass acceptance:** jaki odsetek zmian przechodzi QA bez powrotu do implementacji?
-- **Regresje:** ile problemów pojawia się po integracji lub wdrożeniu?
-- **Interwencje człowieka:** przy ilu zadaniach rzeczywiście trzeba angażować programistę?
-- **Koszt zaakceptowanego zadania:** ile kosztują wszystkie próby, testy i poprawki, nie tylko jedno wywołanie modelu?
+W [demonstracji Machinist opisywanej przez Owaina Lewisa](/post/self-improving-ai-software-factory) dostępne są historia przebiegów i zużycie tokenów. To dobry początek, ale sam czas czy koszt nie mówi jeszcze, czy kod jest poprawny.
 
-Szczególnie ważny jest ostatni punkt. Fabryka, która uruchamia siedmiu agentów do poprawienia jednego przycisku, może działać imponująco i ekonomicznie bez sensu.
+Kolejny krok to **evals**: stały zestaw reprezentatywnych zadań i kryteriów oceny. Wtedy możesz porównać dwa modele, prompty lub konfiguracje review na podobnych przypadkach. W przeciwnym razie oszczędność może wynikać po prostu z łatwiejszego zgłoszenia.
 
-Warto mierzyć też odrzucone zmiany i czas poświęcony na ich naprawę. Zielony CI to warunek techniczny, nie miara tego, czy produkt stał się lepszy.
+Lewis proponuje też zastąpienie powtarzalnego pytania modelu o status CI zwykłym skryptem. To propozycja usprawnienia, nie potwierdzony w filmie wynik finansowy. Pokazuje jednak dobrą zasadę: **operacje deterministyczne zostaw kodowi, interpretację modelowi**.
 
-## Evals i samodoskonalenie: fabryka powinna mierzyć własne błędy
-
-[Owain Lewis w demonstracji Machinist](/post/self-improving-ai-software-factory) pokazuje historię przebiegów, czasy wykonania i zużycie tokenów. W jego środowisku pojawiają się m.in. około 18 minut średniego czasu zadania i około 15 milionów łącznie wykorzystanych tokenów. To **dane z demonstracji**, nie benchmark skuteczności fabryk.
-
-Prawdziwe usprawnianie zaczyna się dopiero wtedy, gdy zapisujesz także **jakość końcowego rezultatu**. Jedna fabryka może wykonywać zadanie tanio, ale produkować PR-y wymagające kilku godzin ręcznej naprawy. Inna zużyje więcej tokenów, ale częściej przejdzie testy za pierwszym podejściem.
-
-Do każdego przebiegu przypisałbym co najmniej identyfikator i klasę zadania, wersję workflow, modele, czas, koszt, liczbę prób, wyniki testów, werdykt recenzenta i informację o późniejszej regresji.
-
-Następnie zbudowałbym **zestaw ewaluacyjny (evals)**: kilkanaście lub kilkadziesiąt reprezentatywnych zadań, których oczekiwane wyniki i kryteria oceny znamy. Zmiana promptu, modelu albo polityki review musi przejść tę samą próbę co poprzednia wersja.
-
-| Co zmieniamy? | Co porównujemy? | Pułapka |
-| --- | --- | --- |
-| Model analityczny | Poprawność specyfikacji, koszt, czas | Nowy wariant dostał łatwiejsze zgłoszenia |
-| Prompt buildera | Przejście testów i liczba rund review | Testy potwierdzają błędne wymagania |
-| Liczbę recenzentów | Wykryte defekty, regresje, koszt | Więcej recenzji powiela te same uwagi |
-| Mechanizm oczekiwania na CI | Liczbę wywołań modeli i czas | Optymalizacja pomija nieudane pipeline'y |
-
-W filmie Lewis wskazuje ciekawy przypadek: agent zużywa zasoby na wielokrotne sprawdzanie statusu CI. Taką mechaniczną pracę można przenieść do skryptu Pythona, który zwróci wynik dopiero po zmianie stanu. **To propozycja optymalizacji, a nie udokumentowana w tej demonstracji oszczędność.**
-
-Mechanizm samodoskonalenia wygląda więc bardziej jak rozwój oprogramowania niż jak niekontrolowana samomodyfikacja AI:
-
-**Wykonaj → zmierz → znajdź problem → zaproponuj zmianę → przetestuj na tych samych zadaniach → wdroż lub wycofaj.**
-
-Nie pozwalałbym fabryce automatycznie modyfikować własnych polityk bezpieczeństwa na podstawie jednego udanego przebiegu. Zmiana procesu wpływa na wszystkie następne zadania; źle zoptymalizowany workflow może seryjnie pogarszać wyniki.
+Samodoskonalenie nie powinno oznaczać dowolnego przepisywania własnych reguł. Zdrowa pętla wygląda tak: **pomiar → hipoteza → test na porównywalnych zadaniach → wdrożenie lub wycofanie**. Polityki bezpieczeństwa pozostają pod oddzielną kontrolą.
 
 ## Jak zbudowałbym pierwszą fabrykę?
 
