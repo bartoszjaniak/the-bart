@@ -291,6 +291,23 @@ Jedno zgłoszenie może obejmować kilka podejść, testy, poprawki, konflikt w 
 
 Podobne przesunięcie widać w [GitHub Copilot coding agent](https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/kick-off-a-task), któremu można przypisać issue, a następnie przejrzeć przygotowany PR. To ważny klocek większej automatyzacji, choć samo delegowanie issue nie oznacza jeszcze pełnej fabryki.
 
+## Przegląd rozwiązań: nie wszystkie zastępują się nawzajem
+
+Powyższe przykłady często lądują w jednym worku z napisem „AI Software Factory”, chociaż rozwiązują różne problemy. Wybór narzędzia ma sens dopiero po określeniu brakującej warstwy.
+
+| Rozwiązanie lub wzorzec | Najważniejsza rola | Czego samo nie gwarantuje? |
+| --- | --- | --- |
+| **Codex / Claude Code** | Wykonanie zadania programistycznego | Trwałego procesu obejmującego wiele zadań |
+| **Tiny Software Factory** | Mały, proaktywny workflow do jednego celu | Skalowalnej infrastruktury dla wielu zespołów |
+| **Claude Code + siedmiu subagentów** | Specyfikacja, implementacja i wielostronne review | Trwałości sesji po dowolnej awarii |
+| **Pi Durable** | Checkpointy i odtwarzanie niedokończonej pracy | Jakości specyfikacji i bezpieczeństwa wdrożenia |
+| **Machinist** | Sterowanie workerami, kolejką i historią wykonania | Samoistnego wzrostu jakości bez ewaluacji |
+| **Symphony** | Przydzielanie ticketów agentom i pilnowanie ich realizacji | Poprawności każdego rozwiązania oraz uniwersalnego procesu QA |
+
+To porównanie **zakresów odpowiedzialności**, nie ranking produktów. Narzędzia można łączyć, ale nie zawsze trzeba. Jeśli problemem jest pojedynczy etap review, uruchomienie całej nowej infrastruktury może być przerostem formy nad treścią.
+
+W praktyce warto wybrać jeden punkt wejścia dla zadań, jeden mechanizm utrzymania ich stanu i jedną ścieżkę kontroli jakości. Dopiero potem decydować, ile agentów i jakich frameworków rzeczywiście potrzeba.
+
 ## Jak nie zbudować fabryki wadliwego kodu?
 
 Największe zagrożenie nie polega na tym, że model raz napisze złą funkcję. Polega na tym, że **automatyczny proces bardzo skutecznie powieli błąd z wcześniejszego etapu**.
@@ -356,6 +373,31 @@ Dla fabryki lepsze są wskaźniki odnoszące się do ukończonej i zaakceptowane
 Szczególnie ważny jest ostatni punkt. Fabryka, która uruchamia siedmiu agentów do poprawienia jednego przycisku, może działać imponująco i ekonomicznie bez sensu.
 
 Warto mierzyć też odrzucone zmiany i czas poświęcony na ich naprawę. Zielony CI to warunek techniczny, nie miara tego, czy produkt stał się lepszy.
+
+## Evals i samodoskonalenie: fabryka powinna mierzyć własne błędy
+
+[Owain Lewis w demonstracji Machinist](/post/self-improving-ai-software-factory) pokazuje historię przebiegów, czasy wykonania i zużycie tokenów. W jego środowisku pojawiają się m.in. około 18 minut średniego czasu zadania i około 15 milionów łącznie wykorzystanych tokenów. To **dane z demonstracji**, nie benchmark skuteczności fabryk.
+
+Prawdziwe usprawnianie zaczyna się dopiero wtedy, gdy zapisujesz także **jakość końcowego rezultatu**. Jedna fabryka może wykonywać zadanie tanio, ale produkować PR-y wymagające kilku godzin ręcznej naprawy. Inna zużyje więcej tokenów, ale częściej przejdzie testy za pierwszym podejściem.
+
+Do każdego przebiegu przypisałbym co najmniej identyfikator i klasę zadania, wersję workflow, modele, czas, koszt, liczbę prób, wyniki testów, werdykt recenzenta i informację o późniejszej regresji.
+
+Następnie zbudowałbym **zestaw ewaluacyjny (evals)**: kilkanaście lub kilkadziesiąt reprezentatywnych zadań, których oczekiwane wyniki i kryteria oceny znamy. Zmiana promptu, modelu albo polityki review musi przejść tę samą próbę co poprzednia wersja.
+
+| Co zmieniamy? | Co porównujemy? | Pułapka |
+| --- | --- | --- |
+| Model analityczny | Poprawność specyfikacji, koszt, czas | Nowy wariant dostał łatwiejsze zgłoszenia |
+| Prompt buildera | Przejście testów i liczba rund review | Testy potwierdzają błędne wymagania |
+| Liczbę recenzentów | Wykryte defekty, regresje, koszt | Więcej recenzji powiela te same uwagi |
+| Mechanizm oczekiwania na CI | Liczbę wywołań modeli i czas | Optymalizacja pomija nieudane pipeline'y |
+
+W filmie Lewis wskazuje ciekawy przypadek: agent zużywa zasoby na wielokrotne sprawdzanie statusu CI. Taką mechaniczną pracę można przenieść do skryptu Pythona, który zwróci wynik dopiero po zmianie stanu. **To propozycja optymalizacji, a nie udokumentowana w tej demonstracji oszczędność.**
+
+Mechanizm samodoskonalenia wygląda więc bardziej jak rozwój oprogramowania niż jak niekontrolowana samomodyfikacja AI:
+
+**Wykonaj → zmierz → znajdź problem → zaproponuj zmianę → przetestuj na tych samych zadaniach → wdroż lub wycofaj.**
+
+Nie pozwalałbym fabryce automatycznie modyfikować własnych polityk bezpieczeństwa na podstawie jednego udanego przebiegu. Zmiana procesu wpływa na wszystkie następne zadania; źle zoptymalizowany workflow może seryjnie pogarszać wyniki.
 
 ## Jak zbudowałbym pierwszą fabrykę?
 
