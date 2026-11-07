@@ -7,7 +7,7 @@ interface Props {
 const { variant = "yellow", title } = Astro.props;
 ---
 
-<aside class={`callout not-prose ${variant}`} role="note">
+<aside class={`callout not-prose ${variant}${title === "TL;DR" ? " tldr" : ""}`} role="note">
   <h3>{title}</h3>
   <slot />
 </aside>
