@@ -177,96 +177,30 @@ Lewis proponuje też zastąpienie powtarzalnego pytania modelu o status CI zwyk�
 
 Samodoskonalenie nie powinno oznaczać dowolnego przepisywania własnych reguł. Zdrowa pętla wygląda tak: **pomiar → hipoteza → test na porównywalnych zadaniach → wdrożenie lub wycofanie**. Polityki bezpieczeństwa pozostają pod oddzielną kontrolą.
 
-## Jak zbudowałbym pierwszą fabrykę?
+## Jak zbudować pierwszą fabrykę bez przerostu formy?
 
-Nie zaczynałbym od zespołu piętnastu wirtualnych specjalistów. Zacząłbym od możliwie małego układu, w którym da się dokładnie określić wejście, wyjście i przyczynę porażki.
+Nie zaczynałbym od kilkunastu agentów. Wybrałbym **jedno powtarzalne zadanie**, np. obsługę dobrze opisanych błędów w Angularze, i rozszerzał proces dopiero po sprawdzeniu wyników.
 
-### Etap 1: jeden agent, jedno repozytorium
+1. **Jeden wykonawca.** Agent przygotowuje branch, poprawkę, testy i raport. Na początku każdy PR przechodzi ręczną ocenę.
+2. **Specyfikacja i niezależny QA.** Przed zmianą zapisujemy kryteria akceptacji. Po zmianie osobny etap sprawdza rezultat. Każda pętla poprawek ma limit.
+3. **Trwały orkiestrator.** Dodajemy kolejkę zadań, identyfikatory, checkpointy i bezpieczne ponawianie operacji. Zdarzenia mogą przychodzić z webhooka lub harmonogramu.
+4. **Izolacja i równoległość.** Worktrees rozdzielają pliki, a osobne uprawnienia chronią narzędzia i sekrety. Współbieżność uruchamiamy tylko dla niezależnych prac.
+5. **Obserwowalność.** Panel pokazuje kolejkę, blokady, koszty i raporty. Z czasem porównujemy wersje procesu na tych samych zadaniach.
 
-Agent dostaje issue, tworzy osobny branch, modyfikuje kod i uruchamia testy. Oddaje diff oraz raport, zamiast kończyć pracę komunikatem „powinno działać”.
+Nie wszystko trzeba automatyzować. W małym projekcie dobrze skonfigurowany pojedynczy agent może być rozsądniejszy od systemu kolejkowego. Fabryka ma sens, gdy zadania powtarzają się regularnie, a ich wyniki można obiektywnie ocenić.
 
-Najpierw dopracowałbym środowisko, instrukcje i sprawdzalne reguły projektu.
+### Przed uruchomieniem bez nadzoru
 
-### Etap 2: specyfikacja i niezależny QA
+Sprawdziłbym sześć warunków:
 
-Przed implementacją powstają kryteria akceptacji. Po implementacji odrębny etap sprawdza, czy zostały spełnione. Błędy wracają do poprawy, ale nie w nieskończoność.
+- **Wejście:** uwierzytelnione zdarzenia i deduplikacja.
+- **Stan:** możliwość wznowienia po awarii bez powtórzenia niebezpiecznych operacji.
+- **Granice:** odizolowane środowiska, minimalne uprawnienia, limity kosztu i czasu.
+- **Jakość:** testowalne kryteria, niezależna weryfikacja i dowody w raporcie.
+- **Kontrola:** znane zasady eskalacji, zatrzymania pracy i zatwierdzania wdrożeń.
+- **Odzyskiwanie:** logi audytowe oraz możliwość cofnięcia zmiany.
 
-To pierwsza pętla, która naprawdę przypomina proces produkcyjny.
-
-### Etap 3: trwałe zadania i orkiestrator
-
-Dodajemy kolejkę, statusy, identyfikatory zadań, ograniczenia równoległości i zasady ponowień. Restart procesu nie powinien kasować wiedzy o wykonanej pracy.
-
-Dopiero tutaj warto pozwolić fabryce samodzielnie pobierać nowe zgłoszenia.
-
-### Etap 4: równoległość tam, gdzie się opłaca
-
-Osobnych wykonawców uruchamiamy dla niezależnych zadań. Współdzielone kontrakty i kolejność integracji ustalamy wcześniej.
-
-Bez tego otrzymamy nie zespół, tylko kilku agentów walczących o ten sam plik.
-
-### Etap 5: centrum sterowania
-
-Panel webowy albo prosty terminalowy dashboard pokazuje kolejkę, etap pracy, liczbę prób, koszty, błędy i decyzje oczekujące na człowieka.
-
-Nie musi być efektowny. Musi pozwalać szybko odpowiedzieć na pytanie: **co fabryka obecnie robi, dlaczego i co ją blokuje?**
-
-<Callout title="Pierwszy sensowny eksperyment" variant="blue">
-Wybierz powtarzalny proces, np. przygotowywanie PR-ów z poprawkami błędów opartych na dobrze opisanych zgłoszeniach. Zacznij od automatycznej analizy, implementacji i testów, ale zachowaj ręczny merge. Mierz koszt, liczbę poprawek i jakość przez kilka iteracji. Dopiero na podstawie wyników rozbudowuj system.
-</Callout>
-
-## Przykład architektury: fabryka do naprawiania błędów frontendu
-
-Złóżmy te elementy w projekt, który można rzeczywiście uruchomić. Załóżmy aplikację Angular, repozytorium na GitHubie oraz pipeline CI z testami jednostkowymi i Playwright.
-
-Fabryka dostaje zgłoszenie o błędzie po odświeżeniu formularza. Zamiast uruchamiać od razu siedmiu agentów, wykonuje kontrolowany przepływ:
-
-1. **Triage.** Webhook przyjmuje zdarzenie, sprawdza jego źródło i identyfikator. Prosty filtr odrzuca duplikaty. Jeśli zgłoszenie nie zawiera scenariusza odtworzenia, system oznacza je jako wymagające doprecyzowania.
-2. **Analiza.** Agent odczytuje pliki związane z formularzem i routingiem, tworzy specyfikację, zapisuje założenia i kryteria akceptacji. Nie zmienia jeszcze kodu.
-3. **Przygotowanie środowiska.** Orkiestrator tworzy branch i worktree dla tego zadania, ustala limit kosztu, liczbę prób oraz dostępne narzędzia. Sekrety produkcyjne pozostają poza zasięgiem wykonawcy.
-4. **Implementacja.** Agent wprowadza poprawkę. Uruchamia TypeScript, lint, testy jednostkowe i test E2E obejmujący odświeżenie strony oraz nawigację Wstecz.
-5. **Niezależne QA.** Recenzent porównuje implementację z kryteriami akceptacji. Jeśli znajdzie problem, wysyła *jeden spójny raport* z warunkami poprawy.
-6. **Integracja.** Po przejściu testów system otwiera PR i obserwuje CI. W razie konfliktu próbuje bezpiecznej aktualizacji brancha, a jeśli nie potrafi jej wykonać, oznacza zadanie jako zablokowane.
-7. **Decyzja.** Człowiek widzi diff, wyniki testów, ewentualny zrzut ekranu i listę nieweryfikowanych przypadków. Zatwierdza merge albo odrzuca zmianę.
-8. **Zamknięcie.** Fabryka zapisuje koszt, czas, liczbę prób, werdykty i wnioski. Po wdrożeniu można dodatkowo obserwować, czy błąd nie wrócił.
-
-Taki przepływ powinien mieć jawne statusy. Minimalny zestaw to **queued → analyzing → ready_to_build → implementing → reviewing → awaiting_approval → completed**. Obok potrzebne są stany **blocked**, **failed** i **cancelled**. Każdy musi mieć definicję: kto może go ustawić, jakie artefakty powinny istnieć i co uruchamia następny etap.
-
-Dla każdego zadania przechowuj identyfikator, wersję specyfikacji, branch, przypisane środowisko, ostatni checkpoint, wykorzystany budżet i linki do raportów. Nie opieraj statusu na tym, co agent napisał w ostatniej wiadomości.
-
-<Callout title="Najpierw stabilny automat, potem inteligentne wyjątki" variant="blue">
-Sprawdzanie, czy test CI zakończył się sukcesem, nie wymaga interpretacji języka naturalnego. Niech zrobi to API albo skrypt. Agenta uruchamiaj, gdy trzeba zrozumieć wymaganie, zdiagnozować nieoczywisty błąd albo ocenić kompromis. Dzięki temu fabryka staje się prostsza, tańsza i łatwiejsza do debugowania.
-</Callout>
-
-Gdy taka jedna ścieżka działa powtarzalnie, możesz dodać kolejne rodzaje zadań. Ale nie kopiuj wszystkich etapów bez refleksji. Aktualizacja dokumentacji i migracja bazy danych mają zupełnie inny profil ryzyka.
-
-## Czy w małym projekcie to w ogóle ma sens?
-
-Czasami nie.
-
-Jeśli rozwijasz prostą aplikację i masz kilka zadań tygodniowo, dobry agent kodujący z testami i jasną instrukcją może dać większość korzyści. Orkiestrator, osobna baza zadań, monitoring i dziesiątki ról mogłyby kosztować więcej pracy niż oszczędzają.
-
-Fabryka zaczyna mieć sens, gdy regularnie pojawiają się zadania, równolegle rozwijasz kilka obszarów, a ręczne pilnowanie sesji agentów staje się wąskim gardłem.
-
-Najłatwiej automatyzować pracę, której poprawność można zdefiniować i sprawdzić. Znacznie trudniej autonomicznie rozwiązywać niejednoznaczne problemy produktowe, wymyślać nową architekturę lub oceniać kompromisy biznesowe.
-
-Nie każda trudność jest gwoździem, a nowy agent nie zawsze jest młotkiem.
-
-## Checklista: kiedy można pozwolić fabryce pracować bez nadzoru?
-
-Zanim pozwoliłbym systemowi samodzielnie przyjmować zgłoszenia z produkcji, sprawdziłbym kilka rzeczy. Brak odpowiedzi na którekolwiek z tych pytań jest dobrym powodem, żeby pozostać przy trybie *near the loop*.
-
-- **Wejście:** czy wiadomo, skąd pochodzą zdarzenia, jak je uwierzytelnić i odrzucić duplikaty?
-- **Zakres pracy:** czy zadanie ma testowalny rezultat, kryteria akceptacji i określone uprawnienia?
-- **Izolacja:** czy wykonawca ma oddzielny katalog i środowisko oraz ograniczony dostęp do sieci i sekretów?
-- **Trwałość:** czy można bezpiecznie wznowić proces po restarcie bez podwójnych skutków ubocznych?
-- **Jakość:** czy wynik przechodzi kontrole niezależne od implementującego agenta?
-- **Budżet:** czy istnieją limity liczby prób, czasu, tokenów i równoległych zadań?
-- **Eskalacja:** czy wiadomo, kiedy wymagana jest decyzja człowieka, a jak zatrzymać całą fabrykę?
-- **Audyt:** czy można odtworzyć, kto lub co wykonało operację, dlaczego i z jakim rezultatem?
-- **Cofnięcie:** czy nieudane wdrożenie lub zmiana konfiguracji ma realną drogę powrotu?
-
-To nie jest lista funkcji, które musi dostarczyć jeden framework. **To lista odpowiedzialności całego systemu**. Część zapewni Git i CI, część baza zadań, część infrastruktura, a tylko część model językowy.
+Jeśli tych elementów brakuje, lepiej pozostać w trybie *near the loop*. Automatyzacja powinna zmniejszać obciążenie, a nie tylko przenosić je na późniejsze debugowanie.
 
 ## Co zostaje programiście?
 
