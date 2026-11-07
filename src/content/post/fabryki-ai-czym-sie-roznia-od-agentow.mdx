@@ -213,6 +213,24 @@ Nie trzeba od razu budować skomplikowanego systemu pamięci wektorowej. Często
 
 Trzeba jednak zadbać o aktualność wiedzy. Jeśli fabryka automatycznie zapisze błędne wnioski jako trwałą zasadę, będzie je powielać z godną podziwu konsekwencją.
 
+## Trwały agent. Dlaczego przywrócenie rozmowy nie wystarczy?
+
+Załóżmy, że agent wykrył błąd 500, utworzył zgłoszenie, zapisał poprawkę i właśnie miał uruchomić testy. W tym momencie proces zostaje przerwany.
+
+Zwykłe polecenie wznowienia sesji może przywrócić historię rozmowy. Nie odpowiada jednak niezawodnie na pytania: czy zgłoszenie zostało naprawdę utworzone, czy commit zakończył się sukcesem i od jakiej operacji trzeba kontynuować.
+
+W [artykule o Pi Durable](/post/pi-durable-proaktywni-agenci) pokazuję różnicę między **trwałością konwersacji** a **trwałością wykonania**. [Dokumentacja Pi Durable](https://github.com/earendil-works/pi/blob/main/packages/durable/README.md) opisuje utrwalanie wpisów, wywołań narzędzi i stanu zadań, a także punkty kontrolne, z których można wznowić pracę po restarcie.
+
+Potrzebujesz tu trzech niezależnych mechanizmów:
+
+- **Checkpoint:** zapisuje zatwierdzony etap pracy i artefakty, do których można wrócić po awarii.
+- **Dedublikacja zdarzeń:** identyfikator żądania, np. requestId, pozwala rozpoznać ponowne dostarczenie tego samego zlecenia.
+- **Idempotentne skutki uboczne:** system sprawdza, czy zapis PR-a, komentarza lub operacja wdrożeniowa już nastąpiła, zanim spróbuje ją powtórzyć.
+
+Ważny szczegół z Pi Durable: przerwane wywołania modeli można ponawiać, natomiast ponowne wykonanie narzędzia z efektem ubocznym wymaga świadomie określonej polityki. **Trwałość nie gwarantuje wykonania zewnętrznej operacji dokładnie jeden raz.**
+
+Przykład? Zdarzenie o identyfikatorze incident-421 przychodzi dwa razy. Fabryka może wznowić to samo dochodzenie i wykorzystać istniejący PR. Nie powinna tworzyć dwóch zgłoszeń, dwóch branchy i dwóch wdrożeń. To drobiazg, dopóki rezultatem powtórzenia nie jest usunięcie danych.
+
 ## Czy każdy etap wymaga osobnego agenta?
 
 Nie. I to jedna z najbardziej praktycznych lekcji.
@@ -228,6 +246,34 @@ Nie warto natomiast tworzyć kilku agentów wyłącznie po to, żeby zgodnie pot
 Anthropic w swoim [opisie wzorców agentowych](https://www.anthropic.com/research/building-effective-agents) rekomenduje zaczynać od możliwie prostego rozwiązania, a złożoność zwiększać, gdy istnieje ku temu powód.
 
 To dobra zasada również tutaj.
+
+## Konkretna fabryka w Claude Code: siedem ról i twarde kontrakty
+
+Najbardziej namacalny przykład przepływu pracy opisałem w tekście [Własna fabryka kodu w Claude Code](/post/fabryka-oprogramowania-claude-code), na podstawie [projektu ZazenCodes](https://github.com/zazencodes/zazencodes-season-3/tree/main/src/software-factory-claude-code).
+
+W tej implementacji jeden skill /factory pełni funkcję orkiestratora. Ma siedmiu wyspecjalizowanych subagentów:
+
+| Rola | Co oddaje? |
+| --- | --- |
+| **Spec writer** | Specyfikację i kryteria akceptacji |
+| **Builder** | Zmiany w kodzie oraz raport wykonania |
+| **Security reviewer** | Ocenę bezpieczeństwa |
+| **UX reviewer** | Ocenę scenariuszy użytkownika |
+| **UI reviewer** | Ocenę interfejsu |
+| **Code reviewer** | Ocenę jakości implementacji |
+| **Approver** | Decyzję o scaleniu lub eskalacji |
+
+Orkiestrator przechowuje stan w plikach, m.in. w job.json w katalogu zadania. Wykonawcy zapisują osobne raporty, zamiast jednocześnie modyfikować centralny status. Wyniki mają kontrakty w rodzaju STATUS: READY, VERDICT: PASS, VERDICT: CHANGES czy ESCALATE.
+
+Przeglądy UI, UX, kodu i bezpieczeństwa ruszają równolegle **dopiero po zakończeniu implementacji**. System czeka na komplet werdyktów. Jeśli któryś zawiera uwagi, builder otrzymuje wspólny raport, a nie serię pojedynczych, sprzecznych żądań.
+
+W opisanym szablonie dopuszczono do dwóch wznowień buildera po pierwszej implementacji. Po wyczerpaniu limitu proces eskaluje problem do człowieka. Wrażliwe zmiany, np. w logowaniu, płatnościach, migracjach lub CI, też wymagają jego decyzji.
+
+Do izolacji zadań projekt używa **Git worktrees**: osobnych katalogów i branchy jednego repozytorium. Dzięki temu agenci nie nadpisują sobie plików podczas pracy, choć nadal mogą przygotować wzajemnie niezgodne zmiany. Worktree nie jest też sandboxem bezpieczeństwa i nie ogranicza sam z siebie dostępu do sekretów.
+
+<Callout title="Najważniejsze w tym przykładzie">
+Nie chodzi o magiczną liczbę siedmiu agentów. Chodzi o **jednoznaczne artefakty, kompletne recenzje, limity ponowień i czytelne warunki zatrzymania**. To te mechanizmy można przenieść do własnej fabryki, nawet jeśli ostatecznie użyje ona dwóch modeli zamiast siedmiu.
+</Callout>
 
 ## Symphony: zadanie zamiast sesji w terminalu
 
