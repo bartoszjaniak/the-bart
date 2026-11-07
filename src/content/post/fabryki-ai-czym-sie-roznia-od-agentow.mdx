@@ -27,146 +27,56 @@ Agent pracuje. Ty jesteś całym działem projektowym, QA i kierownikiem zmiany 
 
 To brzmi jak niewielka różnica. W architekturze systemu zmienia niemal wszystko.
 
-## Czym właściwie jest agent programistyczny?
+## Agent, zespół agentów i fabryka: trzy różne rzeczy
 
-Zwykły chatbot proponuje rozwiązanie. Agent może je sam wykonać.
+Chatbot podpowiada kod. **Agent programistyczny** może samodzielnie zmienić pliki, uruchomić testy i poprawić błąd. Dostaje cel i narzędzia, a potem działa w pętli: analiza, decyzja, wykonanie, obserwacja wyniku. Tak pracują m.in. Claude Code i Codex.
 
-Ma dostęp do narzędzi: repozytorium, terminala, edytora plików, przeglądarki, testów czy API. Dostaje cel, podejmuje decyzje, obserwuje wynik i próbuje kolejnego kroku. Nie potrzebuje osobnego promptu przed każdą komendą.
+**System wieloagentowy** dzieli zadania między wykonawców: analityka, programistę czy recenzenta. Współpraca kilku modeli nie oznacza jednak, że ktoś pilnuje całego procesu.
 
-Jego pętla jest prosta:
+**Fabryka AI** obejmuje również to, co dzieje się przed implementacją i po niej: przyjęcie zgłoszenia, specyfikację, kolejkę, stan zadań, testy, obsługę błędów, PR i decyzję o wdrożeniu.
 
-**Cel → analiza → działanie → wynik → korekta.**
+<QuoteBlock>O fabryce nie decyduje liczba agentów. Decyduje to, czy system potrafi przeprowadzić zadanie do sprawdzonego rezultatu.</QuoteBlock>
 
-Wyobraź sobie błąd, przez który formularz Angular traci dane po odświeżeniu. Agent może wyszukać problematyczny kod, prześledzić synchronizację stanu, przygotować poprawkę i odpalić testy.
+W [Building effective agents](https://www.anthropic.com/research/building-effective-agents) Anthropic rozróżnia *workflow*, w którym przebieg wyznacza kod, od *agenta*, który sam wybiera kolejne działania. Dobra fabryka wykorzystuje oba podejścia. Zdarzenia, statusy i limity warto obsługiwać deterministycznie, a modelowi zostawić pracę wymagającą interpretacji.
 
-To nie oznacza jednak, że odpowiada za cały proces wytwarzania oprogramowania. Zwykle ma jeden przydzielony cel i określony koniec pracy.
+## Od promptu do pracy proaktywnej
 
-W [Building effective agents](https://www.anthropic.com/research/building-effective-agents) Anthropic rozróżnia dwa rodzaje systemów:
+Agent nie musi czekać na otwarcie terminala. Jak opisuję w artykule [Wyjdź z pętli](/post/agents-out-of-loop), autonomię można stopniować:
 
-- **Workflow**: przebieg wyznacza kod. Model wykonuje określone kroki, ale nie decyduje sam o całym procesie.
-- **Agent**: model dynamicznie wybiera działania i narzędzia, reagując na napotkane problemy.
+| Tryb | Co robi człowiek? |
+| --- | --- |
+| **In the loop** | Uruchamia zadanie i prowadzi sesję |
+| **Near the loop** | Otrzymuje wynik lub decyzję do zatwierdzenia |
+| **Out of the loop** | Nadzoruje automatyczny proces, reaguje na wyjątki |
 
-To rozróżnienie jest ważne, bo fabryka może korzystać z obu podejść naraz. Nie musi być jedną gigantyczną, nieprzewidywalną pętlą modelu.
+Zadania mogą przychodzić z GitHub Issues, webhooka, alarmu albo crona. Nie oznacza to prawa do automatycznego merge'a. **Samodzielne rozpoczęcie pracy i prawo do wdrożenia to dwie różne decyzje.**
 
-## Trzy pojęcia, które łatwo pomylić
+W idei [Tiny Software Factories](/post/tiny-software-factories) dobrze widać tę granicę: *Empty Factory* daje środowisko i narzędzia, a *Running Factory* ma już konkretne wejście, wyzwalacz i wynik. Warto zacząć od jednego, dobrze zdefiniowanego problemu.
 
-**Agent kodujący** wykonuje konkretną pracę. Może samodzielnie zmieniać kod, testować i poprawiać błędy. Przykład: sesja Codex lub Claude Code pracująca nad jednym issue.
+## Jak wygląda jedno zadanie w fabryce?
 
-**System wieloagentowy** deleguje pracę kilku wykonawcom. Jeden analizuje wymagania, drugi pisze backend, trzeci sprawdza jakość. Mogą działać równolegle, dyskutować i wymieniać wyniki.
+Przykład z Angulara: filtr zamówień ma zapamiętywać status w URL, obsługiwać Wstecz i działać z klawiatury. Zwykły agent może napisać komponent. Fabryka powinna zadbać o cały przepływ:
 
-**Fabryka AI** obejmuje całość procesu: przyjmuje zadania, nadaje im stan, ustala kolejność, uruchamia wykonawców, pilnuje kryteriów akceptacji, obsługuje porażki, integruje wyniki i przygotowuje dostarczenie zmiany.
+1. **Przyjęcie.** Zgłoszenie dostaje identyfikator. System weryfikuje źródło, odrzuca duplikaty i sprawdza, czy wymagania są kompletne.
+2. **Specyfikacja.** Agent analizuje routing i formularz, zapisuje kryteria akceptacji oraz niejasności. Nie zgaduje po cichu, jak ma działać historia przeglądarki.
+3. **Plan i środowisko.** Orkiestrator tworzy branch i izolowany Git worktree, przydziela narzędzia oraz limity czasu i kosztu.
+4. **Implementacja.** Agent zmienia kod, uruchamia TypeScript, lint i testy. Scenariusz Playwright sprawdza odświeżenie, Wstecz i klawiaturę.
+5. **QA i poprawki.** Niezależny recenzent porównuje wynik ze specyfikacją. Jeśli znajdzie regresję, zwraca jeden raport uwag, a system ponawia pracę w określonym limicie.
+6. **PR i decyzja.** Fabryka publikuje zmianę, dołącza wyniki CI i informację, czego nie sprawdzono. Człowiek zatwierdza merge, a system zapisuje przebieg zadania.
 
-<QuoteBlock>O tym, czy system jest fabryką, nie decyduje liczba agentów. Decyduje odpowiedzialność za przebieg pracy i sprawdzalny wynik.</QuoteBlock>
+Stan nie może istnieć tylko w ostatniej wiadomości agenta. Przydatne statusy to **queued → analyzing → implementing → reviewing → awaiting_approval → completed**, a obok *blocked*, *failed* i *cancelled*. Każdy etap powinien zostawić artefakt, np. specyfikację, diff, raport testów lub werdykt.
 
-Możesz mieć dziesięciu agentów, którzy na koniec zrzucają na Ciebie ręczne łączenie branchy i naprawianie CI. To rozbudowany system wieloagentowy, ale słaba fabryka.
+## Architektura: orkiestrator, workery i trwały stan
 
-Możesz też mieć jednego agenta, trwałą kolejkę zadań, automatyczne testy, politykę ponowień i sensowne bramki jakości. Taki układ bywa bliższy idei fabryki niż symulowana firma z AI-owym CEO.
+W [Machinist](https://github.com/owainlewis/machinist) oraz w [opisanej na blogu demonstracji Owaina Lewisa](/post/self-improving-ai-software-factory) widać podział znany z systemów rozproszonych.
 
-## Kto uruchamia pracę i kiedy wchodzi człowiek?
+**Control plane** przyjmuje zgłoszenia, prowadzi kolejkę, decyduje o kolejności i nadzoruje wyniki. To miejsce orkiestratora, polityk bezpieczeństwa, budżetów i historii wykonania.
 
-W artykule [o wychodzeniu z pętli ciągłego promptowania](/post/agents-out-of-loop) opisałem trzy sposoby pracy z agentem. Dla fabryki są ważne, bo **autonomia to nie przełącznik „włącz/wyłącz”**. Można ją ustalać osobno dla uruchamiania zadań, wykonywania działań i zatwierdzania wyniku.
+**Data plane** wykonuje pracę: uruchamia agentów, shell, przeglądarkę, testy oraz odizolowane katalogi robocze. Jeden worker może realizować wiele kolejnych zadań, ale nie powinien dowolnie zmieniać reguł całej fabryki.
 
-| Tryb | Co rozpoczyna pracę? | Gdzie jest człowiek? |
-| --- | --- | --- |
-| **In the loop** | Polecenie programisty | Prowadzi sesję i zatwierdza kolejne kroki |
-| **Near the loop** | Zdarzenie lub zadanie w kolejce | Dostaje gotowy wynik albo decyzję do zatwierdzenia |
-| **Out of the loop** | Automatyczny wyzwalacz | Nadzoruje polityki i reaguje na wyjątki, zamiast uczestniczyć w każdej realizacji |
+Orkiestrator pilnuje też zależności. Plan można zapisać jako **DAG**, skierowany graf acykliczny: test integracyjny zależy od gotowego API, ale jego scenariusz można przygotować wcześniej. Równoległość przyspiesza pracę tylko wtedy, gdy wykonawcy nie wchodzą sobie w drogę.
 
-Wyzwalaczem może być nowy ticket z etykietą, webhook po nieudanym CI, alarm aplikacji lub harmonogram. W każdym przypadku potrzebujesz **warstwy przyjmowania zdarzeń**, która sprawdzi uprawnienia, odfiltruje duplikaty i zdecyduje, czy warto uruchamiać kosztowną analizę AI.
-
-W [Tiny Software Factories](/post/tiny-software-factories) pojawia się rozróżnienie na *Empty Factory* i *Running Factory*. Pierwsza daje środowisko, narzędzia i konfigurowalnego agenta. Druga łączy je z konkretnym problemem, jego danymi wejściowymi i sposobem uruchamiania. To użyteczny test: jeśli nie potrafisz powiedzieć, co trafia na wejście i jaki rezultat uznajesz za gotowy, masz raczej laboratorium agentów niż działającą fabrykę.
-
-Autonomiczne uruchomienie zadania nie oznacza automatycznego wdrożenia. Możesz pozwolić fabryce samodzielnie analizować, implementować i testować, jednocześnie wymagając zgody na merge lub zmianę produkcyjną. To zwykle rozsądniejszy pierwszy krok niż pełny autopilot.
-
-## Od zgłoszenia do gotowej zmiany
-
-Prześledźmy hipotetyczne zadanie w aplikacji Angular:
-
-> Dodaj filtrowanie zamówień według statusu. Filtr musi przeżyć odświeżenie strony, współpracować z przyciskiem Wstecz i działać z klawiatury.
-
-### 1. Przyjęcie zadania
-
-Zadanie trafia z GitHub Issues, Linear, Jira albo webhooka.
-
-Fabryka zapisuje jego identyfikator, priorytet, ograniczenia i aktualny stan. Sprawdza, czy nie jest już realizowane i czy ma wymagane dane wejściowe.
-
-To banalnie brzmiący etap. Bez niego system po restarcie może ponownie uruchomić ten sam proces, stworzyć duplikaty PR-ów albo zgubić niedokończoną pracę.
-
-### 2. Analiza i specyfikacja
-
-Agent analityczny czyta zgłoszenie i istniejący kod. Doprecyzowuje kryteria akceptacji: jaki parametr URL przechowuje status, co oznacza brak filtra, jak przywracać historię nawigacji i czego wymaga dostępność.
-
-Jeśli wymagania są niejednoznaczne, fabryka powinna umieć zadać pytanie lub jawnie przyjąć ograniczone założenie. Nie zgadywać po cichu.
-
-### 3. Planowanie
-
-Powstaje plan z zależnościami. Implementacja komponentu, testy filtrowania, scenariusz Playwright i przegląd dostępności mogą być osobnymi elementami pracy.
-
-Nie wszystko trzeba wykonywać po kolei, ale równoległość ma sens dopiero wtedy, gdy zadania nie konfliktują ze sobą i znają wspólny kontrakt.
-
-### 4. Implementacja
-
-Agent wykonawczy dostaje specyfikację, odpowiedni fragment repozytorium oraz odizolowane środowisko. Modyfikuje kod, uruchamia sprawdzanie typów, lint i testy.
-
-Jeśli test nie przechodzi, poprawia rozwiązanie w ramach ustalonych limitów prób oraz kosztu.
-
-### 5. Niezależna weryfikacja
-
-QA sprawdza rezultat względem wcześniej ustalonych kryteriów.
-
-W naszym przykładzie test E2E może wykryć, że po kliknięciu Wstecz filtr nie przywraca poprzedniej wartości. Zamiast przekazywać niedokończone zadanie programiście, fabryka tworzy raport i kieruje pracę z powrotem do wykonawcy.
-
-### 6. Integracja i dostarczenie
-
-Po przejściu kontroli fabryka otwiera PR, reaguje na wyniki CI i dostarcza czytelny raport: co zmieniono, jakie testy wykonano, co nie zostało sprawdzone i gdzie potrzebna jest ludzka decyzja.
-
-Dopiero po spełnieniu określonych warunków zmiana może zostać zmergowana lub wdrożona.
-
-### 7. Zachowanie wiedzy
-
-Po zakończeniu procesu system zapisuje wnioski. Nie całą rozmowę, lecz informacje przydatne później: nowe reguły, przyczyny regresji, ograniczenia projektu i decyzje architektoniczne.
-
-**Największa różnica?** W pojedynczej sesji agenta człowiek często ręcznie organizuje tę sekwencję. W fabryce jest ona elementem samego systemu.
-
-## Orkiestrator. Kto pilnuje, żeby roboty nie weszły sobie w drogę?
-
-Orkiestrator to warstwa zarządzania pracą. Nie musi pisać kodu ani używać najdroższego modelu.
-
-Musi wiedzieć, jakie zadania czekają, które są zablokowane, jakie mają zależności, ile wykonawców można uruchomić i co zrobić po błędzie.
-
-Plan może mieć postać **DAG**, czyli skierowanego grafu acyklicznego. Węzły reprezentują zadania, a krawędzie wskazują zależności. Na przykład testy E2E wymagają działającego interfejsu, ale przygotowanie ich scenariuszy może rozpocząć się wcześniej.
-
-W praktyce orkiestrator potrzebuje trzech rzeczy:
-
-- **Trwałego stanu**, niezależnego od aktualnej sesji modelu. Zapisuje, co wykonano i co pozostało.
-- **Idempotencji**, czyli ochrony przed przypadkowym podwójnym wykonaniem tej samej operacji. Ponowne dostarczenie zdarzenia nie powinno tworzyć kolejnego wdrożenia.
-- **Kontroli błędów**, obejmującej limity prób, timeouty, wznowienia, anulowanie i eskalację do człowieka.
-
-Dochodzi jeszcze izolacja wykonawców. Oddzielny Git worktree, kontener lub sandbox ogranicza ryzyko, że dwa agenty nadpiszą sobie pliki. Nie usuwa jednak konfliktów architektonicznych. Dwa niezależne PR-y nadal mogą być ze sobą sprzeczne.
-
-To typowy moment, gdy hasło „dodajmy więcej agentów” przestaje być rozwiązaniem, a zaczyna generować nowe problemy.
-
-## Control plane i data plane: kto zarządza, a kto wykonuje?
-
-W opisie [samodoskonalącej się fabryki opartej na Machinist](/post/self-improving-ai-software-factory) pojawia się klasyczny podział znany z systemów rozproszonych.
-
-**Control plane** to warstwa sterowania. Odbiera zgłoszenia, utrzymuje kolejkę, ustala priorytety, przydziela wykonawców, zapisuje stan i zbiera wyniki. Tu znajdują się orkiestrator, polityki uprawnień, budżety oraz panel obserwacyjny.
-
-**Data plane** to warstwa wykonania. Workery przygotowują katalogi robocze lub kontenery, uruchamiają modele i narzędzia, wykonują testy oraz zapisują artefakty. Nie powinny samodzielnie decydować o zmianie zasad bezpieczeństwa całej fabryki.
-
-Dla niewielkiego projektu oba obszary mogą działać na jednym komputerze lub VPS-ie. Rozdział logiczny jest ważniejszy niż liczba serwerów.
-
-| Warstwa | Przykładowe elementy | Co musi przetrwać restart? |
-| --- | --- | --- |
-| **Wejście** | GitHub Issue, Jira, webhook, cron | Identyfikator zdarzenia i zadania |
-| **Control plane** | Kolejka, orkiestrator, statusy, polityki | Stan procesu, zależności, limity |
-| **Data plane** | Worker, agent, shell, przeglądarka, worktree | Artefakty i wyniki działań |
-| **Kontrola jakości** | CI, testy E2E, recenzje, bramki akceptacji | Raporty, werdykty, dowody |
-| **Obserwowalność** | Logi, historia przebiegów, metryki | Możliwość odtworzenia decyzji |
-
-[Machinist](https://github.com/owainlewis/machinist) jest przykładem infrastruktury, która rozdziela sterowanie od workerów. W [demonstracji Owaina Lewisa](https://youtu.be/ZDOTYfJBuLw) control plane i pojedynczy worker pracują na jednej maszynie Ubuntu, a panel jest udostępniony przez tunel SSH. To nie jest konieczny stos technologiczny ani dowód, że VPS sam w sobie izoluje procesy. Pokazuje natomiast, że **fabryka nie wymaga klastra, żeby mieć sensowną architekturę**.
-
-Sam dashboard również nie wykonuje pracy. Ma odpowiedzieć na pytania: *co aktualnie działa, co blokuje proces, ile kosztuje i kto może interweniować?* Jeżeli potrafi wyłącznie przesuwać kartę do kolumny „Gotowe”, problem pozostał nierozwiązany.
+Obie warstwy mogą działać na jednym VPS-ie. Ważniejsze od liczby maszyn są trwałe identyfikatory zadań, checkpointy, kontrola ponowień i możliwość zatrzymania procesu. Panel sterowania powinien pokazywać, co aktualnie trwa i dlaczego coś utknęło, a nie tylko przesuwać kolorowe karty.
 
 ## Harness engineering: model jest tylko częścią maszyny
 
