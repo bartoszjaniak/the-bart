@@ -1,0 +1,333 @@
+---
+title: "Fabryki AI: czym różnią się od agentów, które tylko piszą kod?"
+description: "Agent kodujący potrafi wykonać zadanie. Fabryka AI zarządza całym procesem: od wymagań, przez implementację, po testy i wdrożenie. Jak ją zbudować i kiedy ma sens?"
+image: /assets/images/posts/fabryki-ai-czym-sie-roznia-od-agentow/hero.jpg
+imageAlt: "Komiksowa ilustracja fabryki oprogramowania: wyspecjalizowane roboty analizują zadania, projektują, programują i testują, a inżynier nadzoruje linię produkcyjną"
+createdAt: 2026-11-07
+category: AI
+tags: ['Agentic engineering', 'Programowanie', 'Automatyzacja', 'Agenci AI']
+stickyNote: "Agent pisze kod. Fabryka dowozi proces."
+---
+
+<Callout title="Na jakich źródłach opiera się tekst?" variant="blue">
+To autorska synteza dokumentacji i doświadczeń opisanych przez [Anthropic](https://www.anthropic.com/research/building-effective-agents), [OpenAI](https://openai.com/index/harness-engineering/), [GitHub](https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/kick-off-a-task) oraz badań [METR](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/) i [IBM Research](https://research.ibm.com/publications/measuring-agents-in-production). Przykład aplikacji Angular i proponowana architektura są ilustracjami mojego podejścia, a nie opisem cudzej demonstracji.
+</Callout>
+
+Dajesz Claude Code zadanie: „Dodaj filtrowanie zamówień po statusie i zapamiętuj wybór w URL”. Agent analizuje repozytorium, poprawia komponent, uruchamia testy i po kilkunastu minutach oddaje kod.
+
+Jest szybciej. Tylko że nadal to Ty musisz sprawdzić wymagania, przejrzeć diff, zauważyć brak obsługi przycisku Wstecz, poprosić o poprawkę, ocenić testy i dopilnować pull requesta.
+
+Agent pracuje. Ty jesteś całym działem projektowym, QA i kierownikiem zmiany w jednej osobie.
+
+**Fabryka AI (AI Software Factory) próbuje rozwiązać inny problem niż pojedynczy agent.** Nie pyta tylko, jak szybciej napisać kod. Pyta, jak przeprowadzić zadanie od zgłoszenia do sprawdzonego rezultatu, bez ręcznego uruchamiania każdego kolejnego etapu.
+
+To brzmi jak niewielka różnica. W architekturze systemu zmienia niemal wszystko.
+
+## Czym właściwie jest agent programistyczny?
+
+Zwykły chatbot proponuje rozwiązanie. Agent może je sam wykonać.
+
+Ma dostęp do narzędzi: repozytorium, terminala, edytora plików, przeglądarki, testów czy API. Dostaje cel, podejmuje decyzje, obserwuje wynik i próbuje kolejnego kroku. Nie potrzebuje osobnego promptu przed każdą komendą.
+
+Jego pętla jest prosta:
+
+**Cel → analiza → działanie → wynik → korekta.**
+
+Wyobraź sobie błąd, przez który formularz Angular traci dane po odświeżeniu. Agent może wyszukać problematyczny kod, prześledzić synchronizację stanu, przygotować poprawkę i odpalić testy.
+
+To nie oznacza jednak, że odpowiada za cały proces wytwarzania oprogramowania. Zwykle ma jeden przydzielony cel i określony koniec pracy.
+
+W [Building effective agents](https://www.anthropic.com/research/building-effective-agents) Anthropic rozróżnia dwa rodzaje systemów:
+
+- **Workflow**: przebieg wyznacza kod. Model wykonuje określone kroki, ale nie decyduje sam o całym procesie.
+- **Agent**: model dynamicznie wybiera działania i narzędzia, reagując na napotkane problemy.
+
+To rozróżnienie jest ważne, bo fabryka może korzystać z obu podejść naraz. Nie musi być jedną gigantyczną, nieprzewidywalną pętlą modelu.
+
+## Trzy pojęcia, które łatwo pomylić
+
+**Agent kodujący** wykonuje konkretną pracę. Może samodzielnie zmieniać kod, testować i poprawiać błędy. Przykład: sesja Codex lub Claude Code pracująca nad jednym issue.
+
+**System wieloagentowy** deleguje pracę kilku wykonawcom. Jeden analizuje wymagania, drugi pisze backend, trzeci sprawdza jakość. Mogą działać równolegle, dyskutować i wymieniać wyniki.
+
+**Fabryka AI** obejmuje całość procesu: przyjmuje zadania, nadaje im stan, ustala kolejność, uruchamia wykonawców, pilnuje kryteriów akceptacji, obsługuje porażki, integruje wyniki i przygotowuje dostarczenie zmiany.
+
+<QuoteBlock>O tym, czy system jest fabryką, nie decyduje liczba agentów. Decyduje odpowiedzialność za przebieg pracy i sprawdzalny wynik.</QuoteBlock>
+
+Możesz mieć dziesięciu agentów, którzy na koniec zrzucają na Ciebie ręczne łączenie branchy i naprawianie CI. To rozbudowany system wieloagentowy, ale słaba fabryka.
+
+Możesz też mieć jednego agenta, trwałą kolejkę zadań, automatyczne testy, politykę ponowień i sensowne bramki jakości. Taki układ bywa bliższy idei fabryki niż symulowana firma z AI-owym CEO.
+
+## Od zgłoszenia do gotowej zmiany
+
+Prześledźmy hipotetyczne zadanie w aplikacji Angular:
+
+> Dodaj filtrowanie zamówień według statusu. Filtr musi przeżyć odświeżenie strony, współpracować z przyciskiem Wstecz i działać z klawiatury.
+
+### 1. Przyjęcie zadania
+
+Zadanie trafia z GitHub Issues, Linear, Jira albo webhooka.
+
+Fabryka zapisuje jego identyfikator, priorytet, ograniczenia i aktualny stan. Sprawdza, czy nie jest już realizowane i czy ma wymagane dane wejściowe.
+
+To banalnie brzmiący etap. Bez niego system po restarcie może ponownie uruchomić ten sam proces, stworzyć duplikaty PR-ów albo zgubić niedokończoną pracę.
+
+### 2. Analiza i specyfikacja
+
+Agent analityczny czyta zgłoszenie i istniejący kod. Doprecyzowuje kryteria akceptacji: jaki parametr URL przechowuje status, co oznacza brak filtra, jak przywracać historię nawigacji i czego wymaga dostępność.
+
+Jeśli wymagania są niejednoznaczne, fabryka powinna umieć zadać pytanie lub jawnie przyjąć ograniczone założenie. Nie zgadywać po cichu.
+
+### 3. Planowanie
+
+Powstaje plan z zależnościami. Implementacja komponentu, testy filtrowania, scenariusz Playwright i przegląd dostępności mogą być osobnymi elementami pracy.
+
+Nie wszystko trzeba wykonywać po kolei, ale równoległość ma sens dopiero wtedy, gdy zadania nie konfliktują ze sobą i znają wspólny kontrakt.
+
+### 4. Implementacja
+
+Agent wykonawczy dostaje specyfikację, odpowiedni fragment repozytorium oraz odizolowane środowisko. Modyfikuje kod, uruchamia sprawdzanie typów, lint i testy.
+
+Jeśli test nie przechodzi, poprawia rozwiązanie w ramach ustalonych limitów prób oraz kosztu.
+
+### 5. Niezależna weryfikacja
+
+QA sprawdza rezultat względem wcześniej ustalonych kryteriów.
+
+W naszym przykładzie test E2E może wykryć, że po kliknięciu Wstecz filtr nie przywraca poprzedniej wartości. Zamiast przekazywać niedokończone zadanie programiście, fabryka tworzy raport i kieruje pracę z powrotem do wykonawcy.
+
+### 6. Integracja i dostarczenie
+
+Po przejściu kontroli fabryka otwiera PR, reaguje na wyniki CI i dostarcza czytelny raport: co zmieniono, jakie testy wykonano, co nie zostało sprawdzone i gdzie potrzebna jest ludzka decyzja.
+
+Dopiero po spełnieniu określonych warunków zmiana może zostać zmergowana lub wdrożona.
+
+### 7. Zachowanie wiedzy
+
+Po zakończeniu procesu system zapisuje wnioski. Nie całą rozmowę, lecz informacje przydatne później: nowe reguły, przyczyny regresji, ograniczenia projektu i decyzje architektoniczne.
+
+**Największa różnica?** W pojedynczej sesji agenta człowiek często ręcznie organizuje tę sekwencję. W fabryce jest ona elementem samego systemu.
+
+## Orkiestrator. Kto pilnuje, żeby roboty nie weszły sobie w drogę?
+
+Orkiestrator to warstwa zarządzania pracą. Nie musi pisać kodu ani używać najdroższego modelu.
+
+Musi wiedzieć, jakie zadania czekają, które są zablokowane, jakie mają zależności, ile wykonawców można uruchomić i co zrobić po błędzie.
+
+Plan może mieć postać **DAG**, czyli skierowanego grafu acyklicznego. Węzły reprezentują zadania, a krawędzie wskazują zależności. Na przykład testy E2E wymagają działającego interfejsu, ale przygotowanie ich scenariuszy może rozpocząć się wcześniej.
+
+W praktyce orkiestrator potrzebuje trzech rzeczy:
+
+- **Trwałego stanu**, niezależnego od aktualnej sesji modelu. Zapisuje, co wykonano i co pozostało.
+- **Idempotencji**, czyli ochrony przed przypadkowym podwójnym wykonaniem tej samej operacji. Ponowne dostarczenie zdarzenia nie powinno tworzyć kolejnego wdrożenia.
+- **Kontroli błędów**, obejmującej limity prób, timeouty, wznowienia, anulowanie i eskalację do człowieka.
+
+Dochodzi jeszcze izolacja wykonawców. Oddzielny Git worktree, kontener lub sandbox ogranicza ryzyko, że dwa agenty nadpiszą sobie pliki. Nie usuwa jednak konfliktów architektonicznych. Dwa niezależne PR-y nadal mogą być ze sobą sprzeczne.
+
+To typowy moment, gdy hasło „dodajmy więcej agentów” przestaje być rozwiązaniem, a zaczyna generować nowe problemy.
+
+## Harness engineering: model jest tylko częścią maszyny
+
+W dyskusjach o autonomicznym programowaniu dominuje pytanie, który model lepiej koduje. Tymczasem wyniki zależą również od tego, w jakim środowisku pracuje.
+
+**Agent harness** to otoczenie modelu: narzędzia, kontekst, pamięć, zasady uprawnień, wykonywanie poleceń, obserwacja wyników i mechanizmy kontroli.
+
+Dobry model w źle przygotowanym repozytorium może regularnie popełniać te same błędy. Nie zna konwencji, nie wie, które testy są wymagane, i nie widzi decyzji podjętych wcześniej poza kodem.
+
+OpenAI opisało to w lutym 2026 roku w tekście [Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/).
+
+W eksperymencie zespół rozwijał produkt, którego kod był generowany przez Codex. Według autorów w około pięć miesięcy powstało mniej więcej milion linii kodu i 1500 scalonych PR-ów, początkowo przy udziale trzech inżynierów.
+
+To **wyniki opisane przez zespół OpenAI**, nie niezależny benchmark pokazujący, że każdy projekt da się tak prowadzić. Autorzy przyznają też, że nadal nie wiedzą, jak spójność architektury takiego systemu zachowa się po wielu latach.
+
+Ciekawsze od liczby linii kodu są decyzje techniczne: repozytorium jako źródło wiedzy, wymuszane narzędziami granice architektury, własne lintery z instrukcjami naprawy i pętle kontroli jakości.
+
+<Callout title="Dokumentacja nie wystarczy" variant="blue">
+Reguła „nie importujemy modułu danych bezpośrednio do UI” zapisana w Markdownzie może zostać pominięta. Ta sama reguła egzekwowana przez linter lub test architektury staje się twardym ograniczeniem. Dla fabryki AI to ogromna różnica.
+</Callout>
+
+## Pamięć projektu to nie historia czatu
+
+Fabryka musi odróżniać **wiedzę o projekcie** od **stanu konkretnego zadania**.
+
+Pierwsza obejmuje konwencje, decyzje architektoniczne, kontrakty API i instrukcje testowania. Może żyć w repozytorium: AGENTS.md, dokumentach Markdown, ADR-ach i sprawdzalnych regułach.
+
+Druga odpowiada na pytanie, czy zadanie zostało przyjęte, czy specyfikacja przeszła review, który agent pracuje nad implementacją i dlaczego QA ją odrzucił.
+
+Nie trzeba od razu budować skomplikowanego systemu pamięci wektorowej. Często wystarcza dobrze utrzymywana dokumentacja, baza zadań i historia zdarzeń.
+
+Trzeba jednak zadbać o aktualność wiedzy. Jeśli fabryka automatycznie zapisze błędne wnioski jako trwałą zasadę, będzie je powielać z godną podziwu konsekwencją.
+
+## Czy każdy etap wymaga osobnego agenta?
+
+Nie. I to jedna z najbardziej praktycznych lekcji.
+
+Można stworzyć agenta „Senior Architect”, „QA Lead”, „Security Expert”, a nawet „Chief AI Officer”. Nazwy same w sobie nie poprawiają jakości.
+
+Osobny agent ma sens, gdy wnosi niezależną perspektywę, dostęp do innych narzędzi, inne uprawnienia albo pozwala wykonać odizolowaną pracę równolegle.
+
+Warto rozważyć na przykład oddzielnego recenzenta bezpieczeństwa z dostępem tylko do odczytu, niezależnego QA sprawdzającego kryteria akceptacji oraz wykonawców pracujących w osobnych środowiskach.
+
+Nie warto natomiast tworzyć kilku agentów wyłącznie po to, żeby zgodnie potwierdzali pomysł pierwszego. Modele korzystające z podobnych danych mogą powtarzać te same błędy.
+
+Anthropic w swoim [opisie wzorców agentowych](https://www.anthropic.com/research/building-effective-agents) rekomenduje zaczynać od możliwie prostego rozwiązania, a złożoność zwiększać, gdy istnieje ku temu powód.
+
+To dobra zasada również tutaj.
+
+## Symphony: zadanie zamiast sesji w terminalu
+
+Wyraźny przykład fabrycznego podejścia pojawił się w kwietniu 2026 roku, gdy OpenAI opisało [Symphony](https://openai.com/index/open-source-codex-orchestration-symphony/).
+
+Symphony zamienia tablicę zadań, np. w Linear, w centrum zarządzania agentami Codex. System pobiera zadania, uruchamia wykonawców i prowadzi pracę przez kolejne etapy. Człowiek zajmuje się przede wszystkim oceną wyniku.
+
+W artykule OpenAI podaje, że w niektórych zespołach liczba scalonych PR-ów wzrosła o **500% w pierwszych trzech tygodniach**. To obserwacja z tych wdrożeń, a nie gwarancja podobnego efektu w innym zespole.
+
+Najważniejsza jest jednak zmiana jednostki pracy.
+
+Dotychczas człowiek zarządzał sesjami: otwierał terminal, uruchamiał agenta, sprawdzał postęp i wznawiał pracę. W Symphony punktem odniesienia staje się **ticket i jego cykl życia**.
+
+Jedno zgłoszenie może obejmować kilka podejść, testy, poprawki, konflikt w Git i ostatecznie PR. System pamięta, że to nadal ta sama praca.
+
+Podobne przesunięcie widać w [GitHub Copilot coding agent](https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/kick-off-a-task), któremu można przypisać issue, a następnie przejrzeć przygotowany PR. To ważny klocek większej automatyzacji, choć samo delegowanie issue nie oznacza jeszcze pełnej fabryki.
+
+## Jak nie zbudować fabryki wadliwego kodu?
+
+Największe zagrożenie nie polega na tym, że model raz napisze złą funkcję. Polega na tym, że **automatyczny proces bardzo skutecznie powieli błąd z wcześniejszego etapu**.
+
+Jeśli analiza źle określi wymagania, implementacja może być poprawna technicznie, a mimo to bezużyteczna. Jeśli ten sam agent stworzy założenia, kod i testy, może skonstruować spójny system potwierdzający własną pomyłkę.
+
+Dlatego potrzebne są bramki jakości, które sprawdzają coś więcej niż zielony wynik kompilacji:
+
+- Specyfikacja musi zawierać testowalne kryteria akceptacji.
+- Narzędzia uruchamiają testy jednostkowe, integracyjne i E2E tam, gdzie mają zastosowanie.
+- Weryfikacja uwzględnia dostępność, bezpieczeństwo i przypadki brzegowe.
+- Zmiany w krytycznych obszarach wymagają dodatkowej kontroli.
+- Raport jasno wskazuje, czego **nie udało się sprawdzić**.
+
+W przypadku frontendu screenshot i test Playwright mogą ujawnić problemy, których nie wyłapie TypeScript. Ale nawet test E2E nie zastąpi rozmowy o tym, czy funkcja jest potrzebna i poprawnie zaprojektowana.
+
+Fabryka nie powinna też mieć nieograniczonych uprawnień. Agent analizujący PR nie potrzebuje sekretów produkcyjnych. Ten, który tworzy kod, nie musi samodzielnie zmieniać reguł bezpieczeństwa. Treść zgłoszenia lub pobrana dokumentacja są danymi, a nie zaufanymi instrukcjami.
+
+**Autonomia bez ograniczeń to nie dojrzałość systemu. To brak hamulców.**
+
+## Human-in-the-loop, ale we właściwym miejscu
+
+Nie wszystkie zadania powinny przechodzić identyczną ścieżkę zatwierdzania.
+
+Poprawka literówki w dokumentacji może być scalana po automatycznej kontroli. Zmiana mechanizmu logowania, migracja bazy czy modyfikacja płatności wymaga znacznie ostrożniejszego podejścia.
+
+W systemie można więc zdefiniować polityki zależne od ryzyka:
+
+**Niskie ryzyko:** automatyczne wykonanie i wymagane testy.
+
+**Średnie ryzyko:** implementacja oraz review, ale merge zatwierdza człowiek.
+
+**Wysokie ryzyko:** analiza i propozycja zmiany, z obowiązkową decyzją człowieka przed wykonaniem wrażliwych operacji.
+
+Nie chodzi o to, żeby zatwierdzać każdą komendę w terminalu. Chodzi o kontrolę na granicach, gdzie potencjalny błąd jest kosztowny albo trudny do cofnięcia.
+
+To szczególnie ważne w systemach, które potrafią uruchamiać się proaktywnie po webhooku, harmonogramie lub nowym issue.
+
+## Czy AI naprawdę przyspiesza programowanie?
+
+Liczba wygenerowanych linii kodu i otwartych PR-ów wygląda atrakcyjnie w raporcie. Sama w sobie niewiele jednak mówi o wartości.
+
+W [badaniu METR z lipca 2025 roku](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/) 16 doświadczonych programistów realizowało 246 rzeczywistych zadań w dobrze znanych im projektach open source. Gdy mogli korzystać z ówczesnych narzędzi AI, wykonywanie zadań trwało średnio **19% dłużej**.
+
+Badanie nie dotyczyło pełnych autonomicznych fabryk ani najnowszych agentów. Nie dowodzi więc, że AI zawsze spowalnia pracę.
+
+W [aktualizacji z lutego 2026 roku](https://metr.org/blog/2026-02-24-uplift-update/) METR opisało problemy z nowym eksperymentem: niektórzy developerzy nie chcieli pracować bez AI, a wybór zadań stawał się nierównomierny. Autorzy uznali, że wyniki nie dają wiarygodnego oszacowania aktualnego przyspieszenia.
+
+Z kolei [badanie produkcyjnych agentów opisane przez IBM Research](https://research.ibm.com/publications/measuring-agents-in-production) objęło 306 praktyków z 26 dziedzin. Według autorów 68% badanych wdrożeń ograniczało działanie agenta do najwyżej dziesięciu kroków przed interwencją człowieka. Najczęściej wskazywanym problemem była niezawodność.
+
+To nie są pomiary tej samej rzeczy, ale prowadzą do rozsądnego wniosku: **większa autonomia i wyższa przepustowość nie są jeszcze dowodem na lepszy proces inżynierski**.
+
+## Co mierzyć zamiast liczby PR-ów?
+
+Dla fabryki lepsze są wskaźniki odnoszące się do ukończonej i zaakceptowanej pracy:
+
+- **Lead time:** ile trwa droga od przyjęcia zadania do gotowej zmiany?
+- **First-pass acceptance:** jaki odsetek zmian przechodzi QA bez powrotu do implementacji?
+- **Regresje:** ile problemów pojawia się po integracji lub wdrożeniu?
+- **Interwencje człowieka:** przy ilu zadaniach rzeczywiście trzeba angażować programistę?
+- **Koszt zaakceptowanego zadania:** ile kosztują wszystkie próby, testy i poprawki, nie tylko jedno wywołanie modelu?
+
+Szczególnie ważny jest ostatni punkt. Fabryka, która uruchamia siedmiu agentów do poprawienia jednego przycisku, może działać imponująco i ekonomicznie bez sensu.
+
+Warto mierzyć też odrzucone zmiany i czas poświęcony na ich naprawę. Zielony CI to warunek techniczny, nie miara tego, czy produkt stał się lepszy.
+
+## Jak zbudowałbym pierwszą fabrykę?
+
+Nie zaczynałbym od zespołu piętnastu wirtualnych specjalistów. Zacząłbym od możliwie małego układu, w którym da się dokładnie określić wejście, wyjście i przyczynę porażki.
+
+### Etap 1: jeden agent, jedno repozytorium
+
+Agent dostaje issue, tworzy osobny branch, modyfikuje kod i uruchamia testy. Oddaje diff oraz raport, zamiast kończyć pracę komunikatem „powinno działać”.
+
+Najpierw dopracowałbym środowisko, instrukcje i sprawdzalne reguły projektu.
+
+### Etap 2: specyfikacja i niezależny QA
+
+Przed implementacją powstają kryteria akceptacji. Po implementacji odrębny etap sprawdza, czy zostały spełnione. Błędy wracają do poprawy, ale nie w nieskończoność.
+
+To pierwsza pętla, która naprawdę przypomina proces produkcyjny.
+
+### Etap 3: trwałe zadania i orkiestrator
+
+Dodajemy kolejkę, statusy, identyfikatory zadań, ograniczenia równoległości i zasady ponowień. Restart procesu nie powinien kasować wiedzy o wykonanej pracy.
+
+Dopiero tutaj warto pozwolić fabryce samodzielnie pobierać nowe zgłoszenia.
+
+### Etap 4: równoległość tam, gdzie się opłaca
+
+Osobnych wykonawców uruchamiamy dla niezależnych zadań. Współdzielone kontrakty i kolejność integracji ustalamy wcześniej.
+
+Bez tego otrzymamy nie zespół, tylko kilku agentów walczących o ten sam plik.
+
+### Etap 5: centrum sterowania
+
+Panel webowy albo prosty terminalowy dashboard pokazuje kolejkę, etap pracy, liczbę prób, koszty, błędy i decyzje oczekujące na człowieka.
+
+Nie musi być efektowny. Musi pozwalać szybko odpowiedzieć na pytanie: **co fabryka obecnie robi, dlaczego i co ją blokuje?**
+
+<Callout title="Pierwszy sensowny eksperyment" variant="blue">
+Wybierz powtarzalny proces, np. przygotowywanie PR-ów z poprawkami błędów opartych na dobrze opisanych zgłoszeniach. Zacznij od automatycznej analizy, implementacji i testów, ale zachowaj ręczny merge. Mierz koszt, liczbę poprawek i jakość przez kilka iteracji. Dopiero na podstawie wyników rozbudowuj system.
+</Callout>
+
+## Czy w małym projekcie to w ogóle ma sens?
+
+Czasami nie.
+
+Jeśli rozwijasz prostą aplikację i masz kilka zadań tygodniowo, dobry agent kodujący z testami i jasną instrukcją może dać większość korzyści. Orkiestrator, osobna baza zadań, monitoring i dziesiątki ról mogłyby kosztować więcej pracy niż oszczędzają.
+
+Fabryka zaczyna mieć sens, gdy regularnie pojawiają się zadania, równolegle rozwijasz kilka obszarów, a ręczne pilnowanie sesji agentów staje się wąskim gardłem.
+
+Najłatwiej automatyzować pracę, której poprawność można zdefiniować i sprawdzić. Znacznie trudniej autonomicznie rozwiązywać niejednoznaczne problemy produktowe, wymyślać nową architekturę lub oceniać kompromisy biznesowe.
+
+Nie każda trudność jest gwoździem, a nowy agent nie zawsze jest młotkiem.
+
+## Co zostaje programiście?
+
+Im więcej kodu wykonują agenci, tym większe znaczenie ma to, **jak opisujemy problem i jak sprawdzamy rezultat**.
+
+Programista nadal musi rozumieć architekturę, testowanie, bezpieczeństwo, dostępność i konsekwencje zmian. Tyle że częściej będzie wykorzystywał tę wiedzę do projektowania reguł i procesów niż do ręcznego poprawiania każdego fragmentu kodu.
+
+To przesunięcie od wykonywania pojedynczych operacji do projektowania środowiska, w którym wiele operacji może odbywać się bez ciągłego nadzoru.
+
+Fabryka AI nie jest więc po prostu „agentem, tylko większym”. Jest połączeniem automatyzacji, inżynierii oprogramowania i zarządzania procesem.
+
+**Agent potrafi napisać kod. Fabryka ma sprawić, że z zadania powstanie kontrolowany, sprawdzalny rezultat.**
+
+I dopiero tę drugą umiejętność warto nazywać automatyzacją wytwarzania oprogramowania.
+
+---
+
+## Źródła
+
+- [Anthropic, *Building effective agents* (19 grudnia 2024)](https://www.anthropic.com/research/building-effective-agents) — różnica między workflow a agentem oraz praktyczne wzorce orkiestracji.
+- [OpenAI, *Harness engineering: leveraging Codex in an agent-first world* (11 lutego 2026)](https://openai.com/index/harness-engineering/) — opis eksperymentu z repozytorium rozwijanym przez Codex, zasad architektury i automatycznych kontroli.
+- [OpenAI, *An open-source spec for Codex orchestration: Symphony* (27 kwietnia 2026)](https://openai.com/index/open-source-codex-orchestration-symphony/) — podejście do orkiestracji oparte na zgłoszeniach oraz wyniki opisane przez zespoły wdrożeniowe.
+- [GitHub Docs, *Kick off a task with Copilot agents on GitHub*](https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/kick-off-a-task) — zakres działania agenta obsługującego issue i pull request.
+- [METR, *Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity* (10 lipca 2025)](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/) — kontrolowane badanie czasu realizacji zadań.
+- [METR, *We are Changing our Developer Productivity Experiment Design* (24 lutego 2026)](https://metr.org/blog/2026-02-24-uplift-update/) — ograniczenia późniejszego eksperymentu.
+- [IBM Research, *Measuring Agents in Production* (23 kwietnia 2026)](https://research.ibm.com/publications/measuring-agents-in-production) — badanie praktyk i ograniczeń produkcyjnych systemów agentowych.
