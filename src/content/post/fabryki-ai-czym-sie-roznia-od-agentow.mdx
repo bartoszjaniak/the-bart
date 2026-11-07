@@ -17,15 +17,15 @@ stickyNote: "Agent pisze kod. Fabryka dowozi proces."
 To autorska synteza [pięciu powiązanych artykułów The-Bart](/posts), źródeł projektów Claude Code, Pi Durable i Machinist oraz dokumentacji [Anthropic](https://www.anthropic.com/research/building-effective-agents), [OpenAI](https://openai.com/index/harness-engineering/) i [GitHub](https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/kick-off-a-task). Dane o produktywności pochodzą z badań [METR](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/) i [IBM Research](https://research.ibm.com/publications/measuring-agents-in-production). Przykład aplikacji Angular, proponowana architektura i checklista są moją analizą, nie opisem gotowej implementacji.
 </Callout>
 
-Dajesz Claude Code zadanie: „Dodaj filtrowanie zamówień po statusie i zapamiętuj wybór w URL”. Agent analizuje repozytorium, poprawia komponent, uruchamia testy i po kilkunastu minutach oddaje kod.
+Zlecasz Claude Code poprawkę w aplikacji. Agent analizuje repozytorium, zmienia kod i uruchamia testy. Dostajesz gotowy diff.
 
-Jest szybciej. Tylko że nadal to Ty musisz sprawdzić wymagania, przejrzeć diff, zauważyć brak obsługi przycisku Wstecz, poprosić o poprawkę, ocenić testy i dopilnować pull requesta.
+Tyle że nadal musisz sprawdzić wymagania, wychwycić brakujący przypadek brzegowy, poprosić o poprawkę, przejrzeć testy i dopilnować pull requesta.
 
-Agent pracuje. Ty jesteś całym działem projektowym, QA i kierownikiem zmiany w jednej osobie.
+Agent pracuje. Ty nadal koordynujesz cały proces.
 
 **Fabryka AI (AI Software Factory) próbuje rozwiązać inny problem niż pojedynczy agent.** Nie pyta tylko, jak szybciej napisać kod. Pyta, jak przeprowadzić zadanie od zgłoszenia do sprawdzonego rezultatu, bez ręcznego uruchamiania każdego kolejnego etapu.
 
-To brzmi jak niewielka różnica. W architekturze systemu zmienia niemal wszystko.
+W architekturze systemu ta różnica zmienia niemal wszystko.
 
 ## Agent, zespół agentów i fabryka: trzy różne rzeczy
 
@@ -94,14 +94,14 @@ Instrukcja w Markdownzie może zostać pominięta. Zakaz niedozwolonych zależno
 
 Załóżmy, że agent wykrył błąd 500, utworzył zgłoszenie, zapisał poprawkę i właśnie miał uruchomić testy. W tym momencie proces zostaje przerwany.
 
-Zwykłe polecenie wznowienia sesji może przywrócić historię rozmowy. Nie odpowiada jednak niezawodnie na pytania: czy zgłoszenie zostało naprawdę utworzone, czy commit zakończył się sukcesem i od jakiej operacji trzeba kontynuować.
+Zwykłe `/resume` może przywrócić historię rozmowy. Nie odpowiada jednak niezawodnie na pytania: czy zgłoszenie zostało naprawdę utworzone, czy commit zakończył się sukcesem i od jakiej operacji trzeba kontynuować.
 
 W [artykule o Pi Durable](/post/pi-durable-proaktywni-agenci) pokazuję różnicę między **trwałością konwersacji** a **trwałością wykonania**. [Dokumentacja Pi Durable](https://github.com/earendil-works/pi/blob/main/packages/durable/README.md) opisuje utrwalanie wpisów, wywołań narzędzi i stanu zadań, a także punkty kontrolne, z których można wznowić pracę po restarcie.
 
 Potrzebujesz tu trzech niezależnych mechanizmów:
 
 - **Checkpoint:** zapisuje zatwierdzony etap pracy i artefakty, do których można wrócić po awarii.
-- **Dedublikacja zdarzeń:** identyfikator żądania, np. requestId, pozwala rozpoznać ponowne dostarczenie tego samego zlecenia.
+- **Dedublikacja zdarzeń:** identyfikator żądania, np. `requestId`, pozwala rozpoznać ponowne dostarczenie tego samego zlecenia.
 - **Idempotentne skutki uboczne:** system sprawdza, czy zapis PR-a, komentarza lub operacja wdrożeniowa już nastąpiła, zanim spróbuje ją powtórzyć.
 
 Ważny szczegół z Pi Durable: przerwane wywołania modeli można ponawiać, natomiast ponowne wykonanie narzędzia z efektem ubocznym wymaga świadomie określonej polityki. **Trwałość nie gwarantuje wykonania zewnętrznej operacji dokładnie jeden raz.**
@@ -112,9 +112,9 @@ Przykład? Zdarzenie o identyfikatorze incident-421 przychodzi dwa razy. Fabryka
 
 Nie. Osobne role mają sens, kiedy dają niezależną ocenę, ograniczone uprawnienia albo równoległość. Kilku recenzentów czytających ten sam prompt może równie dobrze powtórzyć ten sam błąd.
 
-Konkretny schemat pokazuje [fabryka ZazenCodes oparta na Claude Code](/post/fabryka-oprogramowania-claude-code). Jeden skill /factory orkiestruje siedmiu subagentów: **spec writer**, **builder**, recenzentów **security**, **UX**, **UI** i **code**, a na końcu **approver**.
+Konkretny schemat pokazuje [fabryka ZazenCodes oparta na Claude Code](/post/fabryka-oprogramowania-claude-code). Jeden skill `/factory` orkiestruje siedmiu subagentów: **spec writer**, **builder**, recenzentów **security**, **UX**, **UI** i **code**, a na końcu **approver**.
 
-Stan zadania zapisuje plik job.json. Wykonawcy tworzą osobne raporty o jednoznacznych wynikach, np. READY, PASS, CHANGES albo ESCALATE. Cztery recenzje ruszają dopiero po implementacji; builder otrzymuje ich komplet, nie pojedyncze uwagi w przypadkowej kolejności.
+Stan zadania zapisuje plik `job.json`. Wykonawcy tworzą osobne raporty o jednoznacznych wynikach, np. `READY`, `PASS`, `CHANGES` albo `ESCALATE`. Cztery recenzje ruszają dopiero po implementacji; builder otrzymuje ich komplet, nie pojedyncze uwagi w przypadkowej kolejności.
 
 W tym szablonie są najwyżej dwie rundy poprawek po pierwszej implementacji. Trudne lub wrażliwe zmiany trafiają do człowieka. Git worktrees rozdzielają katalogi pracy, ale **nie zapewniają izolacji uprawnień ani dostępu do sekretów**.
 
@@ -210,11 +210,9 @@ Programista nadal musi rozumieć architekturę, testowanie, bezpieczeństwo, dos
 
 To przesunięcie od wykonywania pojedynczych operacji do projektowania środowiska, w którym wiele operacji może odbywać się bez ciągłego nadzoru.
 
-Fabryka AI nie jest więc po prostu „agentem, tylko większym”. Jest połączeniem automatyzacji, inżynierii oprogramowania i zarządzania procesem.
+Fabryka AI przesuwa pracę programisty z prowadzenia każdej sesji na projektowanie reguł, według których oprogramowanie powstaje i przechodzi kontrolę.
 
-**Agent potrafi napisać kod. Fabryka ma sprawić, że z zadania powstanie kontrolowany, sprawdzalny rezultat.**
-
-I dopiero tę drugą umiejętność warto nazywać automatyzacją wytwarzania oprogramowania.
+**Agent może napisać kod. Fabryka ma dostarczyć sprawdzalny rezultat.**
 
 ---
 
@@ -233,15 +231,14 @@ Każdy z tych tekstów przedstawia konkretne podejście lub demonstrację. Tutaj
 
 ## Źródła
 
-- [Anthropic, *Building effective agents* (19 grudnia 2024)](https://www.anthropic.com/research/building-effective-agents) — różnica między workflow a agentem oraz praktyczne wzorce orkiestracji.
-- [OpenAI, *Harness engineering: leveraging Codex in an agent-first world* (11 lutego 2026)](https://openai.com/index/harness-engineering/) — opis eksperymentu z repozytorium rozwijanym przez Codex, zasad architektury i automatycznych kontroli.
-- [OpenAI, *An open-source spec for Codex orchestration: Symphony* (27 kwietnia 2026)](https://openai.com/index/open-source-codex-orchestration-symphony/) — podejście do orkiestracji oparte na zgłoszeniach oraz wyniki opisane przez zespoły wdrożeniowe.
-- [GitHub Docs, *Kick off a task with Copilot agents on GitHub*](https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/kick-off-a-task) — zakres działania agenta obsługującego issue i pull request.
-- [METR, *Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity* (10 lipca 2025)](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/) — kontrolowane badanie czasu realizacji zadań.
-- [METR, *We are Changing our Developer Productivity Experiment Design* (24 lutego 2026)](https://metr.org/blog/2026-02-24-uplift-update/) — ograniczenia późniejszego eksperymentu.
-- [IBM Research, *Measuring Agents in Production* (23 kwietnia 2026)](https://research.ibm.com/publications/measuring-agents-in-production) — badanie praktyk i ograniczeń produkcyjnych systemów agentowych.
-
-- [ZazenCodes, *Build Your Own AI Software Factory with Claude Code*, kod demonstracyjny](https://github.com/zazencodes/zazencodes-season-3/tree/main/src/software-factory-claude-code) — siedem ról, kontrakty artefaktów i ograniczenia procesu.
-- [Pi Durable, dokumentacja eksperymentalnej biblioteki](https://github.com/earendil-works/pi/blob/main/packages/durable/README.md) — trwałość stanów zadań, checkpointy oraz reguły ponowień.
-- [Owain Lewis, Machinist, repozytorium projektu](https://github.com/owainlewis/machinist) — architektura i infrastruktura orkiestracji.
-- [Owain Lewis, *I Built A Self-Improving AI Software Factory*, demonstracja](https://youtu.be/ZDOTYfJBuLw) — monitorowanie pracy agentów i pomysł na ewaluację procesu.
+- [Anthropic, *Building effective agents* (19 grudnia 2024)](https://www.anthropic.com/research/building-effective-agents): różnica między workflow a agentem oraz praktyczne wzorce orkiestracji.
+- [OpenAI, *Harness engineering: leveraging Codex in an agent-first world* (11 lutego 2026)](https://openai.com/index/harness-engineering/): opis eksperymentu z repozytorium rozwijanym przez Codex, zasad architektury i automatycznych kontroli.
+- [OpenAI, *An open-source spec for Codex orchestration: Symphony* (27 kwietnia 2026)](https://openai.com/index/open-source-codex-orchestration-symphony/): podejście do orkiestracji oparte na zgłoszeniach oraz wyniki opisane przez zespoły wdrożeniowe.
+- [GitHub Docs, *Kick off a task with Copilot agents on GitHub*](https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/kick-off-a-task): zakres działania agenta obsługującego issue i pull request.
+- [METR, *Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity* (10 lipca 2025)](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/): kontrolowane badanie czasu realizacji zadań.
+- [METR, *We are Changing our Developer Productivity Experiment Design* (24 lutego 2026)](https://metr.org/blog/2026-02-24-uplift-update/): ograniczenia późniejszego eksperymentu.
+- [IBM Research, *Measuring Agents in Production* (23 kwietnia 2026)](https://research.ibm.com/publications/measuring-agents-in-production): badanie praktyk i ograniczeń produkcyjnych systemów agentowych.
+- [ZazenCodes, *Build Your Own AI Software Factory with Claude Code*, kod demonstracyjny](https://github.com/zazencodes/zazencodes-season-3/tree/main/src/software-factory-claude-code): siedem ról, kontrakty artefaktów i ograniczenia procesu.
+- [Pi Durable, dokumentacja eksperymentalnej biblioteki](https://github.com/earendil-works/pi/blob/main/packages/durable/README.md): trwałość stanów zadań, checkpointy oraz reguły ponowień.
+- [Owain Lewis, Machinist, repozytorium projektu](https://github.com/owainlewis/machinist): architektura i infrastruktura orkiestracji.
+- [Owain Lewis, *I Built A Self-Improving AI Software Factory*, demonstracja](https://youtu.be/ZDOTYfJBuLw): monitorowanie pracy agentów i pomysł na ewaluację procesu.
