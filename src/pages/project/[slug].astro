@@ -4,8 +4,10 @@ export const prerender = true;
 import { type CollectionEntry, getCollection, render } from "astro:content";
 import { contentComponents } from "../../components/blocks/map";
 import Layout from "../../layouts/project.astro";
+import { showProjects } from "../../lib/site-features";
 
 export async function getStaticPaths() {
+	if (!showProjects) return [];
 	const projects = await getCollection("project");
 	return projects.map((project) => ({
 		params: { slug: project.id },
