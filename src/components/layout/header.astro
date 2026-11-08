@@ -1,5 +1,6 @@
 ---
 import menus from "../../collections/menu.json";
+import { showProjects } from "../../lib/site-features";
 import Brand from "./brand.astro";
 
 // Normalizacja: `/posts/` → `/posts`, `/` zostaje `/`.
@@ -42,7 +43,7 @@ const pathname = normalize(Astro.url.pathname);
 
     <nav id="primary-nav" class="nav" aria-label="Nawigacja główna" data-menu>
       {
-        menus.map((menu) => {
+        menus.filter((menu) => showProjects || menu.url !== "/projects").map((menu) => {
           const state = currentState(menu.url, pathname);
           return (
             <a href={menu.url} aria-current={state ?? undefined}>
