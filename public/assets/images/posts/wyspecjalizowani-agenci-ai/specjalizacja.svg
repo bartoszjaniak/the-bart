@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 390" role="img" aria-labelledby="title desc">
+<title id="title">Schemat specjalizacji agenta AI</title>
+<desc id="desc">Zadanie i dobrany skill trafiają do agenta. Agent sięga do odpowiednich materiałów i narzędzi, a na końcu jego raport przechodzi weryfikację.</desc>
+<rect width="960" height="390" rx="22" fill="#142a33"/>
+<g font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-weight="600">
+  <rect x="32" y="42" width="207" height="72" rx="12" fill="#f2cf8c"/>
+  <text x="135" y="71" text-anchor="middle" font-size="19" fill="#182f36">Zadanie</text>
+  <text x="135" y="96" text-anchor="middle" font-size="13" font-weight="400" fill="#182f36">cel + zakres</text>
+  <rect x="32" y="158" width="207" height="72" rx="12" fill="#8cc6bb"/>
+  <text x="135" y="187" text-anchor="middle" font-size="19" fill="#182f36">Skill</text>
+  <text x="135" y="212" text-anchor="middle" font-size="13" font-weight="400" fill="#182f36">procedura + reguły</text>
+  <rect x="350" y="100" width="236" height="122" rx="16" fill="#e97d48"/>
+  <text x="468" y="149" text-anchor="middle" font-size="25" fill="#172b32">Agent AI</text>
+  <text x="468" y="177" text-anchor="middle" font-size="14" font-weight="400" fill="#172b32">dobiera informacje</text>
+  <text x="468" y="196" text-anchor="middle" font-size="14" font-weight="400" fill="#172b32">i wykonuje pracę</text>
+  <rect x="688" y="42" width="238" height="72" rx="12" fill="#264a55" stroke="#8cc6bb" stroke-width="2"/>
+  <text x="807" y="71" text-anchor="middle" font-size="18" fill="#fff5de">Materiały</text>
+  <text x="807" y="95" text-anchor="middle" font-size="13" font-weight="400" fill="#fff5de">dobierane na żądanie</text>
+  <rect x="688" y="158" width="238" height="72" rx="12" fill="#264a55" stroke="#8cc6bb" stroke-width="2"/>
+  <text x="807" y="187" text-anchor="middle" font-size="18" fill="#fff5de">Narzędzia</text>
+  <text x="807" y="211" text-anchor="middle" font-size="13" font-weight="400" fill="#fff5de">kod + testy + przeglądarka</text>
+  <rect x="351" y="282" width="235" height="72" rx="12" fill="#8cc6bb"/>
+  <text x="468" y="311" text-anchor="middle" font-size="18" fill="#182f36">Wynik + dowody</text>
+  <text x="468" y="335" text-anchor="middle" font-size="13" font-weight="400" fill="#182f36">weryfikacja kryteriów</text>
+</g>
+<g fill="none" stroke="#f9e8c5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+ <path d="M239 78 H294 V138 H348"/><path d="M239 194 H294 V182 H348"/>
+ <path d="M586 137 H636 V78 H686"/><path d="M586 184 H636 V194 H686"/>
+ <path d="M468 223 V279"/>
+</g>
+<g fill="#f9e8c5"><path d="M346 131 l10 7 -10 7z"/><path d="M346 175 l10 7 -10 7z"/><path d="M679 71 l10 7 -10 7z"/><path d="M679 187 l10 7 -10 7z"/><path d="M461 274 l7 10 7 -10z"/></g>
+<text x="480" y="379" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="14" fill="#d8e6e2">To schemat procesu, nie osobny model ani obietnica lepszego wyniku.</text>
+</svg>
