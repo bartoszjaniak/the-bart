@@ -1,5 +1,6 @@
 ---
 import Button from "../ui/button.astro";
+import { showProjects } from "../../lib/site-features";
 
 const showPortrait = false;
 ---
@@ -15,7 +16,7 @@ const showPortrait = false;
       </p>
       <div class="actions">
         <Button text="Najnowsze artykuły" link="#artykuly" variant="yellow" />
-        <Button text="Zobacz projekty" link="/projects" />
+        {showProjects && <Button text="Zobacz projekty" link="/projects" />}
         <a
           class="link-tertiary"
           href="https://github.com/bartoszjaniak"

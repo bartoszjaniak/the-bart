@@ -5,6 +5,9 @@ import { getCollection } from "astro:content";
 import ProjectCard from "../components/cards/project-card.astro";
 import SectionHead from "../components/ui/section-head.astro";
 import Layout from "../layouts/main.astro";
+import { showProjects } from "../lib/site-features";
+
+if (!showProjects) return Astro.redirect("/");
 
 const projects = (await getCollection("project")).sort(
 	(a, b) =>
