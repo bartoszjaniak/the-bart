@@ -105,29 +105,22 @@ Write the article using **Editorial voice**, **TL;DR**, reference posts, source 
 - Ground strong claims in sources, label opinion as opinion, preserve dissent and limitations, and distinguish demonstration from production-proven results.
 - Write a specific, accurately scoped headline, description and TL;DR that reflect the *finished* piece, not a broader promise than the article can fulfill.
 - Keep attribution/linkage to original sources even when the narrative angle differs. Do not insert the private audience brief or editorial process into the published text.
+- Consider a concise explanatory SVG only when it clarifies a workflow, architecture or relationship better than prose; follow the optional-diagram rules below.
 
-### Pass 4. Independent reviewer: challenge the finished article
+### Pass 4. Editorial reviewer: structure, repetition and concision
 
-**Review only after a complete draft exists and before generating the final hero image or merging.** Prefer a separate reviewer agent/context if available. Otherwise perform a deliberately separate critical pass: re-read the source inventory, reader contract and complete draft **without relying on the writer's self-assessment**. Do not claim a second agent took part when it did not.
+**Run after the complete draft and before publication.** Prefer a separate editorial reviewer agent/context when available; otherwise do a distinct critical reread. The reviewer has a **deliberately narrow scope**: check that the finished text follows the content and structural requirements of this skill, then remove repetitions and unnecessary bulk. **Do not turn this stage into a second research, fact-checking, technical-security or source-audit process.** Source accuracy and attribution are handled during source intake/writing; MDX/assets/build checks remain part of the publishing workflow.
 
-Review along six dimensions:
+Check only:
 
-1. **Factual fidelity:** compare consequential statements, numbers, dates, versions, names, quotes, capabilities and causal claims against their actual sources. Check that attribution, uncertainty and scope were not lost. Verify material changeable claims against reliable current evidence when possible. Flag unsupported claims; don't "correct" them by inventing a citation.
-2. **Reader value:** does the piece answer the primary question and deliver the reader contract? Are examples concrete and sufficient? Which question remains unanswered?
-3. **Editorial quality:** clear argument, logical sequence, appropriate technical depth, readable prose, no AI filler, hype, unnecessary repetitions or padded length. Confirm the conclusion follows the evidence.
-4. **Balance and intellectual honesty:** limitations, counterarguments, costs, operational caveats, security/privacy risks where relevant; no demonstration presented as an established result or opinion as fact.
-5. **Source integrity:** original source links and credit, accurately characterized citations, no invented authors/URLs/quotes, no plagiarism or overly close paraphrase. Mark unresolved gaps plainly.
-6. **Publishing readiness:** title and TL;DR match the content; frontmatter, links, tags, MDX components and image-alt promise are valid. Final binary-image and build checks also happen in the GitHub gate after illustration.
+1. **Required article structure and voice:** frontmatter fields, title/description, a meaningful 45–80-word TL;DR as the first body element, source credit when available, clear opening, purposeful headings, logical progression, practical examples or trade-offs where the topic calls for them, and a concrete ending. Check the editorial style rules above, not an artificially fixed section template.
+2. **Repeated ideas:** find places where different sections, paragraphs, examples, conclusions or the TL;DR repeat the *same point without adding substance*. Retain the strongest explanation and remove or merge the rest. TL;DR may intentionally summarize the main point; that is not an error.
+3. **Excess length and filler:** identify generic introductions, empty framing, marketing rhetoric, obvious explanations, digressions, redundant qualifications, decorative metaphors and paragraphs whose removal would not reduce reader understanding. Cut or tighten them.
+4. **Readability after cuts:** preserve a natural Polish voice, varied sentence rhythm, important context, clarity, useful examples and smooth transitions. **Do not shorten mechanically** toward a target word count, turn the prose into telegraphic bullets, or sacrifice substance just for brevity.
 
-Produce a compact **internal review report** with findings marked:
+For each meaningful issue, point to the precise heading/paragraph and recommend **delete, combine, move or shorten**, with a concrete alternative where helpful. Send these notes back to the editor, revise, and reread the **whole article** to catch broken transitions and newly created repetitions. Repeat as needed, but stop once the writing is clear and economical; do not manufacture editorial objections.
 
-- `BLOCKER`: fabricated/misleading material fact, missing essential source, broken central argument, unverified consequential claim stated as fact, or invalid publication artifact. **Do not publish.**
-- `MAJOR`: failure to deliver a key reader need, substantial imbalance, serious repetition/structure problem or important unsupported detail. **Revise before publication.**
-- `MINOR`: wording, punctuation, optional clarification, cosmetic polish. Fix when useful without bloating the article.
-
-For each BLOCKER/MAJOR, name the affected section/claim, explain the evidence or gap, and propose a concrete fix. Return the report to the **editor**, revise the text, then re-review the changed passages **and the article as a whole**. Repeat until no BLOCKER or MAJOR remains. Do not suppress findings just to pass the gate. If an essential claim cannot be verified or safely qualified, remove it; if that destroys the article's central thesis, stop and report the blocker to the user.
-
-The final publication decision is `PASS` only when all material claims are source-grounded or clearly attributed/qualified, the reader contract is met and no BLOCKER/MAJOR remains. This is an editorial judgment, **not a guarantee that all claims are objectively true**. Keep unresolved minor caveats transparent. User-requested **draft only** means still run the content review, but do not merge/publish.
+**Editorial PASS:** required structure and style are respected, significant repetitions are gone and every remaining paragraph earns its place. If substantial structural problems or padding remain, revise before publishing. No elaborate severity system, generic score or public review report is needed. The private reviewer notes are not part of the article. A draft-only request still gets this editorial pass, but is not published.
 
 ## Frontmatter template
 
@@ -153,6 +146,31 @@ Tekst jest moim autorskim opracowaniem filmu **[Tytuł](https://source-url)** z 
 ```
 
 Use this only with a verified source URL and attribution. A source link may also appear at the end.
+
+## Optional explanatory SVG diagrams inside the article
+
+During **outline and editorial writing**, proactively assess whether one or more **small, original SVG diagrams** would teach a mechanism faster or more clearly than another paragraph. This is a writing/visual-explanation decision, **not the editorial reviewer's responsibility**. Diagrams are optional, not a quota: skip them when prose, a table or a code example works better.
+
+Good candidates: a multi-step workflow, agent/system architecture, data flow, dependencies, state transitions, or a comparison involving relationships that are hard to convey linearly. For a simple list, an isolated statistic or purely decorative scene, **do not add a diagram**. A diagram should communicate a specific point, be introduced in prose, and not duplicate whole paragraphs of surrounding explanation.
+
+When adding one:
+
+1. **Design the content first**: define nodes, connections, labels and a clear take-away grounded in the article's actual mechanics. Do not invent processes or technical facts just to make a diagram attractive.
+2. **Create an actual standalone, valid UTF-8 `.svg` file**, e.g. `public/assets/images/posts/<slug>/workflow.svg`, using standard SVG shapes, paths and text. Commit it as a text file with the article. Do not treat a rendered preview, mermaid code fence, generated chat image or remote URL as a committed SVG asset.
+3. **Embed it in MDX** using a normal image element pointing to the public URL, near the relevant section. Example:
+
+   ```mdx
+   <figure>
+     <img src="/assets/images/posts/<slug>/workflow.svg" alt="Schemat: zdarzenie uruchamia agenta, agent wykonuje walidację, a wynik trafia do zatwierdzenia." loading="lazy" className="w-full h-auto" />
+     <figcaption>Przepływ od zdarzenia do zatwierdzenia wyniku.</figcaption>
+   </figure>
+   ```
+
+4. **Make it legible and accessible**: meaningful Polish labels, readable typography on mobile, uncluttered layout, strong contrast, explicit `viewBox`, visible arrow direction, `alt` explaining the core relationship, and caption only when helpful. Keep the diagram usable in light and dark modes (e.g. a self-contained, high-contrast background).
+5. **Keep SVG safe and portable**: no scripts, event handlers, `foreignObject`, externally fetched fonts/images, embedded HTML, or unnecessary filters/animation. Use original shapes/icons and do not copy third-party diagrams without permission.
+6. **Validate before publication**: ensure the file exists in the committed tree, the MDX path matches it, the SVG parses correctly, and it renders sensibly in desktop/mobile preview when available. Verify the surrounding text still makes sense if the image cannot load. A broken diagram blocks publication; a diagram that adds no value should be removed.
+
+SVG diagrams **supplement** the article and are distinct from the required hero illustration. Do not replace the hero-image workflow with an explanatory SVG.
 
 ## Hero illustration: art direction and actual file transfer
 
@@ -183,8 +201,8 @@ This step is non-negotiable. Generating an image in the chat **does not** upload
 1. Inspect current `main`, existing post slugs, schema, and examples.
 2. Create a focused branch such as `post/<slug>` from current `main`.
 3. Add `src/content/post/<slug>.mdx` via GitHub `create_file` (or update the existing post via `fetch_file` + `update_file` using its current blob SHA).
-4. Generate, optimize, and commit the actual hero image to `public/assets/images/posts/<slug>/hero.jpg` using the binary-safe procedure above.
-5. Confirm the separate audience → reader-needs → editor → reviewer passes completed and the review decision is `PASS`. Review the final article for fidelity, proper attribution, Markdown/MDX correctness, valid frontmatter, date, slug, working source links when verifiable, and matching image path. If content changes materially after review, repeat the reviewer pass. Run `npm run check:content` and `npm run build` if the repository can be checked out and dependencies are available. If not, explicitly state that these checks were not run; do not fabricate green checks.
+4. Generate, optimize, and commit the actual hero image to `public/assets/images/posts/<slug>/hero.jpg` using the binary-safe procedure above. If the article uses explanatory SVG diagrams, create and commit their real UTF-8 SVG files to the matching post directory and ensure every MDX reference resolves.
+5. Confirm the audience → reader-needs → editor → **editorial reviewer** passes completed and the concise editorial review is `PASS`. Separately perform the normal publication checks: source fidelity and attribution, Markdown/MDX correctness, valid frontmatter, date, slug, source links when verifiable, hero path, and any referenced SVG assets. If prose changes materially after review, repeat the editorial pass. Run `npm run check:content` and `npm run build` if the repository can be checked out and dependencies are available. If not, explicitly state that these checks were not run; do not fabricate green checks.
 6. Create a PR with a meaningful title and summary. Merge it into `main` when authorized and safe. Confirm merge success and verify the article and image on `main`.
 7. Production deployment is a separate step: check its actual status if possible. A successful merge is **not** proof that the site is live.
 8. Final response: concise Polish confirmation, article title/date, actual GitHub PR link, production URL, and a clear note if deployment remains unverified. Never invent PR numbers, URLs, deployment success, or screenshots.
@@ -195,7 +213,7 @@ This step is non-negotiable. Generating an image in the chat **does not** upload
 - [ ] A specific primary audience was identified, without invented demographics or universal generic persona.
 - [ ] The reader contract defines the main question, expected outcome, essential evidence and scope.
 - [ ] The article fulfills that contract, prioritizes reader usefulness, and avoids unnecessary digressions/repetition.
-- [ ] A separate critical review checked factual claims against the sources, reader value and editorial integrity; all BLOCKER/MAJOR findings were fixed and re-reviewed.
+- [ ] An editorial reviewer checked skill-required article structure/style, duplicate ideas, filler and opportunities to shorten without losing clarity; meaningful issues were revised and re-read.
 - [ ] Unverifiable consequential claims were removed or explicitly qualified; no invented quotations, URLs, dates or test results.
 - [ ] Polish article is coherent, useful, technically accurate, and original.
 - [ ] A concise, original TL;DR Callout starts the article body and reflects the entire article.
@@ -205,9 +223,10 @@ This step is non-negotiable. Generating an image in the chat **does not** upload
 - [ ] New custom comic illustration is generated and saved as an actual file.
 - [ ] Binary hero image is committed and fetched back from GitHub.
 - [ ] Frontmatter `image` points to the exact committed asset.
+- [ ] Optional explanatory SVGs were added only where useful, and any included SVG exists in the repository, renders clearly, has meaningful alt text and matches its MDX path.
 - [ ] No unrelated UI changes; no claim of successful tests or deployment without evidence.
 - [ ] PR is merged into `main` only when requested/authorized; final status is precise.
 
 ## Future usage
 
-When the user provides source material (including a transcript, a video, a link, a PDF, notes or a document) and says something like **„Zrób z tego artykuł na bloga”**, run the full audience → needs → writing → independent review workflow without asking for routine decisions. Ask only for essential missing information, such as an explicitly important but ambiguous publication chronology or wholly inaccessible source. Otherwise choose the audience, angle, headline, slug, hero scene, tags and current publication date automatically. Never publish while a review BLOCKER or MAJOR remains.
+When the user provides source material (including a transcript, a video, a link, a PDF, notes or a document) and says something like **„Zrób z tego artykuł na bloga”**, run the full audience → needs → writing → independent review workflow without asking for routine decisions. Ask only for essential missing information, such as an explicitly important but ambiguous publication chronology or wholly inaccessible source. Otherwise choose the audience, angle, headline, slug, hero scene, tags and current publication date automatically. Do not publish with unresolved substantial editorial issues or failing publication validation.
