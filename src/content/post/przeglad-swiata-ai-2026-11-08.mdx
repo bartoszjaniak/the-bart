@@ -1,0 +1,114 @@
+---
+title: "Przegląd świata AI #1: od promptowania do delegowania pracy"
+description: "Agenci przejmują całe zadania, modele zaczynają się specjalizować, a firmy odkrywają koszt nadzoru. Co naprawdę zmieniło się w AI na przełomie października i listopada 2026?"
+image: /assets/images/posts/przeglad-swiata-ai-2026-11-08/hero.svg
+imageAlt: "Retrokomiksowa ilustracja centrum sterowania: człowiek kontroluje pracę wyspecjalizowanych robotów i przepływ zadań na ekranie"
+createdAt: 2026-11-08
+category: AI
+tags: ['AI', 'Agenci AI', 'Automatyzacja', 'Programowanie']
+stickyNote: "Deleguj pracę, nie odpowiedzialność"
+---
+
+<Callout title="TL;DR" variant="blue">
+AI coraz częściej przestaje odpowiadać na pytania, a zaczyna **wykonywać całe zadania**. Dane GitHuba pokazują rosnące wykorzystanie funkcji agentowych, a przykłady Meta i Microsoftu wskazują kierunek: wyspecjalizowani agenci, trwały kontekst i automatyczne wyzwalacze. Nie znika jednak człowiek. Rośnie znaczenie weryfikacji, ograniczania uprawnień i liczenia kosztów nadzoru, bo autonomia bez kontroli potrafi być bardzo drogą automatyzacją błędów.
+</Callout>
+
+AI miało oszczędzać czas. Dlaczego więc niektórzy programiści kończą dzień z pięcioma otwartymi agentami, trzema niedokończonymi pull requestami i poczuciem, że zostali kierownikami wyjątkowo nadgorliwego zespołu?
+
+W ostatnich tygodniach ukazało się kilka publikacji, które dobrze pokazują ten moment. Nie chodzi o nowy model wygrywający o dwa punkty w benchmarku. Zmienia się **sposób organizowania pracy z AI**: od rozmowy, przez współpracę, aż po delegowanie procesów.
+
+To pierwszy numer „Przeglądu świata AI”. Przyglądam się zmianom z okresu **8 października – 7 listopada 2026**, oddzielając dane, zapowiedzi producentów i praktyczne wnioski.
+
+## Coraz rzadziej prosimy o odpowiedź. Coraz częściej dajemy zadanie
+
+Według raportu [GitHub Octoverse 2026](https://github.blog/news-insights/octoverse/octoverse-commits-pushes-reach-new-highs-in-2026-as-developers-build-with-agents/) **55% aktywnych miesięcznie użytkowników Copilota korzysta z funkcji agentowych**, wobec 35% rok wcześniej. Wykorzystanie Copilot cloud agent, któremu można zlecić zadanie do samodzielnego wykonania, wzrosło o 230% rok do roku.
+
+To dane z konkretnego produktu, nie dowód, że 55% wszystkich programistów korzysta z agentów. Kierunek jest jednak wyraźny: zamiast kolejnego „napisz mi funkcję”, coraz częściej pojawia się „rozwiąż ten problem, otwórz PR i pokaż wynik”.
+
+W praktyce współistnieje kilka sposobów korzystania z AI:
+
+- **Rozmówca i recenzent.** Pomaga rozumieć zagadnienie, kwestionuje założenia, analizuje alternatywy.
+- **Copilot.** Podpowiada podczas pisania kodu, tekstu lub analizy.
+- **Agent zadaniowy.** Sam wykonuje kolejne kroki w ramach jednego zlecenia.
+- **System wielu agentów.** Dzieli pracę między role i kontroluje jej przepływ.
+- **Agent proaktywny.** Uruchamia się po zdarzeniu lub zgodnie z harmonogramem, bez nowego promptu.
+
+Nie ma powodu traktować tej listy jak drabiny, po której każdy musi wspiąć się na ostatni szczebel. Do zrozumienia trudnego fragmentu architektury lepsza bywa rozmowa. Do rutynowej aktualizacji zależności sensowniejszy może być agent. Narzędzie trzeba dopasować do pracy, nie odwrotnie.
+
+## Jeden agent do wszystkiego zaczyna przypominać monolit
+
+Ciekawy przykład opublikowała [Meta 19 października](https://engineering.fb.com/2026/10/19/ml-applications/thin-orchestrator-ai-agent-architecture/). W jej systemie zamiast jednego agenta znającego wszystkie zasady powstał **cienki orkiestrator** i 14 wyspecjalizowanych agentów obsługujących ponad 20 przepływów.
+
+Orkiestrator nie podejmuje decyzji domenowych. Ustala kolejność kroków, zbiera dane, pilnuje warunków i przekazuje pracę właściwemu specjaliście. To, co da się sprawdzić zwykłą regułą, pozostaje zwykłą regułą. Model językowy trafia tam, gdzie rzeczywiście trzeba interpretować problem.
+
+Meta opisuje duże korzyści w swoim konkretnym procesie konfiguracji potoków danych. Nie jest to uniwersalny benchmark ani dowód, że każdy projekt potrzebuje kilkunastu agentów.
+
+Warto jednak zapamiętać zasadę: **im mniej niepotrzebnego kontekstu dostaje agent, tym mniejsze pole do pomyłki**. Zamiast jednego ogromnego promptu można mieć niewielkie, dobrze opisane kompetencje i czytelny proces ich uruchamiania.
+
+## AI ma własny kalendarz, pamięć i uprawnienia
+
+[Microsoft zapowiedział 15 października](https://www.microsoft.com/en-us/copilot/blog/copilot-studio/delegate-shared-business-processes-to-agents-that-are-more-persistent-and-proactive-with-microsoft-copilot-studio/) bardziej trwałych agentów w Copilot Studio. Mają własne tożsamości, ograniczone uprawnienia, pamięć procesu i wyzwalacze reagujące na zdarzenia. Część tych możliwości była udostępniana w programie testowym, nie jako gotowa funkcja dla wszystkich.
+
+To ważna zmiana perspektywy. Zamiast pytać codziennie „czy w systemie pojawił się problem?”, można ustawić proces: wykryj zdarzenie, zbierz informacje, przygotuj diagnozę, poproś o zatwierdzenie tam, gdzie istnieje ryzyko.
+
+Taki agent nie potrzebuje otwartej karty przeglądarki. Potrzebuje za to znacznie mniej efektownych rzeczy: trwałego stanu, bezpiecznych sekretów, limitów kosztów, możliwości wznowienia pracy i sensownych logów.
+
+<Callout title="Autonomia to nie nieograniczony dostęp" variant="blue">
+Agent może samodzielnie analizować incydenty i przygotowywać poprawki, a jednocześnie nie mieć prawa do wypchnięcia zmian na produkcję. Uprawnienia i progi akceptacji są częścią projektu, nie dodatkiem po wdrożeniu.
+</Callout>
+
+## Skills i MCP: wiedza oraz narzędzia powinny być przenośne
+
+22 października [Anthropic przekazał standard Agent Skills](https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation) do Agentic AI Foundation działającej przy Linux Foundation. To ważny sygnał: instrukcje wykonywania pracy nie powinny być zamknięte w jednym czacie czy jednym produkcie.
+
+Warto rozróżnić trzy warstwy:
+
+- **Skills** opisują, *jak* wykonać zadanie: procedury, konwencje, kryteria jakości.
+- **MCP i inne integracje** zapewniają, *czym* można działać: repozytorium, baza danych, przeglądarka, system zgłoszeń.
+- **Pamięć projektu** mówi, *co już wiadomo*: podjęte decyzje, wcześniejsze problemy, ograniczenia i ich uzasadnienie.
+
+To właśnie sedno *context engineering*, czyli projektowania kontekstu. Nie wygrywa ten, kto wklei agentowi najdłuższą dokumentację. Wygrywa system, który dostarcza właściwe informacje we właściwym kroku i umie odróżnić aktualne ustalenia od starego szumu.
+
+## Wielomodelowość zamiast kultu jednego modelu
+
+GitHub podaje, że we wrześniu **61% użytkowników Copilota samodzielnie wybierających model skorzystało z więcej niż jednego**. Ma to sens: szybka klasyfikacja logów, napisanie testów i zaplanowanie trudnej migracji nie muszą kosztować tyle samo.
+
+Podobny pomysł można przenieść poza programowanie. Mały model obsługuje rutynowe operacje, mocniejszy dostaje analizę niejednoznacznego problemu, a człowiek decyzje o wysokiej stawce.
+
+Lokalne modele są częścią tej układanki, szczególnie gdy liczy się prywatność lub przewidywalny koszt. Nie oznacza to jednak, że niewielki model uruchomiony na własnym sprzęcie bez problemu zastąpi najlepszą usługę chmurową. Trzeba porównywać jakość na własnych zadaniach, a nie na reklamowych przykładach.
+
+## Nadzór nad AI może zjeść zysk z automatyzacji
+
+Tu dochodzimy do mniej wygodnej strony historii.
+
+W opublikowanym 14 października [raporcie G2 o agentach AI](https://company.g2.com/news/2026-ai-agents-report) **31% ankietowanych nabywców oprogramowania B2B** deklaruje, że pracownicy spędzają co najmniej sześć godzin tygodniowo na nadzorowaniu agentów. Z kolei 45% twierdzi, że poprawki i kontrola pochłaniają ponad jedną czwartą oczekiwanych korzyści produktywności.
+
+To deklaracje respondentów, nie bezpośredni pomiar wydajności wszystkich firm. Mimo tego dobrze opisują problem, który łatwo przeoczyć w demonstracjach.
+
+Można uruchomić dziesięć agentów i otrzymać dziesięć razy więcej kodu do sprawdzenia. Jeśli każda poprawka wymaga ręcznego wyjaśniania kontekstu, a testy są niestabilne, wcale nie zbudowaliśmy szybszego procesu. Zbudowaliśmy kolejkę zadań dla recenzenta.
+
+<QuoteBlock>Miara postępu nie brzmi: ile agentów pracuje? Brzmi: ile wartościowej pracy przechodzi przez proces bez kosztownych poprawek?</QuoteBlock>
+
+Zresztą nawet ankiety programistów sugerują ostrożność. W [Developer Survey 2026](https://stackoverflow.blog/2026/10/06/the-results-of-the-2026-developer-survey-are-here/) Stack Overflow widać intensywne użycie asystentów i agentów, ale wciąż spore znaczenie rzetelnych źródeł, kodu i dokumentacji. Ta publikacja ukazała się tuż przed analizowanym okresem, więc traktuję ją jako szersze tło, nie wydarzenie ostatnich tygodni.
+
+## Co warto zmienić w swoim sposobie pracy?
+
+Zamiast rozpoczynać od zakupu kolejnego agenta, wybrałbym jeden powtarzalny proces. Na przykład analizę błędów po wdrożeniu.
+
+System odbiera zdarzenie, identyfikuje zmienione komponenty, zbiera logi i testy, a następnie przygotowuje diagnozę. Jeśli poprawka jest niewielka, tworzy propozycję zmiany i uruchamia weryfikację. Publikacja na produkcję czeka na zatwierdzenie.
+
+Taki proces warto oceniać po czterech rzeczach: czasie od zdarzenia do wyniku, odsetku zaakceptowanych rozwiązań, liczbie poprawek wykonywanych przez człowieka i całkowitym koszcie działania. Dopiero potem dokładać więcej autonomii.
+
+Warto również ustalić, kiedy **nie używać AI**. Prosty warunek, deterministyczny skrypt czy zwykła walidacja typu danych często zrobią tę samą pracę taniej, szybciej i bardziej przewidywalnie.
+
+## Przyszłość AI to również sztuka mówienia „sprawdzam”
+
+Najnowsze publikacje pokazują dwa ruchy odbywające się równocześnie. AI otrzymuje więcej zadań, kontekstu i narzędzi. A ludzie zaczynają poważniej mierzyć cenę tej samodzielności.
+
+Nie potrzebujemy już wyłącznie inteligentniejszego modelu. Potrzebujemy **procesów, w których wiadomo, za co odpowiada model, co sprawdza kod, a co musi zatwierdzić człowiek**.
+
+Dobry agent nie powinien wymagać opiekuna przez cały dzień. Ale dobrze zaprojektowany system musi umieć powiedzieć, kiedy opiekun rzeczywiście jest potrzebny.
+
+---
+
+*Źródła: [GitHub Octoverse 2026](https://github.blog/news-insights/octoverse/octoverse-commits-pushes-reach-new-highs-in-2026-as-developers-build-with-agents/), [Meta Engineering: Thin Orchestrator](https://engineering.fb.com/2026/10/19/ml-applications/thin-orchestrator-ai-agent-architecture/), [Microsoft Copilot Studio](https://www.microsoft.com/en-us/copilot/blog/copilot-studio/delegate-shared-business-processes-to-agents-that-are-more-persistent-and-proactive-with-microsoft-copilot-studio/), [Anthropic: Agent Skills](https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation), [G2 AI Agents Report](https://company.g2.com/news/2026-ai-agents-report) i [Stack Overflow Developer Survey 2026](https://stackoverflow.blog/2026/10/06/the-results-of-the-2026-developer-survey-are-here/).*
