@@ -1,0 +1,131 @@
+---
+title: "Fabryka AI, która potrafi się przebudować. Od szablonu do wyspecjalizowanego systemu"
+description: "Jak z ogólnego szablonu zrobić fabrykę do jednego zadania: inicjalizacja, konfiguracja, wyspecjalizowani agenci, czytelne ślady pracy i granice samokonfiguracji."
+image: /assets/images/posts/fabryka-ai-liquid-software/hero.jpg
+imageAlt: "Komiksowa ilustracja modułowej fabryki: pusty warsztat zmienia się w zespół małych robotów pracujących przy komputerach, a jeden z nich konfiguruje centralną maszynę"
+createdAt: 2026-11-09
+category: AI
+tags: ['Agentic engineering', 'Programowanie', 'Automatyzacja', 'Agenci AI']
+stickyNote: "Szablon to początek, nie produkt"
+---
+
+<Callout title="TL;DR" variant="blue">
+**Najciekawszy krok w rozwoju fabryk AI to nie kolejny agent, lecz możliwość szybkiego zbudowania fabryki pod konkretną pracę.** W drugiej lekcji Tiny Software Factories IndyDevDan pokazuje trzy etapy: inicjalizację szablonu, konfigurację i specjalizację. Dochodzą streszczenia wywołań narzędzi oraz subagenci z osobnymi budżetami i śladami wykonania. To dobry kierunek dla powtarzalnych zadań, pod warunkiem że agent może zmieniać konfigurację pracy, ale nie własne zabezpieczenia.
+</Callout>
+
+<Callout title="Materiał źródłowy" variant="blue">
+Punktem wyjścia jest film **[„ZERO to RUNNING Software Factory In 16 Minutes (LIQUID Software)”](https://www.youtube.com/watch?v=GRlcm3wmOqs)** z kanału **IndyDevDan**. To autorskie opracowanie i analiza pomysłów z drugiej lekcji serii Tiny Software Factories, nie transkrypcja ani dosłowne tłumaczenie.
+</Callout>
+
+Masz już agenta, który pisze kod, i orkiestrator, który pilnuje etapów. Dodałeś kolejkę zadań, testy i dashboard. Działa. Potem pojawia się drugi projekt z innymi wymaganiami i okazuje się, że musisz ręcznie przerobić połowę systemu: role agentów, narzędzia, widoki, harmonogramy, reguły pracy.
+
+Fabryka miała automatyzować powtarzalne zadania. Tymczasem samo budowanie fabryk zaczyna być powtarzalnym zadaniem.
+
+**Druga lekcja Tiny Software Factories próbuje rozwiązać właśnie ten problem:** zbudować ogólne środowisko, które da się szybko zamienić w wyspecjalizowany system. Nie chodzi o nowy model ani o zwiększenie liczby agentów. Chodzi o zmniejszenie kosztu dopasowania całego warsztatu do konkretnej pracy.
+
+## Trzy kroki: zainstaluj, skonfiguruj, wyspecjalizuj
+
+W [pierwszym tekście o Tiny Software Factories](/post/tiny-software-factories) opisywałem *Empty Factory*, czyli pusty warsztat z agentem i narzędziami. Teraz IndyDevDan pokazuje, jak taki warsztat osadzić w istniejącym produkcie. W demonstracji jest nim **Hues**, przykładowa aplikacja do generowania obrazów na podstawie promptów.
+
+Cały proces dzieli na trzy etapy.
+
+**1. Initialize.** Agent pracujący w edytorze dodaje do repozytorium elementy szablonu fabryki. Istotny szczegół: sam szablon pozostaje osobno, jako materiał do ponownego użycia. Kod aplikacji i mechanizmy fabryki nie powinny przypadkowo stać się jednym nierozdzielnym kłębkiem.
+
+**2. Configure.** Zamiast kilkudziesięciu rozmów o każdym przycisku autor przekazuje agentowi szczegółowy plan, w demonstracji liczący około 150 wierszy. Plan opisuje, do czego fabryka ma służyć i jak ma współpracować z produktem. Agent dostosowuje środowisko do roli systemu analitycznego.
+
+**3. Specialize.** Ogólny agent dostaje wyspecjalizowanych pomocników z określonymi zadaniami, narzędziami i ograniczeniami. Fabryka przestaje być demonstracją możliwości frameworka. Zaczyna mieć konkretną funkcję.
+
+To nie jest dowód, że każda aplikacja otrzyma działającą fabrykę w 16 minut. Tyle trwa pokaz. W prawdziwym repozytorium dochodzą integracje, sekrety, uprawnienia, migracje i testy. Wartość pomysłu leży gdzie indziej: **proces specjalizacji jest powtarzalny i można go częściowo delegować agentowi**.
+
+## Liquid software: elastyczność bez pisania wszystkiego od zera
+
+Autor nazywa tę koncepcję *liquid software*. Oprogramowanie ma zmieniać kształt wraz z problemem, który rozwiązuje. Dzisiaj fabryka analizuje użycie funkcji w produkcie, jutro możesz wykorzystać ten sam szkielet do przeglądu jakości frontendu albo obsługi zgłoszeń.
+
+Brzmi efektownie, ale pod spodem jest całkiem przyziemna architektura:
+
+- **Stały rdzeń:** uruchamianie agentów, kontrola uprawnień, stan zadań, harmonogramy, logi i limity.
+- **Konfiguracja konkretnej fabryki:** dostępne źródła danych, role, instrukcje, wyzwalacze oraz kryteria poprawnego wyniku.
+- **Artefakty:** raporty, zmiany w kodzie, metryki i decyzje, które da się później sprawdzić.
+
+Najważniejsze, żeby nie mylić zmienności z chaosem. Jeżeli agent może przebudować wszystko, a Ty nie wiesz, co zmienił, system nie jest szczególnie płynny. Jest po prostu trudny do utrzymania.
+
+Dlatego własną fabrykę projektowałbym jak zwykłą aplikację konfiguracyjną: definicje wersjonowane w Git, różnice do przejrzenia przed zastosowaniem, możliwość cofnięcia zmian i testy po każdej istotnej modyfikacji. **Agent może proponować nowy kształt. System powinien umieć powiedzieć, czy ten kształt działa.**
+
+## Nie musisz oglądać każdego wywołania narzędzia
+
+To prawdopodobnie najbardziej praktyczny element nowej demonstracji.
+
+W klasycznym interfejsie agenta widzisz lawinę komunikatów: otwarcie pliku, odczyt katalogu, uruchomienie komendy, kolejne wywołanie narzędzia. Większość jest cenna podczas debugowania, ale fatalna do codziennego nadzoru. Gdy pięciu agentów pracuje równolegle, panel szybko zamienia się w drukarkę paragonów.
+
+IndyDevDan pokazuje **tool summaries**. Lżejszy model przekłada wywołania narzędzi na krótkie, czytelne komunikaty. Zamiast surowego strumienia API widzisz na przykład: „Sprawdzono strukturę serwera i znaleziono trzy miejsca odpowiedzialne za konfigurację agentów”. Można regulować częstotliwość i szczegółowość takich opisów.
+
+Jednak streszczenie nie jest dowodem wykonania. Model może coś pominąć albo niewłaściwie zinterpretować. Dlatego rozdzieliłbym dwa poziomy obserwacji:
+
+| W codziennym panelu | W szczegółach przebiegu |
+| --- | --- |
+| Co agent robi i na jakim jest etapie | Dokładne wywołania narzędzi i ich wyniki |
+| Co zakończył, a co go blokuje | Parametry, błędy, czas i zużycie zasobów |
+| Jaka decyzja jest potrzebna | Prompt, ślad wykonania i powiązane artefakty |
+
+Takie rozdzielenie pomaga zachować prosty dashboard bez utraty możliwości diagnozowania błędów. W poprzednich tekstach pisałem o [mierzeniu jakości fabryk AI](/post/fabryki-ai-czym-sie-roznia-od-agentow). Tutaj dochodzi brakująca warstwa: **jak pokazywać tę pracę człowiekowi, który nie zamierza czytać każdego logu**.
+
+## Subagent to nie nazwa stanowiska. To kontrakt wykonania.
+
+W prezentacji pojawiają się pomocnicy z własnym modelem, promptem systemowym, zestawem narzędzi oraz limitami czasu i wydatków. Każde uruchomienie można prześledzić: wejściowe polecenie, działania, wynik i syntezę.
+
+Autor pokazuje trzech lekkich agentów analizujących osobno serwer, klienta i skill fabryki. Agent nadrzędny składa ich wyniki w zwięzły opis architektury. To mały przykład specjalizacji, nie argument za tworzeniem osobnego agenta do każdego pliku.
+
+W [artykule o wyspecjalizowanych agentach](/post/wyspecjalizowani-agenci-ai) skupiałem się na podziale ról i kontekście. Tutaj warto dołożyć rzecz równie ważną: **ograniczenia operacyjne powinny być częścią definicji roli**, a nie dobrymi intencjami zapisanymi w promptcie.
+
+Tak mógłby wyglądać prosty, własny kontrakt zadania, niezależny od składni narzędzia pokazanego w filmie:
+
+```yaml
+agent: frontend-audit
+input: deployed_preview_url
+output: audit-report.json
+model_tier: lightweight
+timeout_seconds: 180
+max_spend_usd: 0.50
+allowed_tools:
+  - browser_readonly
+  - lighthouse
+requires_approval_for:
+  - repository_write
+  - production_change
+```
+
+Kiedy agent przekroczy czas lub budżet, kończy z czytelnym statusem. Kiedy potrzebuje dodatkowych uprawnień, prosi o decyzję. A gdy oddaje wynik, wiadomo, co rzeczywiście sprawdził.
+
+**Dobry kontrakt roli opisuje nie tylko, co agent ma zrobić, ale też czego nie wolno mu robić i kiedy musi się zatrzymać.**
+
+## Agent może zmieniać ustawienia. Nie powinien uchylać zasad.
+
+Kolejny mechanizm to *agentic access parity*: agent może wykonać operacje dostępne człowiekowi w interfejsie. W pokazie zmienia domyślną konfigurację subagentów, ustawienia streszczeń, motyw kolorystyczny i nawigację.
+
+To atrakcyjna idea. Jeśli do zmiany harmonogramu potrzebujesz pięciu kliknięć, a agent zna intencję i ma odpowiednie narzędzie, może przygotować konfigurację za Ciebie. Tyle że **dostęp do funkcji nie oznacza prawa do dowolnego jej użycia**.
+
+Praktycznie podzieliłbym ustawienia na dwie grupy. Zmiana układu panelu, opisów ról lub częstotliwości raportów może być odwracalną operacją zwykłą. Rozszerzenie dostępu do sekretów, wyłączenie audytu, podniesienie budżetu czy włączenie automatycznego wdrażania powinno wymagać osobnej zgody, egzekwowanej przez kod poza agentem.
+
+To ważniejsze niż najbardziej rozbudowany prompt systemowy. Agent, który sam może wyłączyć mechanizm wymagający zatwierdzenia, nie podlega już realnemu zatwierdzaniu.
+
+## Co wdrożyłbym z tego do własnej fabryki?
+
+Nie przenosiłbym całej demonstracji. Wybrałbym jedną usługę, którą da się uruchamiać regularnie. Na przykład **audyt frontendu po każdej wersji aplikacji**: odczyt adresu podglądu, podstawowe scenariusze przeglądarkowe, wyniki Lighthouse i raport regresji. Bez samodzielnego merge'a.
+
+W takim zastosowaniu najpierw stworzyłbym mały, wersjonowany szablon z definicją wejścia i rezultatu. Potem poprosiłbym agenta o jego konfigurację dla konkretnego projektu. Dopiero na końcu dodałbym wyspecjalizowane role, jeśli jeden wykonawca nie radzi sobie z zadaniem albo wyraźnie zyskujemy na niezależnej ocenie.
+
+Panel pokazywałby tylko cztery rzeczy: aktualne zadanie, najbliższy etap, akcję wymagającą decyzji oraz zakończone przebiegi. Kliknięcie w zadanie prowadziłoby do pełnych dowodów i logów. **W skrócie: mniej teatru w dashboardzie, więcej informacji, na podstawie których da się podjąć decyzję.**
+
+Skuteczność sprawdziłbym na serii tych samych scenariuszy: ile rzeczywistych błędów wykryto, ile alarmów było fałszywych, jaki był koszt i czas wykonania. Sama liczba uruchomionych subagentów nie jest metryką jakości. Zresztą [Anthropic zaleca zaczynanie od prostych, składanych wzorców](https://www.anthropic.com/research/building-effective-agents) i zwiększanie złożoności dopiero wtedy, gdy ma to uzasadnienie.
+
+## Największą zmianą jest to, co staje się konfigurowalne
+
+Pierwsze fabryki AI uczą, jak przenieść programistę z ręcznego promptowania do nadzorowania pracy. Druga lekcja IndyDevDana dodaje kolejne pytanie: **czy sam proces tworzenia i dostosowywania fabryki również możemy zamienić w powtarzalną pracę?**
+
+Możemy, przynajmniej częściowo. Szablon daje punkt startowy, plan określa cel, wyspecjalizowani agenci wykonują zadania, a ślady pracy pozwalają sprawdzić wynik. Nie znosi to potrzeby testów, limitów i ludzkich decyzji. Przeciwnie, im łatwiej agent zmienia własne środowisko, tym bardziej potrzebne są granice tych zmian.
+
+**Fabryka, którą można szybko przebudować, jest użyteczna. Fabryka, której zmiany można zrozumieć, zweryfikować i cofnąć, zaczyna być rozwiązaniem inżynierskim.**
+
+---
+
+*Źródła: [IndyDevDan, „ZERO to RUNNING Software Factory In 16 Minutes (LIQUID Software)”](https://www.youtube.com/watch?v=GRlcm3wmOqs), [Building effective agents, Anthropic](https://www.anthropic.com/research/building-effective-agents). Opis filmu dotyczy prezentacji autora; kontrakt YAML, zasady rozdzielania uprawnień i przykład audytu frontendu to moje propozycje projektowe.*
