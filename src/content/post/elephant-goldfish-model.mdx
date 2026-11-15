@@ -46,6 +46,31 @@ Recenzję Goldfish można dołożyć do istniejącego procesu. Jeśli masz już 
 
 ## Jak wypróbować EGM na własnym repozytorium
 
+### Wersja z wtyczką w Codex CLI
+
+W terminalu dodaj repozytorium Google jako źródło wtyczek, a potem zainstaluj z niego pełny pakiet EGM.
+
+```bash
+codex plugin marketplace add google/elephant-goldfish-model
+codex plugin add egm@egm
+```
+
+Uruchom nową sesję Codexa w katalogu projektu. Na każdym etapie wybierz odpowiednią pozycję z listy skilli. Do recenzji potrzebujesz sesji, która potrafi uruchamiać subagentów bez historii twojej rozmowy. [Instalacja w Codex CLI](https://github.com/google/elephant-goldfish-model/blob/main/docs/codex.md) · [Instrukcje dla pozostałych narzędzi](https://github.com/google/elephant-goldfish-model#install)
+
+**1. `egm-brainstorm` — ustal, co ma się wydarzyć.** Podaj problem i wskaż, gdzie w repozytorium działa dziś synchronizacja. Na przykład „Zaprojektuj zachowanie listy zakupów, gdy jedna osoba odhacza produkt offline, a druga zmienia jego ilość”. Codex dopyta o wymagania, a recenzenci mogą podważyć wstępne założenia. Etap kończy się krótkim dokumentem `concepts_brief.md` z uzgodnionym kierunkiem.
+
+**2. `egm-draft` — spisz projekt techniczny.** Na podstawie briefu i kodu Codex przygotuje projekt w Markdownie. Doprecyzuj reguły, rozważane warianty i plan zmian w repozytorium. W przykładzie z zakupami wpisz do dokumentu kolejność zdarzeń, zachowanie obu urządzeń i warunki akceptacji. Zachowaj ścieżkę do pliku zwróconą przez Codexa.
+
+**3. `egm-review` — podaj ścieżkę do projektu.** Goldfish dostają dokument i materiały potrzebne do oceny. Pełna recenzja przebiega w pięciu etapach.
+
+- **Pierwszy przegląd całości.** Czy projekt rozwiązuje właściwy problem i uwzględnia główne zależności?
+- **Sprawdzenie zrozumienia.** Czy recenzent potrafi własnymi słowami odtworzyć reguły z dokumentu?
+- **Krytyka projektu.** Co się stanie w przypadkach brzegowych? Która przyjęta reguła może zawieść?
+- **Ponowny przegląd całości.** Czy rozwiązania problemów wykrytych w recenzji pasują do reszty projektu?
+- **Ocena gotowości do implementacji.** Czy plan opisuje potrzebne zmiany na tyle konkretnie, żeby wykonawca mógł zacząć pracę?
+
+**4. Rozstrzygnij uwagi i zatwierdź projekt.** Jeśli recenzja pokaże, że z dokumentu da się wyczytać dwa różne zachowania po synchronizacji, dopisz wybraną regułę i przypadek testowy. Możesz użyć `egm-resolve`, żeby przejść przez uwagi z Codexem. Gdy projekt jest gotowy, przekaż zatwierdzony plik agentowi implementującemu. Gotową specyfikację możesz skierować od razu do `egm-review`. [Przebieg pracy](https://github.com/google/elephant-goldfish-model/blob/main/docs/getting_started.md) · [Etapy pełnej recenzji](https://github.com/google/elephant-goldfish-model/blob/main/skills/egm-review/SKILL.md)
+
 ### Wersja bez instalacji
 
 Wybierz jedną zmianę, w której agent może rozsądnie wybrać więcej niż jedno zachowanie. W naszym przykładzie jest to konflikt między zmianą ilości a odhaczeniem produktu.
@@ -75,17 +100,6 @@ brak zapisu, pokaż konkretny przypadek i wskaż decyzję do podjęcia.
 > Na liście jest jedno mleko. Na telefonie A ktoś oznacza je jako kupione w trybie offline. Telefon B próbuje zmienić ilość na dwa na podstawie starszego stanu. Serwer najpierw zapisuje zakup, potem odbiera zmianę ilości. Po synchronizacji oba telefony pokazują jedno mleko w sekcji „Kupione”. Ponowienie tej samej spóźnionej operacji daje ten sam wynik.
 
 Osobno rozstrzygnij, co ma się stać, gdy serwer odbierze te zdarzenia w odwrotnej kolejności. Potem przekaż zatwierdzony dokument do implementacji i sprawdź wynik testami.
-
-### Wersja z wtyczką w Codex CLI
-
-Zainstaluj pełny pakiet EGM przez Codex CLI.
-
-```bash
-codex plugin marketplace add google/elephant-goldfish-model
-codex plugin add egm@egm
-```
-
-Uruchom nową sesję Codexa w repozytorium i wybieraj z listy skilli kolejno `egm-brainstorm`, `egm-draft` i `egm-review`. Do ostatniego kroku podaj ścieżkę zwróconą przez etap tworzenia dokumentu. Mając gotową specyfikację, możesz zacząć od samego `egm-review`. Instalacja i składnia zależą od narzędzia. Wtyczka potrzebuje możliwości uruchomienia recenzentów w świeżych kontekstach. [Instrukcja dla Codexa](https://github.com/google/elephant-goldfish-model/blob/main/docs/codex.md) · [Instrukcje dla pozostałych narzędzi](https://github.com/google/elephant-goldfish-model#install)
 
 ## Kiedy warto robić dodatkowe review
 
