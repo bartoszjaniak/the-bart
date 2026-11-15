@@ -1,0 +1,76 @@
+---
+title: "Przegląd świata AI #2: mocniejszy model nie musi robić wszystkiego"
+description: "Claude Fable 5.2, Gemini 4 Carbon i Hydrogen pokazują, że liczy się dobór modelu do zadania. Do tego otwarte wagi, koszty agentów i bezpieczeństwo automatyzacji."
+image: /assets/images/posts/przeglad-swiata-ai-2026-11-15/hero.svg
+imageAlt: "Retrokomiksowy warsztat AI: operator wybiera między szybką maszyną, potężnym silnikiem analitycznym i modułem bezpieczeństwa"
+createdAt: 2026-11-15
+category: AI
+tags: ['AI', 'Agenci AI', 'Programowanie', 'Automatyzacja']
+stickyNote: "Nie każdy problem potrzebuje Fable"
+---
+
+<Callout title="TL;DR" variant="blue">
+W ciągu tygodnia Anthropic udostępnił Claude Fable 5.2, a Google wprowadził Gemini 4 Carbon i szybszy Hydrogen. Najciekawsze nie jest jednak to, który model wygrywa ranking. Google pokazał orkiestrację modeli o różnych kosztach, Anthropic poprawę jakości trudnych zadań, a Thinking Machines opublikowało otwarte wagi Inkling 2 Small. **Warto mierzyć koszt ukończonej pracy i niezawodność agentów**, zamiast kierować wszystko do najpotężniejszego modelu.
+</Callout>
+
+Nowy model rozwiązuje trudniejszy problem. Jest szybszy, ma lepszy wynik w benchmarku, a jego prezentacja wygląda tak, jakby właśnie skończyły się wszystkie problemy z programowaniem.
+
+Potem uruchamiasz go do poprawienia trzech testów i odkrywasz, że jeden przebieg potrafi zużyć sporą część limitu. Właśnie dlatego ten tydzień w AI jest ciekawszy niż zwykły wyścig modeli. Pojawiły się konkretne propozycje **dzielenia pracy między różne klasy inteligencji**.
+
+Przegląd obejmuje wydarzenia z **9–15 listopada 2026**. Liczby pochodzące od producentów traktuję jako ich wyniki testów, nie niezależnie potwierdzoną przewagę w każdym projekcie.
+
+## Najtrudniejsze zadania mają nowego kandydata
+
+9 listopada [Anthropic przedstawił Claude Fable 5.2 i Claude Mythos 5.2](https://www.anthropic.com/claude-fable-and-mythos-5-2). Fable trafił do użytkowników i API, a Mythos jest ograniczony do zweryfikowanych organizacji. Producent kieruje je do wymagającego programowania, analizy i pracy naukowej.
+
+W teście FrontierCode 2.0, który ocenia zmiany kodu pod kątem akceptacji przez opiekunów projektów open source, Fable 5.2 uzyskał według Anthropic **49,1% przy najwyższym poziomie wysiłku obliczeniowego**. Przy poziomie High wynik wyniósł 45,3%, bardzo blisko najlepszego wyniku Opus 5.5 (45,5%). Ta różnica pokazuje, że ustawienie *effort*, czyli budżetu rozumowania, jest równie ważne jak nazwa modelu.
+
+Fable 5.2 kosztuje w API **8 dolarów za milion tokenów wejściowych i 40 dolarów za milion wyjściowych**. To mniej niż Fable 5.1, ale nadal dużo jak na rutynową pracę. Wysoka jakość pojedynczego wyniku nie musi oznaczać najniższego kosztu całego zadania.
+
+Na [r/ClaudeCode](https://www.reddit.com/r/ClaudeCode/comments/1xsbbl9/fable_52_usage/) pojawiły się relacje o szybkim zużywaniu limitów, a także odpowiedzi osób, które uzyskiwały znacznie lepszą wydajność przy innym kontekście i ustawieniach. To doświadczenia pojedynczych użytkowników, nie miarodajny benchmark. Wspólny praktyczny wniosek jest jednak rozsądny: trudny refaktoring warto dać modelowi o najwyższych możliwościach, ale niekoniecznie każde uruchomienie lintera.
+
+## Google pokazuje dwa silniki zamiast jednego
+
+10 listopada [Gemini 4 Carbon stał się dostępny szerzej](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-carbon-now-available/). Google pozycjonuje go jako model do długich, wymagających zadań, szczególnie programowania agentowego, cyberbezpieczeństwa i rozumowania naukowego. Nie jest to pierwsza zapowiedź Carbon, ale **udostępnienie modelu w API i produktach** jest wydarzeniem tego tygodnia.
+
+Dwa dni później pojawił się [Gemini 4 Hydrogen](https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-hydrogen/). Jest przeznaczony do szybszej, codziennej pracy: modyfikacji kodu, testowania, korzystania z narzędzi i przetwarzania dokumentów. Google podaje cenę 1,50 dolara za milion tokenów wejściowych i 7,50 dolara za milion wyjściowych, z jednolitą stawką w oknie kontekstu do miliona tokenów.
+
+Ciekawsza od samej premiery jest funkcja **Orchestrator** w Google Antigravity. Potrafi przełączać modele w obrębie jednej sesji. Mocniejszy Carbon może zaplanować rozwiązanie, a Hydrogen wykonać prostsze operacje i sprawdzenia. Według Google w Terminal-Bench 4.0 takie podejście osiągało wynik zbliżony do Carbon, przy **24% mniejszym zużyciu limitu i 19% krótszym czasie**. To wyniki producenta z określonego testu, które wymagają sprawdzenia na własnych zadaniach.
+
+Mechanizm jest ważniejszy od liczb. Zamiast pytać „jaki model jest najlepszy?”, zaczynamy pytać: **na którym etapie potrzebujemy najdroższego rozumowania?**
+
+<Callout title="Prosty podział pracy" variant="blue">
+**Planowanie i trudna diagnoza:** model o najwyższych możliwościach. **Zmiany w kodzie, testy i iteracje:** szybszy model wykonawczy. **Krytyczne decyzje:** automatyczne kontrole i zatwierdzenie przez człowieka. To wzorzec do przetestowania, nie gotowa gwarancja oszczędności.
+</Callout>
+
+## Otwarte wagi nie oznaczają małego modelu
+
+12 listopada [Thinking Machines udostępniło Inkling 2 Small](https://tinker-docs.thinkingmachines.ai/changelog/) do dostrajania i opublikowało jego wagi. Model ma architekturę *Mixture of Experts*: **594 miliardy parametrów łącznie, z czego około 17 miliardów aktywnych** podczas przetwarzania tokenu.
+
+Nazwa „Small” jest więc względna. Aktywowanie części parametrów ogranicza koszt obliczeń, ale nie sprawia, że całość bez trudu zmieści się w pamięci zwykłego laptopa.
+
+Ważniejsza jest możliwość własnego dostrajania. Firma deklaruje poprawę jakości względem pierwszej generacji, szczególnie w długich zadaniach autonomicznych. To deklaracja autora modelu. Dla zespołów posiadających własne dane i infrastrukturę otwarte wagi oznaczają możliwość eksperymentowania z wyspecjalizowanym modelem bez pełnego uzależnienia od jednego API.
+
+Nie jest to jednak automatycznie tańsze rozwiązanie. Koszt GPU, pamięci, wdrożenia, ewaluacji i utrzymania może łatwo przeważyć oszczędności na tokenach.
+
+## Agenci dostają więcej narzędzi. Rosną też powierzchnie ataku
+
+W tygodniu premier modeli łatwo przeoczyć drobne zmiany infrastrukturalne. [GitHub 9 listopada](https://github.blog/changelog/month/11-2026/) rozszerzył skanowanie sekretów o logi workflow GitHub Actions, a 12 listopada dodał wykrywanie tokenów usług Cloudflare. To konkretne usprawnienia dla zespołów, w których agent uruchamia buildy i operuje na automatyzacjach.
+
+Z kolei w [wydaniach Claude Code 2.1.321 i 2.1.322](https://www.reddit.com/r/ClaudeCode/comments/1xu1mkx/claude_code_21321_21322_fable_52_is_now_the/) użytkownicy zwracali uwagę na poprawki dotyczące przekierowań OAuth w MCP, uruchamiania poleceń poza sandboxem i egzekwowania reguł odmowy zapisu. To społecznościowe omówienie zmian, więc szczegóły konkretnej wersji należy zawsze potwierdzić w oficjalnym changelogu przed aktualizacją.
+
+Wniosek nie jest nowy, ale w tym tygodniu otrzymał bardzo praktyczną ilustrację: **agent z dostępem do terminala, sekretów i repozytorium jest częścią infrastruktury bezpieczeństwa**. Nawet najlepszy model nie naprawi błędnej polityki uprawnień.
+
+Warto ograniczać zakres tokenów, izolować środowiska, skanować logi i wymagać zatwierdzenia operacji o wysokim ryzyku. Dobrze, jeśli takie reguły egzekwuje system, a nie wyłącznie prompt.
+
+## Jak wybrać model do swojej pracy?
+
+Nie proponuję migracji na trzy nowe modele tylko dlatego, że mają świeże numery wersji. Lepszy eksperyment to porównanie ich na pięciu własnych zadaniach: poprawce błędu, refaktoringu, dopisaniu testów, analizie incydentu i zadaniu wymagającym długiego kontekstu.
+
+Dla każdego przypadku warto zapisać **koszt zakończonego zadania**, czas, liczbę interwencji człowieka, liczbę powtórzeń oraz to, czy testy i review zaakceptowały wynik. Jeżeli droższy model kończy pracę za pierwszym razem, może być bardziej ekonomiczny. Jeżeli szybszy model wykonuje ją równie dobrze za ułamek ceny, nie ma powodu dopłacać za prestiż.
+
+Dopiero po takim pomiarze sens ma routing: wybór modelu zależnie od trudności i ryzyka. Najlepsza architektura nie potrzebuje najpotężniejszego modelu na każdym kroku. Potrzebuje **wiedzieć, kiedy naprawdę warto go uruchomić**.
+
+---
+
+*Źródła: [Anthropic, 9.11](https://www.anthropic.com/claude-fable-and-mythos-5-2), [Google Carbon, 10.11](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-carbon-now-available/), [Google Hydrogen, 12.11](https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-hydrogen/), [Thinking Machines, 12.11](https://tinker-docs.thinkingmachines.ai/changelog/), [GitHub Changelog, 9–13.11](https://github.blog/changelog/month/11-2026/) oraz [dyskusja użytkowników Claude Code](https://www.reddit.com/r/ClaudeCode/comments/1xsbbl9/fable_52_usage/).*
