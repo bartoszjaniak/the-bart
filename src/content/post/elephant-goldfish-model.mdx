@@ -1,0 +1,88 @@
+---
+title: "Kod może poczekać. Jak Google testuje specyfikacje z AI"
+description: "Jak działa Elephant–Goldfish Model od Google i jak zrecenzować specyfikację we własnym repozytorium, z wtyczką Codex CLI lub w dwóch osobnych sesjach."
+image: /assets/images/posts/elephant-goldfish-model/hero.jpg
+imageAlt: "Słoń szkicuje projekt, a złota rybka przygląda się przekazanemu jej arkuszowi."
+createdAt: 2026-11-15
+category: AI
+tags: ['Agenci AI', 'Agentic engineering', 'Programowanie', 'Spec-driven development', 'Context engineering']
+---
+
+<Callout title="TL;DR" variant="blue">
+W Elephant–Goldfish Model projektujesz zmianę z agentem, który zna repozytorium i historię decyzji. Potem dajesz specyfikację recenzentom w świeżych sesjach. Mają dokument i wskazane materiały, a historię rozmowy pomijasz. Jeśli recenzent musi zgadywać, jak system ma się zachować, poprawiasz dokument przed implementacją. Cały mechanizm da się wypróbować w dwóch sesjach, bez instalowania wtyczki.
+</Callout>
+
+Wyobraź sobie, że dodajesz synchronizację offline do współdzielonej listy zakupów. Jedna osoba odhacza mleko w sklepie bez zasięgu, druga w domu zmienia jego ilość. Co ma zobaczyć każda z nich po synchronizacji?
+
+Na czacie wszystko mogło wydawać się jasne. W specyfikacji zostaje zdanie „aplikacja synchronizuje zmiany po odzyskaniu połączenia”. Agent implementujący zmianę musi podjąć decyzję, której w tym zdaniu brakuje. Może ją nawet pokryć testem. Zielony test potwierdzi wtedy regułę wymyśloną podczas kodowania.
+
+**Elephant–Goldfish Model (EGM)** przenosi ten moment przed implementację. Metodę opisał Dave Rensin, inżynier Google. W październiku 2026 r. zespół udostępnił wtyczkę open source, która automatyzuje przygotowanie i recenzję projektu. [Tekst Dave’a Rensina](https://drensin.medium.com/elephants-goldfish-and-the-new-golden-age-of-software-engineering-c33641a48874) · [Ogłoszenie Google](https://opensource.googleblog.com/2026/10/introducing-elephant-goldfish-model-plugin.html)
+
+## Słoń zna projekt. Rybka dostaje dokument
+
+**Elephant** to sesja, w której omawiasz zachowanie systemu, ograniczenia i kompromisy. Agent zna istotne fragmenty repozytorium i może dopytać, dlaczego wcześniejsze decyzje wyglądają tak, jak wyglądają. Wynikiem tej pracy jest dokument w Markdownie z wymaganiami, projektem technicznym i planem implementacji.
+
+**Goldfish** to recenzent uruchomiony w świeżej sesji. Czyta specyfikację i materiały, na które dokument się powołuje. Najpierw próbuje własnymi słowami odtworzyć zamierzone działanie. Potem szuka luk, sprzeczności z kodem i decyzji, które nadal musiałby podjąć wykonawca. Możesz użyć tego samego modelu w obu rolach. Zmienia się to, co agent wie na wejściu. [Dokumentacja EGM](https://github.com/google/elephant-goldfish-model/blob/main/docs/getting_started.md) · [Zasady izolowania sesji](https://github.com/google/elephant-goldfish-model/blob/main/docs/harnesses.md)
+
+Ty decydujesz, które uwagi zmieniają projekt. Gdy dopiszesz odpowiedź wyłącznie w rozmowie ze słoniem, następna sesja znów będzie musiała zgadywać. Rozstrzygnięcie powinno trafić do specyfikacji.
+
+## Gdzie to się mieści obok Spec Kit, OpenSpec i Conductora
+
+| Podejście | Co organizuje w praktyce |
+| --- | --- |
+| **Plan i implementacja w jednej sesji** | Szybkie przejście od pomysłu do kodu. Agent może korzystać z całej rozmowy, również kiedy ocenia własny plan. |
+| **GitHub Spec Kit** | Przejście od wymagań przez plan i listę zadań do implementacji. Ma też checklisty wymagań i analizę spójności dokumentów. [Dokumentacja Spec Kit](https://github.github.com/spec-kit/) |
+| **OpenSpec** | Przebieg konkretnej zmiany, od propozycji przez wdrożenie po aktualizację głównej specyfikacji i archiwizację. [Dokumentacja OpenSpec](https://github.com/Fission-AI/OpenSpec/blob/main/docs/how-commands-work.md) |
+| **Google Conductor** | Utrzymywanie kontekstu projektu, specyfikacji i postępu prac w repozytorium, także między sesjami i narzędziami. [Opis Conductora](https://developers.googleblog.com/evolving-spec-driven-development-conductor-now-supports-antigravity/) |
+| **Elephant–Goldfish Model** | Sprawdzenie, czy recenzent bez historii rozmowy potrafi odtworzyć zamierzone zachowanie systemu i ocenić gotowość projektu do implementacji. [Dokumentacja EGM](https://github.com/google/elephant-goldfish-model/blob/main/docs/getting_started.md) |
+
+Recenzję Goldfish można dołożyć do istniejącego procesu. Jeśli masz już `spec.md` i `plan.md`, daj je recenzentowi wraz z istotnymi plikami. Sprawdzasz w ten sposób, czy dokumenty wystarczą komuś, kto właśnie dostał zadanie. W [fabryce AI](/post/fabryki-ai-czym-sie-roznia-od-agentow) ten krok można umieścić między przygotowaniem specyfikacji a przekazaniem jej agentowi, który napisze kod.
+
+## Jak wypróbować EGM na własnym repozytorium
+
+### Wersja bez instalacji
+
+Wybierz jedną zmianę, w której agent może rozsądnie wybrać więcej niż jedno zachowanie. W naszym przykładzie jest to konflikt między zmianą ilości a odhaczeniem produktu.
+
+**1. Przygotuj projekt w pierwszej sesji.** Podaj agentowi zgłoszenie i wskaż pliki, które pokazują aktualne działanie. Poproś go o projekt i kryteria akceptacji.
+
+```text
+Pomóż mi zaprojektować obsługę konfliktu między zmianą ilości produktu
+a oznaczeniem go jako kupionego w trybie offline. Dopytaj o decyzje,
+których nie da się odczytać z kodu. Ustalmy, co ma zobaczyć każda osoba
+po synchronizacji. Zapisz reguły, przykłady i kryteria akceptacji
+w docs/designs/synchronizacja-zakupow.md. Na tym etapie pracuj nad dokumentem.
+```
+
+**2. Otwórz świeżą sesję.** Daj jej dokument i wskazane pliki. Jeśli narzędzie przenosi pamięć między rozmowami, wybierz tryb bez dostępu do wcześniejszej dyskusji. Pomiń streszczenie rozmowy, bo to właśnie dokument ma wyjaśniać decyzje.
+
+```text
+Zrecenzuj docs/designs/synchronizacja-zakupow.md i wskazane w nim pliki.
+Najpierw opisz, co zobaczą obie osoby w podanych scenariuszach.
+Następnie wypisz sytuacje, w których z dokumentu wynikają co najmniej
+dwa możliwe zachowania. Dla każdej podaj fragment dokumentu lub zaznacz
+brak zapisu, pokaż konkretny przypadek i wskaż decyzję do podjęcia.
+```
+
+**3. Zamień uwagę w regułę i test.** Załóżmy, że zapis zmiany ilości dociera po oznaczeniu pozycji jako kupionej. Możesz przyjąć regułę, że aplikacja odrzuca spóźnioną zmianę i odświeża stan na drugim urządzeniu. Zapisz regułę w dokumencie razem z kryterium akceptacji.
+
+> Na liście jest jedno mleko. Na telefonie A ktoś oznacza je jako kupione w trybie offline. Telefon B próbuje zmienić ilość na dwa na podstawie starszego stanu. Serwer najpierw zapisuje zakup, potem odbiera zmianę ilości. Po synchronizacji oba telefony pokazują jedno mleko w sekcji „Kupione”. Ponowienie tej samej spóźnionej operacji daje ten sam wynik.
+
+Osobno rozstrzygnij, co ma się stać, gdy serwer odbierze te zdarzenia w odwrotnej kolejności. Potem przekaż zatwierdzony dokument do implementacji i sprawdź wynik testami.
+
+### Wersja z wtyczką w Codex CLI
+
+Zainstaluj pełny pakiet EGM przez Codex CLI.
+
+```bash
+codex plugin marketplace add google/elephant-goldfish-model
+codex plugin add egm@egm
+```
+
+Uruchom nową sesję Codexa w repozytorium i wybieraj z listy skilli kolejno `egm-brainstorm`, `egm-draft` i `egm-review`. Do ostatniego kroku podaj ścieżkę zwróconą przez etap tworzenia dokumentu. Mając gotową specyfikację, możesz zacząć od samego `egm-review`. Instalacja i składnia zależą od narzędzia. Wtyczka potrzebuje możliwości uruchomienia recenzentów w świeżych kontekstach. [Instrukcja dla Codexa](https://github.com/google/elephant-goldfish-model/blob/main/docs/codex.md) · [Instrukcje dla pozostałych narzędzi](https://github.com/google/elephant-goldfish-model#install)
+
+## Kiedy warto robić dodatkowe review
+
+Recenzja kosztuje dodatkowe wywołania modelu i czas na przejrzenie uwag. Przy lokalnej poprawce z jasnym oczekiwanym wynikiem zwykle wystarczy odtworzyć błąd i sprawdzić poprawkę. Przy synchronizacji offline, migracji danych albo zmianie kontraktu API warto wcześniej ustalić, które zachowanie ma być poprawne. Sam raport recenzenta mówi, co dało się wyczytać z projektu. O tym, co faktycznie robi kod, rozstrzygają testy i review implementacji.
+
+Zacząłbym od jednej specyfikacji, którą i tak trzeba przekazać dalej. Jeśli świeża sesja wskaże decyzję zmieniającą zachowanie produktu, dopisz ją do dokumentu i zamień na test. Taki wynik uzasadnia kolejną rundę znacznie lepiej niż długa lista uwag.
