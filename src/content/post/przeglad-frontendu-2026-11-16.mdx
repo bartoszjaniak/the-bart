@@ -1,50 +1,28 @@
 ---
-title: "Przegląd frontendu #1: Firefox słucha lokalnie, a Astro odciąża build"
-description: "Firefox 160 rozpoznaje mowę na komputerze. Angular poprawia hydratację i formularze, Vite obsługę workerów, a Astro zmniejsza zużycie pamięci podczas budowania."
+title: "Przegląd frontendu #1: lokalne dyktowanie w Firefoksie i UI SDK od Vercela"
+description: "Firefox 160 rozpoznaje mowę na urządzeniu, a UI SDK od Vercela pozwala używać tej samej logiki interakcji w różnych frameworkach. Przegląd za 10–16 listopada 2026."
 image: /assets/images/posts/przeglad-frontendu-2026-11-16/hero.jpg
 imageAlt: "Komiksowy warsztat z mikrofonem, monitorem pokazującym falę dźwiękową i maszyną z trzema wskaźnikami"
 createdAt: 2026-11-16
 category: TECH
-tags: ['Frontend', 'Programowanie', 'Firefox', 'Angular', 'Vite', 'Astro']
-stickyNote: "Mikrofon, hydratacja, pamięć w CI"
+tags: ['Frontend', 'Programowanie', 'Firefox', 'Dostępność', 'Vercel']
+stickyNote: "Głos w przeglądarce, logika w bibliotece"
 ---
 
 <Callout title="TL;DR" variant="blue">
-**Firefox 160 rozpoznaje mowę lokalnie na komputerze.** Jeśli dodajesz dyktowanie, sprawdź dostępność pakietu językowego i zostaw zwykłe pole tekstowe. Angular 22.2.6 poprawia błędy hydratacji i formularzy, a Vite 8.3.8 naprawia ładowanie zasobów przez workery osadzane w kodzie w trybie `bundled-dev`. W Astro 7.4.12 warto zmierzyć szczytowe zużycie pamięci, zwłaszcza gdy build w CI ledwo mieści się w limicie.
+**Firefox 160 pozwala stronom zamieniać mowę na tekst na komputerze użytkownika.** To otwiera drogę do dyktowania bez wysyłania nagrania na serwer, choć w Firefoksie na Androidzie ta funkcja jest niedostępna. Vercel wypuścił betę UI SDK. Biblioteka pozwala współdzielić obsługę klawiatury, fokusu i wyboru opcji między komponentami tworzonymi w różnych frameworkach.
 </Callout>
 
-Dodajesz dyktowanie do pola wyszukiwania. U Ciebie działa. U kogoś innego przeglądarka nie ma pakietu językowego, a po odmowie dostępu do mikrofonu przycisk nie daje żadnej odpowiedzi. To dobry moment, by sprawdzić, czy obsługa tekstu wciąż działa od początku do końca.
+## Firefox 160 rozpoznaje mowę na urządzeniu
 
-W pierwszym przeglądzie, za **10–16 listopada 2026**, cztery zmiany podpowiadają, które ścieżki warto przetestować od nowa.
+Od 10 listopada Firefox na komputerze obsługuje lokalne rozpoznawanie mowy przez Web Speech API. Aplikacja webowa może dodać mikrofon do wyszukiwarki albo pola notatek i przetworzyć dźwięk na urządzeniu. Według MDN funkcja obejmuje 40 języków. Na Androidzie Firefox jeszcze jej nie oferuje, więc dyktowanie ma sens jako dodatek do zwykłego pola tekstowego.
 
-## Firefox 160 uruchamia dyktowanie na urządzeniu
+[Informacje dla deweloperów o Firefoksie 160](https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/160)
 
-10 listopada Firefox 160 udostępnił na komputerach lokalne rozpoznawanie mowy przez Web Speech API. Według MDN obejmuje ono 40 języków. Firefox na Androidzie nadal nie obsługuje rozpoznawania mowy przez to API.
+## Vercel udostępnia betę UI SDK
 
-W prototypie ustaw `processLocally = true` na instancji `SpeechRecognition` i przekaż tę samą opcję do `SpeechRecognition.available()`, by sprawdzić, czy wybrany język jest dostępny lokalnie. Pakiet może wymagać pobrania przez `SpeechRecognition.install()`. Dwa szybkie testy przed wdrożeniem to świeży profil przeglądarki, w którym pakietu jeszcze nie ma, i odmowa dostępu do mikrofonu. W obu przypadkach użytkownik powinien móc od razu wpisać to samo ręcznie.
+Rozwijana przez Vercel biblioteka przenosi obsługę klawiatury, fokusu i zaznaczania do modułów, które można składać w różne kontrolki. Przykład z dokumentacji jest prosty. Otwieranie listy, wybór opcji i wyszukiwanie po pierwszych literach można wykorzystać zarówno w zwykłym polu wyboru, jak i w polu z autouzupełnianiem.
 
-[Informacje o wydaniu Firefox 160](https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/160) · [Dokumentacja Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API/Using_the_Web_Speech_API)
+SDK powstał z myślą o agentach składających interfejsy, ale pomysł jest ciekawy też dla zespołów, które utrzymują kilka aplikacji. Ten sam mechanizm wyboru może działać w jednej aplikacji napisanej w React i w drugiej napisanej w Vue, nawet jeśli obie wyglądają inaczej. Na razie to beta, więc zacząłbym od sprawdzenia jednej złożonej kontrolki.
 
-## Angular 22.2.6 poprawia moment, w którym strona ożywa
-
-12 listopada wyszły stabilna poprawka 22.2.6 i przedpremierowa 22.3.0-rc.0. W stabilnym wydaniu są poprawki usuwania wczesnych nasłuchiwaczy po odtworzeniu zdarzeń zebranych przed hydratacją oraz eliminowania powtórnych emisji `valueChanges` przy zmianie `parseErrors` w formularzach.
-
-Jeśli utrzymujesz Angulara 22.2 z SSR, sprawdź kliknięcie wykonane tuż po pojawieniu się strony, zanim aplikacja przejmie HTML z serwera. Akcja powinna wykonać się raz. W formularzu z Signal Forms sprawdź, ile razy zapis albo walidacja zależna od `valueChanges` reaguje po zmianie błędu parsowania.
-
-[Angular 22.2.6](https://github.com/angular/angular/releases/tag/v22.2.6) · [Angular 22.3.0-rc.0](https://github.com/angular/angular/releases/tag/v22.3.0-rc.0)
-
-## Vite 8.3.8 poprawia ładowanie zasobów workerów
-
-11 listopada Vite wydał 8.3.8. W trybie `bundled-dev` poprawka obejmuje zasoby, do których odwołują się workery osadzane w kodzie. Przy okazji Vite przestał importować Sass osobno dla każdego pliku.
-
-Jeśli masz taki worker, który ładuje np. plik WASM, uruchom go w `bundled-dev` i sprawdź żądanie zasobu w zakładce Network. Powtórz test na lokalnym podglądzie produkcyjnego buildu.
-
-[Vite 8.3.8](https://github.com/vitejs/vite/releases/tag/v8.3.8)
-
-## Astro 7.4.12 zwalnia pamięć po synchronizacji treści
-
-13 listopada Astro wydało 7.4.12. `astro build` zwalnia teraz wpisy kolekcji treści z pamięci po zakończeniu synchronizacji warstwy treści. Najłatwiej ocenić tę zmianę na serwisie z dużą liczbą wpisów, którego buildy zbliżają się do limitu pamięci w CI.
-
-Na tym samym runnerze zbuduj ten sam zestaw treści przed aktualizacją i po niej. Porównaj szczytowe zużycie pamięci procesu, na Linuksie np. przez `/usr/bin/time -v npm run build`. Jeśli build dobija do limitu całego kontenera, porównaj też szczyt zużycia pamięci raportowany przez CI.
-
-[Astro 7.4.12](https://github.com/withastro/astro/releases/tag/astro@7.4.12)
+[Dokumentacja UI SDK](https://ui-sdk.dev/) · [Repozytorium i status bety](https://github.com/vercel-labs/ui)
