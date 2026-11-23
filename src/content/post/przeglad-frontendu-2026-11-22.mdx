@@ -1,0 +1,24 @@
+---
+title: "Przegląd frontendu #2: Chrome 158 i koniec XSLT w przeglądarce"
+description: "Chrome 158 trafia do stabilnego kanału. Plan wycofania XSLT dotyczy zarówno API JavaScript, jak i transformacji dokumentów XML."
+image: /assets/images/posts/przeglad-frontendu-2026-11-22/hero.jpg
+imageAlt: "Programistka wymienia koła zębate w maszynie przypominającej okno przeglądarki"
+createdAt: 2026-11-23
+category: TECH
+tags: ['Frontend', 'Chrome', 'Przeglądarki', 'Programowanie']
+stickyNote: "Sprawdź stare XML-e"
+---
+
+<Callout title="TL;DR" variant="blue">
+Chrome 158 zaczął trafiać do stabilnego kanału 17 listopada. Według planu Google ta wersja wyłącza natywne transformacje XSLT, używane między innymi do wyświetlania dokumentów XML jako HTML. Dotknięte zespoły powinny sprawdzić instrukcje w XML i użycie XSLTProcessor; dostępne są czasowe wyjątki oraz ścieżki migracji, w tym transformacja po stronie serwera.
+</Callout>
+
+Przegląd obejmuje **16–22 listopada 2026**. W tym tygodniu sprawdź starsze fragmenty aplikacji: zmiana w przeglądarce może dotknąć strony, która od lat poprawnie wyświetlała XML.
+
+## Chrome 158 i wycofanie XSLT
+
+17 listopada [Google ogłosiło Chrome 158 w stabilnym kanale](https://chromereleases.googleblog.com/2026/11/stable-channel-update-for-desktop_01699533288.html) dla Windows, macOS i Linuksa. Wdrożenie rozłożono na kolejne dni i tygodnie. Według [planu wycofania XSLT](https://developer.chrome.com/docs/web-platform/deprecating-xslt) od tej wersji przestaje działać natywna transformacja XSLT: zarówno klasa JavaScript `XSLTProcessor`, jak i instrukcja `xml-stylesheet` dołączająca arkusz do dokumentu XML.
+
+Dotyczy to na przykład starszego panelu urządzenia albo kanału RSS, który po otwarciu w przeglądarce zamienia XML w czytelną stronę. Sam format XML i jego użycie przez czytnik RSS nie są tym samym co przeglądarkowa transformacja XSLT. Google wskazuje koszty utrzymania i bezpieczeństwo starej implementacji jako powód zmiany.
+
+Jeśli utrzymujesz taki widok, sprawdź oba sposoby użycia XSLT i przetestuj go w aktualnym Chrome. Google opisuje kilka wyjść: transformację na serwerze, polyfill lub rozszerzenie dla stron, których nie da się zmienić. Origin Trial i polityka firmowa pozwalają czasowo zachować funkcję; według opublikowanego harmonogramu wygasną w Chrome 176 w sierpniu 2027. Nie zastępują planu migracji.
