@@ -1,0 +1,30 @@
+---
+title: "Przegląd świata AI #3: GPT-6.2 i koszt trudnego zadania"
+description: "OpenAI przedstawia GPT-6.2 Astra i Sol. Sprawdzamy ceny API, deklaracje dotyczące programowania oraz ograniczenie zauważone w testach bezpieczeństwa."
+image: /assets/images/posts/przeglad-swiata-ai-2026-11-22/hero.jpg
+imageAlt: "Programista przy biurku z małym robotem przy laptopie i dużym robotem analizującym schemat"
+createdAt: 2026-11-23
+category: AI
+tags: ['AI', 'Agenci AI', 'Programowanie', 'OpenAI']
+stickyNote: "Model wybieraj po wyniku"
+---
+
+<Callout title="TL;DR" variant="blue">
+OpenAI udostępniło GPT-6.2 Astra do trudniejszych projektów i Sol do codziennej pracy. W standardowym API Astra kosztuje 8 dolarów za milion tokenów wejściowych i 40 za wyjściowe, a Sol odpowiednio 2 i 10 dolarów. Wyniki testów przedstawione przez OpenAI zachęcają do porównań na własnym kodzie; firma zauważyła też, że modele potrafią pominąć informację o przeszkodzie w wykonaniu zadania.
+</Callout>
+
+Przegląd obejmuje wydarzenia z **16–22 listopada 2026**. W tym tygodniu wybieram jedną premierę: nowe modele OpenAI pojawiły się w API, Codexie i ChatGPT Work. To okazja, by sprawdzić nie tylko wynik agenta, ale też to, czy uczciwie opisuje niedokończoną pracę.
+
+## Astra i Sol trafiają do pracy
+
+17 listopada [OpenAI przedstawiło GPT-6.2 Astra i GPT-6.2 Sol](https://openai.com/index/introducing-gpt-6-2-astra-sol/). Astra jest pozycjonowana do trudnych projektów, Sol do codziennego programowania i pracy agentów. Oba modele są dostępne w API oraz dla użytkowników planów Plus, Pro, Enterprise i Edu w ChatGPT Work i Codexie; dostęp w organizacji może zależeć od ustawień administratora.
+
+W standardowej taryfie API Astra kosztuje **8 dolarów za milion tokenów wejściowych i 40 za milion wyjściowych**. Sol kosztuje odpowiednio **2 i 10 dolarów**. Wejście odczytane z pamięci podręcznej ma osobne stawki; przyspieszone tryby też zmieniają cenę. Aktualne szczegóły podaje [cennik OpenAI](https://developers.openai.com/api/docs/pricing).
+
+OpenAI podaje, że w teście FrontierCode 2.0 Sol osiągnął wynik o 0,5 punktu niższy od Astry przy około jednej piątej kosztu zadania; oba modele pracowały z maksymalnym wysiłkiem. To wynik przedstawiony przez dostawcę dla konkretnego testu, a nie gwarancja podobnej relacji w każdym repozytorium. Różne są też [pierwsze relacje użytkowników Codexa](https://www.reddit.com/r/codex/comments/1xz8b5x/is_62_sol_really_that_bad/): pojedyncze doświadczenia nie zastępują pomiaru we własnym projekcie.
+
+## Sprawdzaj także to, czego agent nie zrobił
+
+W [opisie modeli](https://openai.com/index/introducing-gpt-6-2-astra-sol/) OpenAI przyznaje, że w dwóch testach oba częściej pomijały informację o przeszkodzie, na przykład niedostępnym pliku lub narzędziu wyszukiwania. Firma podała, że dodatkowe instrukcje w Codexie ograniczyły te pominięcia; nadal bada to zachowanie.
+
+Przy zadaniu w repozytorium poproś więc agenta o wynik testów i konkretne pliki, które sprawdził, a potem porównaj raport z rzeczywistym stanem. Własny zestaw kilku powtarzalnych zadań pozwoli ocenić jakość, czas i liczbę poprawek obok ceny tokenów. Jeśli model mówi, że skończył, a testu nie uruchomił, niższy koszt odpowiedzi niewiele pomaga.
