@@ -1,0 +1,118 @@
+---
+title: "Meta-fabryka AI: jak tworzyć i rozwijać fabryki agentów"
+description: "Szablony i fabryki agentów w praktyce: wersjonowanie, bezpieczne ponowienia, testy i granice autonomii. Analiza filmu IndyDevDana i dokumentacji technicznej."
+image: /assets/images/posts/meta-fabryka-ai/hero.jpg
+imageAlt: "Programistka nad planem fabryki obserwuje trzy małe warsztaty z robotami, a strzałka prowadzi od części z powrotem do planu"
+createdAt: 2026-11-24
+category: AI
+tags: ['Agentic engineering', 'Agenci AI', 'Programowanie', 'Automatyzacja']
+stickyNote: "Ulepsz fabrykę, popraw szablon"
+---
+
+<Callout title="TL;DR" variant="blue">
+Meta-fabryka IndyDevDana zarządza szablonami i uruchamia z nich wyspecjalizowane fabryki agentów. Film demonstruje dodanie notatek do szablonu, ale nie dowodzi skuteczności całego podejścia w produkcji. Dokumentacja GitHuba, Temporal i doświadczenia Anthropic pomagają doprecyzować praktykę: zapisz wersje instancji, zabezpiecz ponowienia działań i oceniaj wyniki na powtarzanych próbach. Wspólny szablon opłaca się wtedy, gdy oszczędność przewyższa koszt jego utrzymania.
+</Callout>
+
+<Callout title="Materiał na podstawie filmu" variant="blue">
+Punktem wyjścia jest film **[The Meta Software Factory: Advanced Agentic Engineering](https://www.youtube.com/watch?v=PuHDu3Kn8sQ)** z kanału **IndyDevDan**. To autorskie opracowanie i analiza czwartej lekcji Tiny Software Factories, uzupełniona dokumentacją GitHuba i Temporal oraz doświadczeniami Anthropic. Przykład audytu i proponowane zabezpieczenia są moim zastosowaniem tej koncepcji.
+</Callout>
+
+Pierwszą fabrykę agentów konfigurujesz ręcznie. Drugą kopiujesz z pierwszej. Przy trzeciej przypominasz sobie, że dwie poprzednie mają już inne narzędzia, poprawki i uprawnienia. Która wersja jest właściwie punktem startowym dla następnego projektu?
+
+W [poprzednim tekście](/post/fabryka-ai-liquid-software) opisywałem przejście od pustej fabryki do systemu wyspecjalizowanego w jednym zadaniu. W czwartej lekcji IndyDevDan przenosi uwagę poziom wyżej: **kto ma zarządzać szablonami, tworzyć kolejne fabryki i pilnować ich zmian?** Jego odpowiedź to *Meta Software Factory*, czyli system agentów służący do zarządzania innymi fabrykami.
+
+To ambitna architektura, więc zacznijmy od rozróżnienia trzech rzeczy, które łatwo wrzucić do jednego worka.
+
+## Szablon, pusta fabryka i działająca fabryka
+
+**Szablon** opisuje, z czego powstanie nowa fabryka: jej strukturę, narzędzia, konfigurację i dostępne mechanizmy pracy. **Pusta fabryka** to uruchomiona instancja utworzona z tego szablonu. Ma podstawowy zespół i możliwości, ale nie została jeszcze dopasowana do konkretnego problemu. **Działająca fabryka** dostaje misję, role i konfigurację odpowiadającą wybranej pracy.
+
+W demonstracji autor kopiuje szablon z poprzedniego poziomu, zleca agentowi dodanie obsługi krótkich notatek, a następnie tworzy z niego nową instancję. Jej członkowie zapisują notatki i przekazują odpowiedzi liderowi. Dopiero później nowa fabryka otrzymuje właściciela i ogólną misję pracy z wiedzą zespołu.
+
+Ta kolejność ma znaczenie. Dodanie narzędzia **do szablonu** sprawia, że może ono trafić do kolejnych instancji. Zmiana w działającej fabryce rozwiązuje natomiast jej bieżący problem. Nie ma powodu zakładać, że automatycznie poprawi wszystkie pozostałe.
+
+## Trzy role zamiast jednego agenta od wszystkiego
+
+IndyDevDan dzieli odpowiedzialność między niewielki zespół:
+
+| Rola | Zakres w pokazie |
+| --- | --- |
+| **Factory Lead** | Punkt kontaktu dla człowieka, koordynacja zespołu i zbieranie decyzji. |
+| **MetaFactory Agent** | Zarządzanie pustymi szablonami i tworzeniem nowych fabryk. |
+| **Factory Owner** | Opieka nad konkretną instancją, jej misją i dziennikiem zmian. |
+
+Lider może regularnie sprawdzać postęp i przekazywać sprawy do decyzji. W przykładzie to on ma narzędzie do dodania nowego członka zespołu. Autor najpierw określa misję Notes Factory, a następnie zatwierdza propozycję utworzenia jej właściciela. Osobne zatwierdzenie pojawia się przed uruchomieniem fabryki i wprowadzeniem jej specjalizacji.
+
+Nie jest to dowód, że trzy role zawsze będą lepsze niż jedna. To **podział odpowiedzialności pokazany w filmie**. Może ułatwić zrozumienie, kto zmienił szablon, a kto odpowiada za konkretną instancję. Każda kolejna rola dokłada jednak komunikację, koszt i możliwość błędu w przekazaniu zadania.
+
+## Zmiana raz, użycie wiele razy
+
+Najciekawsza obietnica meta-fabryki dotyczy *backportu*: przeniesienia przydatnej zmiany z działającej fabryki z powrotem do wspólnego szablonu. Nowe instancje mogą wtedy zaczynać z ulepszeniem, które wcześniej trzeba było dopisywać ręcznie.
+
+Wyobraź sobie trzy fabryki kontrolujące aplikacje webowe. Jedna dostaje lepszy raport błędów dostępności. Jeśli raport nie zależy od sekretów ani struktury jednego projektu, można przygotować jego uogólnioną wersję w szablonie. Czwarta fabryka otrzyma ją już na starcie.
+
+To mój przykład zastosowania. **W samym filmie autor dodaje notatki bezpośrednio do skopiowanego szablonu** i sprawdza je w nowej instancji. Omawia również mechanizm backportu, ale pokaz z notatkami nie jest pełnym dowodem migracji poprawki z działającej instancji do wzorca ani aktualizacji wcześniej uruchomionych fabryk.
+
+Przy współdzielonym szablonie pomyłka też może się mnożyć. Dlatego przed przeniesieniem zmiany sprawdziłbym, czy naprawdę jest wspólna, jakie ma zależności i czy nie rozszerza dostępu wszystkich przyszłych instancji. Szablon powinien mieć wersję, testy i możliwość powrotu do poprzedniej wersji. Istniejące fabryki warto aktualizować świadomie, a nie zakładać, że każda poprawka pasuje do każdej konfiguracji.
+
+### Szablon nie jest kanałem aktualizacji
+
+[GitHub wyjaśnia](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template), że repozytorium utworzone z szablonu zaczyna nową historię, a gałęzie szablonu i nowego repozytorium mają niepowiązane historie. Samo użycie przycisku „Use this template” nie zapewnia więc zwykłego przepływu PR-ów między nimi. Jeśli chcesz przenosić poprawki w obie strony, zaprojektuj ten mechanizm osobno: na przykład wyciągnij współdzielony kod do wersjonowanego pakietu albo przygotowuj kontrolowane aktualizacje plików w każdym projekcie.
+
+Przy każdej instancji zapisałbym co najmniej identyfikator wersji szablonu, wersję kodu wykonawczego, konfigurację i wynik ostatniej walidacji. Nie wkładałbym do szablonu danych klienta ani sekretów. Aktualizacja powinna pokazać różnicę, przejść testy konkretnej instancji i zostawić możliwość powrotu do poprzedniej wersji. To propozycja procesu; samo wersjonowanie nie rozwiązuje konfliktów między lokalnymi zmianami a nowym wzorcem.
+
+## Powtarzalna praca: agent wewnątrz procesu
+
+Agent zarządzający szablonem uruchamia w pokazie zadanie *change a template*. Autor opisuje je jako proces łączący kod z pracą agenta: kod organizuje kroki i podaje odpowiednie instrukcje, a agent wykonuje część wymagającą interpretacji i zmiany. W interfejsie widać też zadania do tworzenia fabryki, sprawdzania jej i przenoszenia zmian.
+
+Taki podział pozwala zapisać kolejność pracy zamiast liczyć, że model odtworzy ją za każdym razem z pamięci rozmowy. **Powtarzalny przebieg nie gwarantuje jednak identycznego ani poprawnego wyniku agenta.** Walidacja nadal musi sprawdzić artefakty: co zmieniono, jakie testy przeszły i czy propozycja odpowiada wymaganiu.
+
+W demonstracji zmiany są widoczne w dzienniku wraz z różnicami i przebiegiem zadania. To użyteczne przy przeglądzie, ale samo streszczenie nie zastępuje dostępu do szczegółów. Jeśli zatwierdzasz nową wersję szablonu, potrzebujesz możliwości przejścia od krótkiego opisu do konkretnych plików i wyników testów.
+
+### Co dzieje się po awarii?
+
+Wyobraź sobie, że agent utworzył zgłoszenie, ale proces zatrzymał się przed zapisaniem potwierdzenia. Po wznowieniu nie wiadomo, czy trzeba je utworzyć ponownie. **Ponowienie bez identyfikatora operacji może dać dwa zgłoszenia.** Dlatego zapisuj stan przed i po skutku zewnętrznym, nadaj operacji stały identyfikator i sprawdź, czy system docelowy obsługuje deduplikację. Jeżeli nie obsługuje, po niejednoznacznym błędzie potrzebna może być kontrola istniejącego wyniku lub decyzja człowieka.
+
+To nie jest wyłącznie problem agentów. [Dokumentacja Temporal](https://docs.temporal.io/activity-definition) wyjaśnia, że pojedyncza czynność może zostać ponowiona, dlatego operacje zapisujące powinny być idempotentne: kolejne wykonanie z tym samym kluczem nie powinno powodować kolejnego skutku. Temporal proponuje m.in. klucz łączący identyfikator przebiegu z identyfikatorem czynności. Jest tu przykładem narzędzia do trwałej orkiestracji, a nie elementem potwierdzonym w pokazanej przez IndyDevDana implementacji.
+
+W Temporal logika workflow musi być deterministyczna, aby dało się odtworzyć jej stan; wywołania modeli i usług umieszcza się w osobnych *Activities*. [Worker Versioning](https://docs.temporal.io/best-practices/worker) pozwala przypiąć trwający przebieg do wersji workera, na której wystartował. Ten wzorzec odpowiada na konkretne pytanie meta-fabryki: co zrobić z zadaniem, które czeka na decyzję człowieka, kiedy w międzyczasie wdrażasz nową wersję szablonu?
+
+## Fabryki mogą rozmawiać. Potrzebują też granic.
+
+W pokazie lider meta-fabryki kontaktuje się z liderem nowej instancji przez narzędzia skrzynki między fabrykami. Autor wskazuje, że komunikacja korzysta z API fabryk. To pozwala przekazać zadanie lub informację bez ręcznego kopiowania treści między oknami.
+
+W rzeczywistym systemie potraktowałbym taką wiadomość jak wejście z innej usługi: zidentyfikowany nadawca, zakres uprawnień, identyfikator zadania i zapisana odpowiedź. Treść wiadomości może zawierać dane z zewnątrz, więc nie powinna sama nadawać agentowi nowych uprawnień. Przy ponowieniu zadania trzeba też wiedzieć, czy operacja już się wykonała.
+
+Autor uruchamia Notes Factory lokalnie i zaznacza, że większość fabryk powinna działać w izolowanym środowisku. Sandbox ogranicza skutki części błędów, lecz sam nie rozwiązuje dostępu do sekretów ani zatwierdzania zmian. Uprawnienia do modyfikacji szablonu, uruchamiania instancji i wdrożenia powinny być egzekwowane poza instrukcją dla modelu.
+
+<Callout title="Co zatwierdzać?" variant="blue">
+W pokazie człowiek zatwierdza ważne zmiany, między innymi dodanie narzędzia do szablonu, uruchomienie fabryki i utworzenie jej właściciela. We własnym systemie dobrałbym bramki do skutków działania: podgląd i odwracalna propozycja mogą przejść automatycznie, natomiast rozszerzenie uprawnień, publikacja lub wdrożenie wymagają osobnej decyzji.
+</Callout>
+
+## Jak sprawdzić, czy dodatkowi agenci pomagają?
+
+Zanim porównasz architektury, przygotuj zestaw zadań z oczekiwanym wynikiem: na przykład wykrycie znanego błędu dostępności, poprawne pominięcie fałszywego alarmu i odmowę operacji poza zakresem dostępu. Uruchom te same przypadki kilka razy dla jednej roli oraz zespołu. Zapisz wersje modelu, narzędzi i szablonu, koszt wszystkich prób, czas, interwencje człowieka i końcowy stan środowiska.
+
+[Anthropic opisuje ewaluację agentów](https://www.anthropic.com/research/demystifying-evals-for-ai-agents) jako połączenie testów kodowych, oceny modelu i oceny człowieka. Ponieważ przebiegi różnią się między sobą, jeden udany pokaz nie mówi, jak często system zadziała. Warto odróżnić szansę uzyskania przynajmniej jednego poprawnego wyniku w kilku próbach od konsekwentnego powodzenia każdej próby. W obsłudze klienta ta druga właściwość może być ważniejsza niż pojedynczy dobry rezultat.
+
+Anthropic opisuje również [własny system researchowy](https://www.anthropic.com/research/multi-agent-research-system): w jego wewnętrznym teście określony układ lidera i podagentów wypadł lepiej od porównywanego pojedynczego agenta. Firma wskazuje zarazem większe zużycie zasobów oraz trudności z koordynacją i odtwarzaniem stanu. To wynik dla konkretnego systemu i zadań badawczych, a nie dowód, że zespół agentów poprawi dowolną fabrykę.
+
+## Jak zacząć bez budowy całej meta-fabryki
+
+Jeżeli utrzymujesz jedną fabrykę do jednego projektu, dodatkowy zespół agentów może jeszcze nie mieć sensu. Najpierw sprawdź, czy rzeczywiście powtarzasz proces tworzenia podobnych instancji i czy ich wspólne elementy są stabilne.
+
+Można zacząć od prostszego eksperymentu, na przykład z audytem frontendu:
+
+1. Wydziel wersjonowany szablon zawierający konfigurację, kontrakt raportu i testy, bez danych konkretnego klienta.
+2. Utwórz dwie instancje dla różnych aplikacji. Każdej nadaj osobne dostępy i zapisuj, z której wersji szablonu powstała.
+3. Dodaj w jednej instancji poprawkę raportu. Zmierz, ile pracy kosztuje jej uogólnienie i sprawdzenie na obu aplikacjach.
+4. Przenieś ją do szablonu przez zmianę do przeglądu. Nową instancję uruchom z poprawionej wersji; aktualizację istniejących rozpatrz osobno.
+5. Porównaj czas przygotowania, koszty przebiegów, liczbę błędów i interwencji człowieka z ręcznym utrzymaniem tych dwóch konfiguracji.
+
+Ten scenariusz jest propozycją, nie procedurą z filmu. Dopiero gdy ręczne zarządzanie wersjami i instancjami zaczyna być rzeczywistym kosztem, warto automatyzować je agentem i dokładać role.
+
+IndyDevDan sam zaznacza ograniczenie demonstracji: pokazane fabryki nie zostały jeszcze skierowane na konkretny problem produktu. Notes Factory dowodzi w tym pokazie, że można dodać narzędzie do szablonu, utworzyć instancję i nadać jej właściciela. O wartości całej konstrukcji zdecyduje dopiero praca na realnych zadaniach i koszt utrzymania tych możliwości.
+
+---
+
+*Źródła: [film IndyDevDana](https://www.youtube.com/watch?v=PuHDu3Kn8sQ), [szablony repozytoriów GitHub](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template), [Temporal: Activities](https://docs.temporal.io/activity-definition) i [wersjonowanie workerów](https://docs.temporal.io/best-practices/worker), [Anthropic: ewaluacje agentów](https://www.anthropic.com/research/demystifying-evals-for-ai-agents) oraz [system wieloagentowy](https://www.anthropic.com/research/multi-agent-research-system). Opis ról i notatek odnosi się do demonstracji; scenariusz audytu i proponowany proces są autorskim zastosowaniem.*
